@@ -152,16 +152,37 @@ export default function LessonScreen() {
   })();
 
   return (
-    <>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <Stack.Screen
         options={{
-          title: `${lesson.order}. Dars`,
-          headerShown: true,
-          headerBackTitle: "Orqaga",
-          headerStyle: { backgroundColor: colors.background },
-          headerTintColor: colors.foreground,
+          headerShown: false,
         }}
       />
+      <View
+        style={[
+          styles.topBar,
+          {
+            backgroundColor: colors.background,
+            borderBottomColor: colors.border,
+            paddingTop: Platform.OS === "web" ? insets.top + 67 : insets.top + 8,
+          },
+        ]}
+      >
+        <Pressable
+          onPress={() => router.back()}
+          style={({ pressed }) => [
+            styles.backBtn,
+            { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.7 : 1 },
+          ]}
+        >
+          <Feather name="chevron-left" size={20} color={colors.foreground} />
+        </Pressable>
+        <Text style={[styles.topBarTitle, { color: colors.foreground }]} numberOfLines={1}>
+          {lesson.order}. {lesson.title}
+        </Text>
+        <View style={styles.backBtn} />
+      </View>
+
       <ScrollView
         style={[styles.container, { backgroundColor: colors.background }]}
         contentContainerStyle={[
@@ -313,11 +334,34 @@ export default function LessonScreen() {
           )}
         </View>
       </ScrollView>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    gap: 12,
+  },
+  backBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  topBarTitle: {
+    flex: 1,
+    fontSize: 15,
+    fontFamily: "Inter_600SemiBold",
+    textAlign: "center",
+  },
   container: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 16 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
