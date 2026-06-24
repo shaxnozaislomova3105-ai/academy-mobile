@@ -1,3 +1,8 @@
+export interface LessonLink {
+  title: string;
+  url: string;
+}
+
 export interface Lesson {
   id: string;
   courseId: string;
@@ -7,6 +12,7 @@ export interface Lesson {
   content: string;
   order: number;
   type: "video" | "article" | "quiz";
+  links?: LessonLink[];
 }
 
 export interface Course {
@@ -206,6 +212,11 @@ export const COURSES: Course[] = [
         description: "To'liq HTML sahifasi yaratish",
         content:
           "Barcha o'rganganlaringizni birlashtiriб, to'liq HTML sahifasi yarating.\n\n**Loyiha: Shaxsiy portfolio sahifasi**\n\nTarkib:\n- `<header>` — navigatsiya\n- Hero section — sarlavha va tavsif\n- `<section>` — Ko'nikmalar\n- `<section>` — Loyihalar\n- `<section>` — Men haqimda\n- Bog'lanish formasi\n- `<footer>`\n\nBu loyiha CV ga qo'shsa bo'ladigan real ish bo'ladi!",
+        links: [
+          { title: "Brittany Chiang — Portfolio namunasi", url: "https://brittanychiang.com" },
+          { title: "HTML5 UP — Bepul HTML shablonlar", url: "https://html5up.net" },
+          { title: "freeCodeCamp — Portfolio loyiha", url: "https://www.freecodecamp.org/learn/2022/responsive-web-design/build-a-personal-portfolio-webpage-project/build-a-personal-portfolio-webpage" },
+        ],
         order: 14,
         type: "article",
       },
@@ -464,6 +475,11 @@ export const COURSES: Course[] = [
         description: "Web Academy landing page kloni",
         content:
           "CSS bilimlaringizni sinab ko'rish uchun Web Academy saytiga o'xshash landing page yarating.\n\n**Tarkib:**\n- Header (sticky nav)\n- Hero section (gradient + animatsiya)\n- Features grid\n- Kurslar karuseli\n- Testimonials\n- CTA section\n- Footer\n\n**Texnologiyalar:** HTML5 + CSS3, Flexbox, Grid, Animations, CSS Variables",
+        links: [
+          { title: "webacademy.uz — O'quv platformamiz", url: "https://webacademy.uz" },
+          { title: "Dribbble — UI dizayn ilhom", url: "https://dribbble.com/tags/landing-page" },
+          { title: "Awwwards — Eng yaxshi veb saytlar", url: "https://www.awwwards.com" },
+        ],
         order: 12,
         type: "article",
       },
@@ -500,7 +516,7 @@ export const COURSES: Course[] = [
       { id: "js-12", courseId: "javascript", title: "Modullar", duration: "13 daqiqa", description: "import/export", content: "```js\n// api.js\nexport const fetchCourses = () => fetch('/api/courses').then(r => r.json());\n\n// main.js\nimport { fetchCourses } from './api.js';\n```", order: 12, type: "article" },
       { id: "js-13", courseId: "javascript", title: "Error handling", duration: "11 daqiqa", description: "try/catch, custom errors", content: "```js\ntry {\n  const data = JSON.parse(invalidJson);\n} catch (e) {\n  console.error('JSON xatosi:', e.message);\n} finally {\n  console.log('Har doim ishlaydi');\n}\n```", order: 13, type: "article" },
       { id: "js-14", courseId: "javascript", title: "Event Loop", duration: "17 daqiqa", description: "Call stack, microtasks, macrotasks", content: "JavaScript single-threaded bo'lsa-da, Event Loop orqali asinxron operatsiyalarni boshqaradi.\n\nCall Stack → Web APIs → Callback Queue → Event Loop → Call Stack", order: 14, type: "article" },
-      { id: "js-15", courseId: "javascript", title: "Yakuniy loyiha", duration: "35 daqiqa", description: "To-do ilovasi + LocalStorage", content: "JavaScript bilan to'liq funksional To-do ilovasi yarating:\n- Vazifa qo'shish/o'chirish\n- Bajarildi belgilash\n- Filtrlash\n- LocalStorage da saqlash", order: 15, type: "article" },
+      { id: "js-15", courseId: "javascript", title: "Yakuniy loyiha", duration: "35 daqiqa", description: "To-do ilovasi + LocalStorage", content: "JavaScript bilan to'liq funksional To-do ilovasi yarating:\n- Vazifa qo'shish/o'chirish\n- Bajarildi belgilash\n- Filtrlash\n- LocalStorage da saqlash", links: [{ title: "TodoMVC — Turli frameworklarda To-do", url: "https://todomvc.com" }, { title: "JavaScript30 — 30 kun JS mashqlari", url: "https://javascript30.com" }, { title: "Vanilla JavaScript Projects", url: "https://vanillawebprojects.com" }], order: 15, type: "article" },
     ],
   },
   {
@@ -529,7 +545,7 @@ export const COURSES: Course[] = [
       { id: "rc-7", courseId: "react", title: "React Router", duration: "22 daqiqa", description: "SPA navigatsiyasi", content: "```jsx\n<Routes>\n  <Route path=\"/\" element={<Home />} />\n  <Route path=\"/courses\" element={<Courses />} />\n  <Route path=\"/course/:id\" element={<CourseDetail />} />\n</Routes>\n```", order: 7, type: "article" },
       { id: "rc-8", courseId: "react", title: "Custom Hooks", duration: "17 daqiqa", description: "Mantiqni qayta ishlatish", content: "```jsx\nconst useCourses = () => {\n  const [courses, setCourses] = useState([]);\n  const [loading, setLoading] = useState(true);\n  useEffect(() => {\n    fetchCourses().then(setCourses).finally(() => setLoading(false));\n  }, []);\n  return { courses, loading };\n};\n```", order: 8, type: "article" },
       { id: "rc-9", courseId: "react", title: "Performance", duration: "19 daqiqa", description: "memo, useMemo, useCallback", content: "```jsx\nconst CourseList = memo(({ courses }) => (\n  <div>{courses.map(c => <CourseCard key={c.id} {...c} />)}</div>\n));\n\nconst totalStudents = useMemo(() => courses.reduce((s, c) => s + c.studentsCount, 0), [courses]);\n```", order: 9, type: "article" },
-      { id: "rc-10", courseId: "react", title: "Yakuniy loyiha", duration: "40 daqiqa", description: "Web Academy fronend kloni", content: "React bilan Web Academy saytining frontend qismini yarating:\n- Kurslar ro'yxati\n- Kurs sahifasi\n- Filtrlash\n- Qidiruv\n- Auth sahifasi", order: 10, type: "article" },
+      { id: "rc-10", courseId: "react", title: "Yakuniy loyiha", duration: "40 daqiqa", description: "Web Academy fronend kloni", content: "React bilan Web Academy saytining frontend qismini yarating:\n- Kurslar ro'yxati\n- Kurs sahifasi\n- Filtrlash\n- Qidiruv\n- Auth sahifasi", links: [{ title: "webacademy.uz — Namuna platforma", url: "https://webacademy.uz" }, { title: "Udemy — O'quv platforma dizayni", url: "https://www.udemy.com" }, { title: "React.dev — Rasmiy React hujjatlari", url: "https://react.dev" }], order: 10, type: "article" },
     ],
   },
   {
@@ -556,7 +572,7 @@ export const COURSES: Course[] = [
       { id: "nd-5", courseId: "nodejs", title: "JWT Autentifikatsiya", duration: "20 daqiqa", description: "Login, register, token", content: "```js\nconst token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: '7d' });\n```", order: 5, type: "article" },
       { id: "nd-6", courseId: "nodejs", title: "Middleware", duration: "14 daqiqa", description: "Auth, error handling", content: "```js\nconst protect = (req, res, next) => {\n  const token = req.headers.authorization?.split(' ')[1];\n  if (!token) return res.status(401).json({ error: 'Kirish taqiqlangan' });\n  req.user = jwt.verify(token, SECRET);\n  next();\n};\n```", order: 6, type: "article" },
       { id: "nd-7", courseId: "nodejs", title: "Fayl yuklash", duration: "16 daqiqa", description: "Multer, S3", content: "```js\nconst upload = multer({ dest: 'uploads/' });\napp.post('/upload', upload.single('file'), (req, res) => res.json({ url: req.file.path }));\n```", order: 7, type: "article" },
-      { id: "nd-8", courseId: "nodejs", title: "Yakuniy loyiha", duration: "40 daqiqa", description: "Web Academy API", content: "Web Academy uchun to'liq REST API yarating: foydalanuvchilar, kurslar, darslar, ro'yxatga olish, progress.", order: 8, type: "article" },
+      { id: "nd-8", courseId: "nodejs", title: "Yakuniy loyiha", duration: "40 daqiqa", description: "Web Academy API", content: "Web Academy uchun to'liq REST API yarating: foydalanuvchilar, kurslar, darslar, ro'yxatga olish, progress.", links: [{ title: "webacademy.uz — Namuna platforma", url: "https://webacademy.uz" }, { title: "JSONPlaceholder — Amaliyot uchun REST API", url: "https://jsonplaceholder.typicode.com" }, { title: "Reqres.in — Sinov REST API", url: "https://reqres.in" }], order: 8, type: "article" },
     ],
   },
   {
@@ -591,7 +607,7 @@ export const COURSES: Course[] = [
       { id: "fs-13", courseId: "fullstack", title: "Testing", duration: "18 daqiqa", description: "Unit va integration testlar", content: "Vitest bilan backend testlar, React Testing Library bilan frontend testlar.", order: 13, type: "article" },
       { id: "fs-14", courseId: "fullstack", title: "Performance", duration: "16 daqiqa", description: "Caching, optimization", content: "Redis caching, React Query, image optimization, code splitting.", order: 14, type: "article" },
       { id: "fs-15", courseId: "fullstack", title: "Deploy", duration: "20 daqiqa", description: "Production ga chiqarish", content: "Backend: Railway/Render. Frontend: Vercel. DB: Neon PostgreSQL.", order: 15, type: "article" },
-      { id: "fs-16", courseId: "fullstack", title: "Sertifikat", duration: "10 daqiqa", description: "Yakuniy baholash", content: "Full-Stack kursini muvaffaqiyatli tugatganingiz uchun tabriklaymiz! Sertifikatingizni oling.", order: 16, type: "quiz" },
+      { id: "fs-16", courseId: "fullstack", title: "Sertifikat", duration: "10 daqiqa", description: "Yakuniy baholash", content: "Full-Stack kursini muvaffaqiyatli tugatganingiz uchun tabriklaymiz! Sertifikatingizni oling.", links: [{ title: "webacademy.uz — O'quv platformamiz", url: "https://webacademy.uz" }, { title: "Coursera — Global o'quv platformasi", url: "https://www.coursera.org" }, { title: "GitHub — Loyihangizni joylash", url: "https://github.com" }], order: 16, type: "quiz" },
     ],
   },
 ];

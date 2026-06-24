@@ -1,5 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import * as Linking from "expo-linking";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import {
@@ -11,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { CodePlayground } from "@/components/CodePlayground";
 import { useAcademy } from "@/context/AcademyContext";
 import { COURSES } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
@@ -59,10 +61,13 @@ export default function LessonScreen() {
 
   const renderContent = (content: string) => {
     const lines = content.split("\n");
+    let inBlock = false;
     return lines.map((line, i) => {
       if (line.startsWith("```")) {
+        inBlock = !inBlock;
         return null;
       }
+      if (inBlock) return null;
       if (line.startsWith("**") && line.endsWith("**")) {
         return (
           <Text key={i} style={[styles.bold, { color: colors.foreground }]}>
@@ -124,16 +129,19 @@ export default function LessonScreen() {
   };
 
   const codeBlocks = (() => {
-    const blocks: string[] = [];
+    const blocks: { code: string; lang: string }[] = [];
     let inBlock = false;
     let current = "";
+    let lang = "";
     for (const line of lesson.content.split("\n")) {
       if (line.startsWith("```")) {
         if (inBlock) {
-          blocks.push(current.trim());
+          blocks.push({ code: current.trim(), lang });
           current = "";
+          lang = "";
           inBlock = false;
         } else {
+          lang = line.slice(3).trim();
           inBlock = true;
         }
       } else if (inBlock) {
@@ -201,25 +209,53 @@ export default function LessonScreen() {
         {/* Content */}
         <View style={styles.body}>{renderContent(lesson.content)}</View>
 
-        {/* Code blocks */}
+        {/* Code playgrounds */}
         {codeBlocks.map((block, i) => (
-          <View
+          <CodePlayground
             key={i}
-            style={[
-              styles.codeBlock,
-              { backgroundColor: colors.navyDark ?? "#0D1117", borderColor: course.color + "30" },
-            ]}
-          >
-            <View style={styles.codeHeader}>
-              <View style={styles.codeDots}>
-                {["#FF5F57", "#FEBC2E", "#28C840"].map((c) => (
-                  <View key={c} style={[styles.codeDot, { backgroundColor: c }]} />
-                ))}
-              </View>
-            </View>
-            <Text style={styles.codeText}>{block}</Text>
-          </View>
+            code={block.code}
+            language={block.lang}
+            color={course.color}
+          />
         ))}
+
+        {/* Example project links */}
+        {lesson.links && lesson.links.length > 0 && (
+          <View style={[styles.linksCard, { backgroundColor: course.color + "08", borderColor: course.color + "25" }]}>
+            <View style={styles.linksHeader}>
+              <Feather name="globe" size={15} color={course.color} />
+              <Text style={[styles.linksTitle, { color: course.color }]}>
+                Namuna loyihalar
+              </Text>
+            </View>
+            <Text style={[styles.linksSub, { color: colors.mutedForeground }]}>
+              Ilhom olish uchun quyidagi saytlarni ko'ring:
+            </Text>
+            {lesson.links.map((link, i) => (
+              <Pressable
+                key={i}
+                onPress={() => Linking.openURL(link.url)}
+                style={({ pressed }) => [
+                  styles.linkRow,
+                  { borderColor: colors.border, backgroundColor: colors.card, opacity: pressed ? 0.8 : 1 },
+                ]}
+              >
+                <View style={[styles.linkIcon, { backgroundColor: course.color + "15" }]}>
+                  <Feather name="external-link" size={13} color={course.color} />
+                </View>
+                <View style={styles.linkInfo}>
+                  <Text style={[styles.linkTitle, { color: colors.foreground }]} numberOfLines={1}>
+                    {link.title}
+                  </Text>
+                  <Text style={[styles.linkUrl, { color: colors.mutedForeground }]} numberOfLines={1}>
+                    {link.url.replace(/^https?:\/\//, "")}
+                  </Text>
+                </View>
+                <Feather name="chevron-right" size={14} color={colors.mutedForeground} />
+              </Pressable>
+            ))}
+          </View>
+        )}
 
         {/* Complete button */}
         <Pressable
@@ -323,27 +359,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     borderRadius: 4,
   },
-  codeBlock: {
-    borderRadius: 14,
+  linksCard: {
+    borderRadius: 16,
     borderWidth: 1,
-    marginBottom: 20,
-    overflow: "hidden",
-  },
-  codeHeader: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.08)",
-  },
-  codeDots: { flexDirection: "row", gap: 6 },
-  codeDot: { width: 10, height: 10, borderRadius: 5 },
-  codeText: {
-    color: "#E6EDF3",
-    fontSize: 13,
-    fontFamily: "Inter_400Regular",
-    lineHeight: 20,
     padding: 16,
+    marginBottom: 20,
+    gap: 12,
   },
+  linksHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
+  linksTitle: { fontSize: 14, fontFamily: "Inter_700Bold" },
+  linksSub: { fontSize: 13, fontFamily: "Inter_400Regular", marginTop: -4 },
+  linkRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  linkIcon: { width: 32, height: 32, borderRadius: 8, alignItems: "center", justifyContent: "center" },
+  linkInfo: { flex: 1 },
+  linkTitle: { fontSize: 13, fontFamily: "Inter_600SemiBold", marginBottom: 2 },
+  linkUrl: { fontSize: 11, fontFamily: "Inter_400Regular" },
   completeBtn: {
     flexDirection: "row",
     alignItems: "center",

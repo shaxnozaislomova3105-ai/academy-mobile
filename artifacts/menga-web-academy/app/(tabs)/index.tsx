@@ -102,24 +102,6 @@ export default function HomeScreen() {
         </View>
       ) : (
         <>
-          {/* Stats */}
-          <View style={styles.statsRow}>
-            {[
-              { val: "7+", label: "Kurslar", icon: "book-open" as const },
-              { val: "10K+", label: "O'quvchilar", icon: "users" as const },
-              { val: "4.9★", label: "Reyting", icon: "star" as const },
-            ].map((s) => (
-              <View
-                key={s.label}
-                style={[styles.stat, { backgroundColor: colors.card, borderColor: colors.border }]}
-              >
-                <Feather name={s.icon} size={16} color={colors.primary} />
-                <Text style={[styles.statVal, { color: colors.foreground }]}>{s.val}</Text>
-                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>{s.label}</Text>
-              </View>
-            ))}
-          </View>
-
           {/* Enrolled courses */}
           {enrolledCourses.length > 0 && (
             <View style={styles.section}>
@@ -225,17 +207,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   searchInput: { flex: 1, fontSize: 14, fontFamily: "Inter_400Regular", padding: 0 },
-  statsRow: { flexDirection: "row", gap: 10, marginBottom: 16 },
-  stat: {
-    flex: 1,
-    alignItems: "center",
-    gap: 4,
-    padding: 12,
-    borderRadius: 14,
-    borderWidth: 1,
-  },
-  statVal: { fontSize: 16, fontFamily: "Inter_700Bold" },
-  statLabel: { fontSize: 10, fontFamily: "Inter_400Regular" },
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
   sectionTitle: { fontSize: 18, fontFamily: "Inter_700Bold" },
