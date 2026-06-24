@@ -1,0 +1,26 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "vA4JsMUcjvXi9ps-O-CNu"
+uri = "file://artifacts/menga-web-academy/assets/images/icon.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "irTF9sIyDQ8TgATNiPQA9"
+uri = "file://artifacts/menga-web-academy/assets/images/course-web-basics.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Xu0kflD2tfQgwcJnos5Id"
+uri = "file://artifacts/menga-web-academy/assets/images/course-react.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Z_k5EhRnTQMQoRiA_Qhck"
+uri = "file://artifacts/menga-web-academy/assets/images/course-nodejs.png"
+type = "image"
+title = "generated_image"
