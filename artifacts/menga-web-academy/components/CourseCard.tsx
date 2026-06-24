@@ -77,9 +77,6 @@ export const CourseCard: React.FC<Props> = ({
             >
               {course.title}
             </Text>
-            {course.isPremium && (
-              <View style={[styles.premiumDot, { backgroundColor: colors.premium }]} />
-            )}
           </View>
           <Text style={[styles.compactMeta, { color: colors.mutedForeground }]}>
             {course.lessonsCount} dars · {course.duration}
@@ -136,12 +133,6 @@ export const CourseCard: React.FC<Props> = ({
               {course.category}
             </Text>
           </View>
-          {course.isPremium && (
-            <View style={[styles.badge, { backgroundColor: "#F59E0B" }]}>
-              <Feather name="lock" size={10} color="#fff" />
-              <Text style={styles.badgePremium}>Premium</Text>
-            </View>
-          )}
         </View>
 
         <View
@@ -292,6 +283,5 @@ const styles = StyleSheet.create({
   compactInfo: { flex: 1, padding: 12, justifyContent: "center", gap: 4 },
   compactTitleRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   compactTitle: { flex: 1, fontSize: 14, fontFamily: "Inter_600SemiBold", lineHeight: 18 },
-  premiumDot: { width: 8, height: 8, borderRadius: 4 },
   compactMeta: { fontSize: 12, fontFamily: "Inter_400Regular" },
 });

@@ -95,14 +95,6 @@ export default function CourseDetailScreen() {
               <Feather name="book-open" size={48} color={course.color} />
             </View>
           )}
-          {course.isPremium && (
-            <View style={styles.premiumOverlay}>
-              <View style={[styles.premiumBadge, { backgroundColor: "#F59E0B" }]}>
-                <Feather name="lock" size={12} color="#fff" />
-                <Text style={styles.premiumText}>Premium</Text>
-              </View>
-            </View>
-          )}
         </View>
 
         <View style={styles.body}>
@@ -114,11 +106,6 @@ export default function CourseDetailScreen() {
             <View style={[styles.levelTag, { backgroundColor: levelColor + "15" }]}>
               <Text style={[styles.levelTagText, { color: levelColor }]}>{course.level}</Text>
             </View>
-            {!course.isPremium && (
-              <View style={[styles.freeTag, { backgroundColor: "#22C55E15" }]}>
-                <Text style={[styles.freeTagText, { color: "#22C55E" }]}>Bepul</Text>
-              </View>
-            )}
           </View>
 
           <Text style={[styles.title, { color: colors.foreground }]}>{course.title}</Text>

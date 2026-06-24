@@ -92,19 +92,6 @@ export default function CoursesScreen() {
         ))}
       </ScrollView>
 
-      {/* Premium banner */}
-      <View style={[styles.premiumBanner, { backgroundColor: "#FEF9ED", borderColor: "#F59E0B40" }]}>
-        <Feather name="lock" size={16} color="#F59E0B" />
-        <View style={styles.premiumTextWrap}>
-          <Text style={[styles.premiumTitle, { color: colors.foreground }]}>
-            Web Academy Premium
-          </Text>
-          <Text style={[styles.premiumSub, { color: colors.mutedForeground }]}>
-            CSS, JavaScript, React, Node.js va Full-Stack kurslariga + barcha sertifikatlarga kirish. HTML kurslari hamisha bepul.
-          </Text>
-        </View>
-      </View>
-
       {filtered.length === 0 ? (
         <View style={styles.empty}>
           <Feather name="search" size={32} color={colors.mutedForeground} />
@@ -115,61 +102,20 @@ export default function CoursesScreen() {
       ) : (
         <>
           {/* Free courses */}
-          {freeCourses.length > 0 && (
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-                  Bepul kurslar
-                </Text>
-                <View style={[styles.countBadge, { backgroundColor: "#22C55E15" }]}>
-                  <Text style={[styles.countText, { color: "#22C55E" }]}>
-                    {freeCourses.length} ta
-                  </Text>
-                </View>
-              </View>
-              {freeCourses.map((c) => {
-                const enrolled = isEnrolled(c.id);
-                return (
-                  <CourseCard
-                    key={c.id}
-                    course={c}
-                    onPress={() => router.push(`/course/${c.id}` as any)}
-                    showProgress={enrolled}
-                    progress={getCourseProgress(c.id)}
-                  />
-                );
-              })}
-            </View>
-          )}
-
-          {/* Premium courses */}
-          {premiumCourses.length > 0 && (
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-                  Premium kurslar
-                </Text>
-                <View style={[styles.countBadge, { backgroundColor: "#F59E0B15" }]}>
-                  <Feather name="lock" size={11} color="#F59E0B" />
-                  <Text style={[styles.countText, { color: "#F59E0B" }]}>
-                    {premiumCourses.length} ta
-                  </Text>
-                </View>
-              </View>
-              {premiumCourses.map((c) => {
-                const enrolled = isEnrolled(c.id);
-                return (
-                  <CourseCard
-                    key={c.id}
-                    course={c}
-                    onPress={() => router.push(`/course/${c.id}` as any)}
-                    showProgress={enrolled}
-                    progress={getCourseProgress(c.id)}
-                  />
-                );
-              })}
-            </View>
-          )}
+          <View style={styles.section}>
+            {filtered.map((c) => {
+              const enrolled = isEnrolled(c.id);
+              return (
+                <CourseCard
+                  key={c.id}
+                  course={c}
+                  onPress={() => router.push(`/course/${c.id}` as any)}
+                  showProgress={enrolled}
+                  progress={getCourseProgress(c.id)}
+                />
+              );
+            })}
+          </View>
         </>
       )}
     </ScrollView>
@@ -194,18 +140,6 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 14, fontFamily: "Inter_400Regular", padding: 0 },
   chipsScroll: { marginBottom: 4 },
   chips: { paddingBottom: 14, paddingRight: 20 },
-  premiumBanner: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 12,
-    borderRadius: 14,
-    borderWidth: 1,
-    padding: 14,
-    marginBottom: 24,
-  },
-  premiumTextWrap: { flex: 1 },
-  premiumTitle: { fontSize: 14, fontFamily: "Inter_700Bold", marginBottom: 4 },
-  premiumSub: { fontSize: 12, fontFamily: "Inter_400Regular", lineHeight: 16 },
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 },
   sectionTitle: { fontSize: 16, fontFamily: "Inter_700Bold" },
