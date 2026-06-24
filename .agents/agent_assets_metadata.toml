@@ -24,3 +24,27 @@ id = "Z_k5EhRnTQMQoRiA_Qhck"
 uri = "file://artifacts/menga-web-academy/assets/images/course-nodejs.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "7eu46bXKzKxu0zvS0t8H0"
+uri = "file://artifacts/menga-web-academy/assets/images/wa-logo.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "TxR332rpd_JG0LwLRA5iv"
+uri = "file://artifacts/menga-web-academy/assets/images/course-html.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "AUUPNit1cn2-gnoaUpJzm"
+uri = "file://artifacts/menga-web-academy/assets/images/course-css.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "pXfb8TQYVqzgFiNEFxp-2"
+uri = "file://artifacts/menga-web-academy/assets/images/course-fullstack.png"
+type = "image"
+title = "generated_image"

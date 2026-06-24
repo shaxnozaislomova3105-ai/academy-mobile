@@ -21,6 +21,15 @@ const IMAGES: Record<string, ReturnType<typeof require>> = {
   "course-web-basics": require("@/assets/images/course-web-basics.png"),
   "course-react": require("@/assets/images/course-react.png"),
   "course-nodejs": require("@/assets/images/course-nodejs.png"),
+  "course-html": require("@/assets/images/course-html.png"),
+  "course-css": require("@/assets/images/course-css.png"),
+  "course-fullstack": require("@/assets/images/course-fullstack.png"),
+};
+
+const LEVEL_COLORS: Record<string, string> = {
+  "Boshlang'ich": "#22C55E",
+  "O'rta": "#F59E0B",
+  "Murakkab": "#EF4444",
 };
 
 export default function CourseDetailScreen() {
@@ -44,13 +53,16 @@ export default function CourseDetailScreen() {
   const enrolled = isEnrolled(course.id);
   const progress = getCourseProgress(course.id);
   const imageSource = course.image ? IMAGES[course.image] : null;
+  const levelColor = LEVEL_COLORS[course.level] ?? colors.primary;
+  const completedCount = course.lessons.filter((l) => isLessonCompleted(l.id)).length;
 
   const handleEnroll = async () => {
     if (enrolled) {
       await unenrollCourse(course.id);
     } else {
       await enrollCourse(course.id);
-      if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (Platform.OS !== "web")
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
   };
 
@@ -63,84 +75,84 @@ export default function CourseDetailScreen() {
           headerBackTitle: "Orqaga",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.foreground,
+          headerShadowVisible: false,
         }}
       />
       <ScrollView
         style={[styles.container, { backgroundColor: colors.background }]}
         contentContainerStyle={[
           styles.content,
-          {
-            paddingBottom:
-              Platform.OS === "web"
-                ? insets.bottom + 34
-                : insets.bottom + 24,
-          },
+          { paddingBottom: Platform.OS === "web" ? insets.bottom + 34 : insets.bottom + 24 },
         ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Hero */}
-        <View
-          style={[styles.hero, { backgroundColor: course.color + "20" }]}
-        >
+        <View style={[styles.hero, { backgroundColor: course.color + "18" }]}>
           {imageSource ? (
             <Image source={imageSource} style={styles.heroImage} />
           ) : (
             <View style={styles.heroPlaceholder}>
-              <Feather name="code" size={48} color={course.color} />
+              <Feather name="book-open" size={48} color={course.color} />
+            </View>
+          )}
+          {course.isPremium && (
+            <View style={styles.premiumOverlay}>
+              <View style={[styles.premiumBadge, { backgroundColor: "#F59E0B" }]}>
+                <Feather name="lock" size={12} color="#fff" />
+                <Text style={styles.premiumText}>Premium</Text>
+              </View>
             </View>
           )}
         </View>
 
         <View style={styles.body}>
-          {/* Level Badge */}
-          <View style={[styles.levelBadge, { backgroundColor: course.color + "18" }]}>
-            <Text style={[styles.levelText, { color: course.color }]}>
-              {course.level}
-            </Text>
+          {/* Category + Level */}
+          <View style={styles.tagRow}>
+            <View style={[styles.catTag, { backgroundColor: course.color + "15" }]}>
+              <Text style={[styles.catTagText, { color: course.color }]}>{course.category}</Text>
+            </View>
+            <View style={[styles.levelTag, { backgroundColor: levelColor + "15" }]}>
+              <Text style={[styles.levelTagText, { color: levelColor }]}>{course.level}</Text>
+            </View>
+            {!course.isPremium && (
+              <View style={[styles.freeTag, { backgroundColor: "#22C55E15" }]}>
+                <Text style={[styles.freeTagText, { color: "#22C55E" }]}>Bepul</Text>
+              </View>
+            )}
           </View>
 
-          <Text style={[styles.title, { color: colors.foreground }]}>
-            {course.title}
-          </Text>
+          <Text style={[styles.title, { color: colors.foreground }]}>{course.title}</Text>
           <Text style={[styles.description, { color: colors.mutedForeground }]}>
             {course.description}
           </Text>
 
-          {/* Meta chips */}
-          <View style={styles.metaRow}>
+          {/* Meta row */}
+          <View style={[styles.metaCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             {[
-              { icon: "user", val: course.instructor },
-              { icon: "book-open", val: `${course.lessonsCount} dars` },
-              { icon: "clock", val: course.duration },
-              { icon: "star", val: `${course.rating}` },
-              { icon: "users", val: `${course.studentsCount.toLocaleString()}` },
-            ].map((m) => (
-              <View
-                key={m.icon}
-                style={[styles.metaChip, { backgroundColor: colors.muted }]}
-              >
-                <Feather name={m.icon as any} size={12} color={colors.mutedForeground} />
-                <Text style={[styles.metaChipText, { color: colors.mutedForeground }]}>
-                  {m.val}
-                </Text>
+              { icon: "user" as const, val: course.instructor },
+              { icon: "book-open" as const, val: `${course.lessonsCount} dars` },
+              { icon: "clock" as const, val: course.duration },
+              { icon: "star" as const, val: `${course.rating}` },
+              { icon: "users" as const, val: `${course.studentsCount.toLocaleString()} o'quvchi` },
+            ].map((m, i) => (
+              <View key={i} style={styles.metaItem}>
+                <Feather name={m.icon} size={13} color={colors.primary} />
+                <Text style={[styles.metaVal, { color: colors.foreground }]}>{m.val}</Text>
               </View>
             ))}
           </View>
 
           {/* Topics */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-              Mavzular
-            </Text>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Mavzular</Text>
             <View style={styles.topicsRow}>
               {course.topics.map((t) => (
                 <View
                   key={t}
-                  style={[styles.topicTag, { backgroundColor: course.color + "15", borderColor: course.color + "30" }]}
+                  style={[styles.topicTag, { backgroundColor: colors.muted, borderColor: colors.border }]}
                 >
-                  <Text style={[styles.topicText, { color: course.color }]}>
-                    {t}
-                  </Text>
+                  <Feather name="check" size={11} color={colors.primary} />
+                  <Text style={[styles.topicText, { color: colors.foreground }]}>{t}</Text>
                 </View>
               ))}
             </View>
@@ -148,35 +160,28 @@ export default function CourseDetailScreen() {
 
           {/* Progress (if enrolled) */}
           {enrolled && (
-            <View
-              style={[styles.progressCard, { backgroundColor: course.color + "12", borderColor: course.color + "25" }]}
-            >
+            <View style={[styles.progressCard, { backgroundColor: colors.primary + "10", borderColor: colors.primary + "25" }]}>
               <View style={styles.progressHeader}>
-                <Text style={[styles.progressLabel, { color: colors.foreground }]}>
-                  Sizning progressingiz
-                </Text>
-                <Text style={[styles.progressPct, { color: course.color }]}>
-                  {progress}%
-                </Text>
+                <Text style={[styles.progressLabel, { color: colors.foreground }]}>Sizning progressingiz</Text>
+                <Text style={[styles.progressPct, { color: colors.primary }]}>{progress}%</Text>
               </View>
               <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { backgroundColor: course.color, width: `${progress}%` as any },
-                  ]}
-                />
+                <View style={[styles.progressFill, { backgroundColor: colors.primary, width: `${progress}%` as any }]} />
               </View>
+              <Text style={[styles.progressSub, { color: colors.mutedForeground }]}>
+                {completedCount} / {course.lessons.length} dars bajarildi
+              </Text>
             </View>
           )}
 
-          {/* Enroll button */}
+          {/* Enroll CTA */}
           <Pressable
             onPress={handleEnroll}
             style={({ pressed }) => [
               styles.enrollBtn,
               {
-                backgroundColor: enrolled ? colors.muted : course.color,
+                backgroundColor: enrolled ? colors.muted : colors.primary,
+                borderColor: enrolled ? colors.border : colors.primary,
                 opacity: pressed ? 0.85 : 1,
               },
             ]}
@@ -186,12 +191,7 @@ export default function CourseDetailScreen() {
               size={18}
               color={enrolled ? colors.mutedForeground : "#fff"}
             />
-            <Text
-              style={[
-                styles.enrollText,
-                { color: enrolled ? colors.mutedForeground : "#fff" },
-              ]}
-            >
+            <Text style={[styles.enrollText, { color: enrolled ? colors.mutedForeground : "#fff" }]}>
               {enrolled ? "Ro'yxatdan chiqish" : "Kursga yozilish"}
             </Text>
           </Pressable>
@@ -199,7 +199,7 @@ export default function CourseDetailScreen() {
           {/* Lessons */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-              Darslar ({course.lessons.length})
+              Kurs dasturi ({course.lessons.length} dars)
             </Text>
             {course.lessons.map((lesson) => (
               <LessonItem
@@ -207,10 +207,8 @@ export default function CourseDetailScreen() {
                 lesson={lesson}
                 isCompleted={isLessonCompleted(lesson.id)}
                 isLocked={!enrolled}
-                accentColor={course.color}
-                onPress={() =>
-                  router.push(`/lesson/${lesson.id}` as any)
-                }
+                accentColor={colors.primary}
+                onPress={() => router.push(`/lesson/${lesson.id}` as any)}
               />
             ))}
           </View>
@@ -224,76 +222,45 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: {},
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  hero: { height: 200, overflow: "hidden" },
+  hero: { height: 200, overflow: "hidden", position: "relative" },
   heroImage: { width: "100%", height: "100%", resizeMode: "cover" },
-  heroPlaceholder: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  heroPlaceholder: { flex: 1, alignItems: "center", justifyContent: "center" },
+  premiumOverlay: { position: "absolute", top: 12, right: 12 },
+  premiumBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20 },
+  premiumText: { fontSize: 12, fontFamily: "Inter_700Bold", color: "#fff" },
   body: { padding: 20 },
-  levelBadge: {
-    alignSelf: "flex-start",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 20,
-    marginBottom: 10,
-  },
-  levelText: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
-  title: { fontSize: 24, fontFamily: "Inter_700Bold", marginBottom: 8, lineHeight: 30 },
-  description: {
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
-    lineHeight: 20,
-    marginBottom: 16,
-  },
-  metaRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 24 },
-  metaChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  metaChipText: { fontSize: 12, fontFamily: "Inter_500Medium" },
+  tagRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
+  catTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
+  catTagText: { fontSize: 12, fontFamily: "Inter_700Bold" },
+  levelTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
+  levelTagText: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
+  freeTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
+  freeTagText: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
+  title: { fontSize: 22, fontFamily: "Inter_700Bold", marginBottom: 8, lineHeight: 28 },
+  description: { fontSize: 14, fontFamily: "Inter_400Regular", lineHeight: 20, marginBottom: 16 },
+  metaCard: { borderRadius: 14, borderWidth: 1, padding: 14, gap: 8, marginBottom: 24 },
+  metaItem: { flexDirection: "row", alignItems: "center", gap: 8 },
+  metaVal: { fontSize: 13, fontFamily: "Inter_500Medium" },
   section: { marginBottom: 24 },
-  sectionTitle: { fontSize: 18, fontFamily: "Inter_700Bold", marginBottom: 12 },
+  sectionTitle: { fontSize: 17, fontFamily: "Inter_700Bold", marginBottom: 12 },
   topicsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  topicTag: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
+  topicTag: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1 },
   topicText: { fontSize: 12, fontFamily: "Inter_500Medium" },
-  progressCard: {
-    borderRadius: 14,
-    borderWidth: 1,
-    padding: 16,
-    marginBottom: 16,
-    gap: 10,
-  },
-  progressHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  progressCard: { borderRadius: 14, borderWidth: 1, padding: 16, marginBottom: 16, gap: 8 },
+  progressHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   progressLabel: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
   progressPct: { fontSize: 20, fontFamily: "Inter_700Bold" },
-  progressTrack: {
-    height: 6,
-    borderRadius: 3,
-    overflow: "hidden",
-  },
+  progressTrack: { height: 6, borderRadius: 3, overflow: "hidden" },
   progressFill: { height: "100%", borderRadius: 3 },
+  progressSub: { fontSize: 12, fontFamily: "Inter_400Regular" },
   enrollBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    paddingVertical: 16,
+    paddingVertical: 15,
     borderRadius: 14,
+    borderWidth: 1,
     marginBottom: 28,
   },
   enrollText: { fontSize: 16, fontFamily: "Inter_700Bold" },

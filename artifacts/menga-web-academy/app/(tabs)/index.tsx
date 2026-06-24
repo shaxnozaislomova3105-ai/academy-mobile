@@ -12,29 +12,28 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CategoryChip } from "@/components/CategoryChip";
 import { CourseCard } from "@/components/CourseCard";
-import { CATEGORIES, COURSES } from "@/data/courses";
+import { WALogo } from "@/components/WALogo";
+import { COURSES } from "@/data/courses";
+import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
 
 export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { getEnrolledCourses, getCourseProgress } = useAcademy();
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("Barchasi");
 
-  const filtered = COURSES.filter((c) => {
-    const matchesCategory =
-      activeCategory === "Barchasi" || c.category === activeCategory;
-    const matchesSearch =
+  const filtered = COURSES.filter(
+    (c) =>
       search.length === 0 ||
       c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.description.toLowerCase().includes(search.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+      c.category.toLowerCase().includes(search.toLowerCase())
+  );
 
-  const featured = COURSES.slice(0, 3);
+  const freeCourses = COURSES.filter((c) => !c.isPremium).slice(0, 3);
+  const enrolledCourses = getEnrolledCourses().slice(0, 3);
 
   return (
     <ScrollView
@@ -42,154 +41,205 @@ export default function HomeScreen() {
       contentContainerStyle={[
         styles.content,
         {
-          paddingTop:
-            Platform.OS === "web"
-              ? insets.top + 67
-              : insets.top + 16,
-          paddingBottom:
-            Platform.OS === "web"
-              ? insets.bottom + 34 + 84
-              : insets.bottom + 100,
+          paddingTop: Platform.OS === "web" ? insets.top + 67 : insets.top + 16,
+          paddingBottom: Platform.OS === "web" ? insets.bottom + 34 + 84 : insets.bottom + 100,
         },
       ]}
       showsVerticalScrollIndicator={false}
     >
       {/* Header */}
       <View style={styles.header}>
-        <View>
-          <Text style={[styles.greeting, { color: colors.mutedForeground }]}>
-            Xush kelibsiz!
-          </Text>
-          <Text style={[styles.headerTitle, { color: colors.foreground }]}>
-            Menga Web Academy
-          </Text>
-        </View>
-        <View
-          style={[styles.avatarCircle, { backgroundColor: colors.primary + "20" }]}
+        <WALogo size="md" />
+        <Pressable
+          onPress={() => router.push("/(tabs)/profile" as any)}
+          style={[styles.avatarBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
         >
-          <Feather name="user" size={22} color={colors.primary} />
-        </View>
+          <Feather name="user" size={18} color={colors.mutedForeground} />
+        </Pressable>
       </View>
 
       {/* Search */}
       <View
-        style={[
-          styles.searchBox,
-          { backgroundColor: colors.card, borderColor: colors.border },
-        ]}
+        style={[styles.searchBox, { backgroundColor: colors.card, borderColor: colors.border }]}
       >
-        <Feather name="search" size={18} color={colors.mutedForeground} />
+        <Feather name="search" size={16} color={colors.mutedForeground} />
         <TextInput
           value={search}
           onChangeText={setSearch}
-          placeholder="Kurs qidiring..."
+          placeholder="Kurslarni qidiring..."
           placeholderTextColor={colors.mutedForeground}
           style={[styles.searchInput, { color: colors.foreground }]}
         />
         {search.length > 0 && (
           <Pressable onPress={() => setSearch("")}>
-            <Feather name="x" size={16} color={colors.mutedForeground} />
+            <Feather name="x" size={14} color={colors.mutedForeground} />
           </Pressable>
         )}
       </View>
 
-      {search.length === 0 && (
-        <>
-          {/* Banner */}
-          <View
-            style={[
-              styles.banner,
-              { backgroundColor: colors.primary },
-            ]}
-          >
-            <View style={styles.bannerText}>
-              <Text style={styles.bannerTag}>Yangi kurs!</Text>
-              <Text style={styles.bannerTitle}>
-                React.js ni{"\n"}noldan o'rganing
-              </Text>
-              <Pressable
-                onPress={() => router.push("/course/react" as any)}
-                style={styles.bannerBtn}
-              >
-                <Text style={styles.bannerBtnText}>Boshlash</Text>
-                <Feather name="arrow-right" size={14} color={colors.primary} />
-              </Pressable>
-            </View>
-            <View style={styles.bannerImageWrapper}>
-              <Image
-                source={require("@/assets/images/course-react.png")}
-                style={styles.bannerImage}
-              />
-            </View>
-          </View>
-
-          {/* Stats Row */}
-          <View style={styles.statsRow}>
-            {[
-              { icon: "book-open", value: `${COURSES.length}`, label: "Kurslar" },
-              { icon: "users", value: "12K+", label: "O'quvchilar" },
-              { icon: "award", value: "98%", label: "Mamnuniyat" },
-            ].map((s) => (
-              <View
-                key={s.label}
-                style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-              >
-                <Feather name={s.icon as any} size={18} color={colors.primary} />
-                <Text style={[styles.statValue, { color: colors.foreground }]}>
-                  {s.value}
-                </Text>
-                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>
-                  {s.label}
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Featured */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-                Tavsiya etilgan
-              </Text>
-              <Pressable onPress={() => router.push("/(tabs)/courses" as any)}>
-                <Text style={[styles.seeAll, { color: colors.primary }]}>
-                  Barchasi
-                </Text>
-              </Pressable>
-            </View>
-            {featured.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                onPress={() => router.push(`/course/${course.id}` as any)}
-              />
-            ))}
-          </View>
-        </>
-      )}
-
-      {search.length > 0 && (
-        <View style={styles.section}>
+      {/* Search results */}
+      {search.length > 0 ? (
+        <View>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
             Natijalar ({filtered.length})
           </Text>
           {filtered.length === 0 ? (
             <View style={styles.empty}>
-              <Feather name="search" size={36} color={colors.mutedForeground} />
+              <Feather name="search" size={32} color={colors.mutedForeground} />
               <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
                 Kurs topilmadi
               </Text>
             </View>
           ) : (
-            filtered.map((course) => (
+            filtered.map((c) => (
               <CourseCard
-                key={course.id}
-                course={course}
-                onPress={() => router.push(`/course/${course.id}` as any)}
+                key={c.id}
+                course={c}
+                onPress={() => router.push(`/course/${c.id}` as any)}
               />
             ))
           )}
         </View>
+      ) : (
+        <>
+          {/* Hero banner */}
+          <View style={[styles.hero, { backgroundColor: colors.navyDark }]}>
+            <View style={styles.heroLeft}>
+              <Text style={styles.heroSub}>Noldan professionalga</Text>
+              <Text style={styles.heroTitle}>
+                Web Academy{"\n"}bilan{" "}
+                <Text style={{ color: colors.primary }}>dasturlashni boshlang.</Text>
+              </Text>
+              <Pressable
+                onPress={() => router.push("/(tabs)/courses" as any)}
+                style={[styles.heroBtn, { backgroundColor: colors.primary }]}
+              >
+                <Text style={styles.heroBtnText}>Kurslarni ko'rish</Text>
+                <Feather name="arrow-right" size={14} color="#fff" />
+              </Pressable>
+            </View>
+            <View style={styles.heroRight}>
+              <View style={[styles.codeBox, { backgroundColor: colors.navyMid }]}>
+                <Text style={[styles.codeLine, { color: colors.primary }]}>{"<WA>"}</Text>
+                <Text style={styles.codeGray}>{"  learn("}</Text>
+                <Text style={styles.codeStr}>{"    'html',"}</Text>
+                <Text style={styles.codeStr}>{"    'css',"}</Text>
+                <Text style={styles.codeStr}>{"    'js'"}</Text>
+                <Text style={styles.codeGray}>{"  )"}</Text>
+                <Text style={[styles.codeLine, { color: colors.primary }]}>{"</WA>"}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Stats */}
+          <View style={styles.statsRow}>
+            {[
+              { val: "7+", label: "Kurslar", icon: "book-open" as const },
+              { val: "10K+", label: "O'quvchilar", icon: "users" as const },
+              { val: "4.9★", label: "Reyting", icon: "star" as const },
+            ].map((s) => (
+              <View
+                key={s.label}
+                style={[styles.stat, { backgroundColor: colors.card, borderColor: colors.border }]}
+              >
+                <Feather name={s.icon} size={16} color={colors.primary} />
+                <Text style={[styles.statVal, { color: colors.foreground }]}>{s.val}</Text>
+                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>{s.label}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Premium banner */}
+          <Pressable
+            onPress={() => router.push("/(tabs)/courses" as any)}
+            style={[styles.premiumBanner, { backgroundColor: "#FEF3C7", borderColor: "#F59E0B40" }]}
+          >
+            <View style={[styles.premiumIcon, { backgroundColor: "#F59E0B20" }]}>
+              <Feather name="lock" size={18} color="#F59E0B" />
+            </View>
+            <View style={styles.premiumText}>
+              <Text style={[styles.premiumTitle, { color: colors.foreground }]}>
+                Web Academy Premium
+              </Text>
+              <Text style={[styles.premiumSub, { color: colors.mutedForeground }]}>
+                CSS, JS, React, Node.js va Full-Stack kurslariga kirish
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={18} color="#F59E0B" />
+          </Pressable>
+
+          {/* Enrolled courses */}
+          {enrolledCourses.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
+                  Davom etish
+                </Text>
+                <Pressable onPress={() => router.push("/(tabs)/my-learning" as any)}>
+                  <Text style={[styles.seeAll, { color: colors.primary }]}>Barchasi</Text>
+                </Pressable>
+              </View>
+              {enrolledCourses.map((c) => (
+                <CourseCard
+                  key={c.id}
+                  course={c}
+                  onPress={() => router.push(`/course/${c.id}` as any)}
+                  showProgress
+                  progress={getCourseProgress(c.id)}
+                  compact
+                />
+              ))}
+            </View>
+          )}
+
+          {/* Free courses */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
+                Bepul kurslar
+              </Text>
+              <Pressable onPress={() => router.push("/(tabs)/courses" as any)}>
+                <Text style={[styles.seeAll, { color: colors.primary }]}>Barchasi</Text>
+              </Pressable>
+            </View>
+            {freeCourses.map((c) => (
+              <CourseCard
+                key={c.id}
+                course={c}
+                onPress={() => router.push(`/course/${c.id}` as any)}
+              />
+            ))}
+          </View>
+
+          {/* Categories */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
+              Yo'nalishlar
+            </Text>
+            <View style={styles.catGrid}>
+              {[
+                { name: "HTML", color: "#E44D26", icon: "code" as const },
+                { name: "CSS", color: "#264DE4", icon: "layout" as const },
+                { name: "JavaScript", color: "#F7DF1E", icon: "zap" as const },
+                { name: "React", color: "#61DAFB", icon: "layers" as const },
+                { name: "Node.js", color: "#339933", icon: "server" as const },
+                { name: "Full-Stack", color: "#7C3AED", icon: "package" as const },
+              ].map((cat) => (
+                <Pressable
+                  key={cat.name}
+                  onPress={() => router.push("/(tabs)/courses" as any)}
+                  style={({ pressed }) => [
+                    styles.catCard,
+                    { backgroundColor: cat.color + "12", borderColor: cat.color + "30", opacity: pressed ? 0.8 : 1 },
+                  ]}
+                >
+                  <Feather name={cat.icon} size={20} color={cat.color} />
+                  <Text style={[styles.catName, { color: cat.color }]}>{cat.name}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        </>
       )}
     </ScrollView>
   );
@@ -202,102 +252,99 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 16,
   },
-  greeting: { fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: 2 },
-  headerTitle: {
-    fontSize: 22,
-    fontFamily: "Inter_700Bold",
-  },
-  avatarCircle: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+  avatarBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
   },
   searchBox: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 14,
+    borderRadius: 12,
     borderWidth: 1,
     paddingHorizontal: 14,
     paddingVertical: 12,
     gap: 10,
     marginBottom: 20,
   },
-  searchInput: {
-    flex: 1,
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
-    padding: 0,
-  },
-  banner: {
+  searchInput: { flex: 1, fontSize: 14, fontFamily: "Inter_400Regular", padding: 0 },
+  hero: {
     borderRadius: 20,
     padding: 20,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
-    overflow: "hidden",
-  },
-  bannerText: { flex: 1 },
-  bannerTag: {
-    color: "rgba(255,255,255,0.75)",
-    fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
-    marginBottom: 4,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  bannerTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontFamily: "Inter_700Bold",
-    lineHeight: 26,
     marginBottom: 16,
+    overflow: "hidden",
+    minHeight: 160,
   },
-  bannerBtn: {
+  heroLeft: { flex: 1, gap: 8 },
+  heroSub: { color: "#00BCD4", fontSize: 11, fontFamily: "Inter_600SemiBold", textTransform: "uppercase", letterSpacing: 1 },
+  heroTitle: { color: "#fff", fontSize: 17, fontFamily: "Inter_700Bold", lineHeight: 24 },
+  heroBtn: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    gap: 6,
     alignSelf: "flex-start",
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    gap: 6,
+    marginTop: 4,
   },
-  bannerBtnText: {
-    fontSize: 13,
-    fontFamily: "Inter_700Bold",
-    color: "#4F8EF7",
+  heroBtnText: { fontSize: 13, fontFamily: "Inter_700Bold", color: "#fff" },
+  heroRight: { width: 110, marginLeft: 12 },
+  codeBox: {
+    borderRadius: 10,
+    padding: 10,
+    gap: 1,
   },
-  bannerImageWrapper: {
-    width: 100,
-    height: 90,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  bannerImage: { width: "100%", height: "100%", resizeMode: "cover" },
-  statsRow: { flexDirection: "row", gap: 10, marginBottom: 24 },
-  statCard: {
+  codeLine: { fontSize: 11, fontFamily: "Inter_700Bold" },
+  codeGray: { fontSize: 10, fontFamily: "Inter_400Regular", color: "#8B9DB5" },
+  codeStr: { fontSize: 10, fontFamily: "Inter_400Regular", color: "#22C55E" },
+  statsRow: { flexDirection: "row", gap: 10, marginBottom: 16 },
+  stat: {
     flex: 1,
     alignItems: "center",
     gap: 4,
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  statVal: { fontSize: 16, fontFamily: "Inter_700Bold" },
+  statLabel: { fontSize: 10, fontFamily: "Inter_400Regular" },
+  premiumBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 14,
+    gap: 12,
+    marginBottom: 24,
+  },
+  premiumIcon: { width: 40, height: 40, borderRadius: 10, alignItems: "center", justifyContent: "center" },
+  premiumText: { flex: 1 },
+  premiumTitle: { fontSize: 14, fontFamily: "Inter_700Bold", marginBottom: 2 },
+  premiumSub: { fontSize: 12, fontFamily: "Inter_400Regular", lineHeight: 16 },
+  section: { marginBottom: 24 },
+  sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
+  sectionTitle: { fontSize: 18, fontFamily: "Inter_700Bold" },
+  seeAll: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
+  catGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+  catCard: {
+    width: "30%",
+    flex: undefined,
+    flexGrow: 1,
+    alignItems: "center",
+    gap: 6,
     padding: 14,
     borderRadius: 14,
     borderWidth: 1,
   },
-  statValue: { fontSize: 16, fontFamily: "Inter_700Bold" },
-  statLabel: { fontSize: 11, fontFamily: "Inter_400Regular" },
-  section: { marginBottom: 8 },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  sectionTitle: { fontSize: 18, fontFamily: "Inter_700Bold" },
-  seeAll: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
-  empty: { alignItems: "center", paddingVertical: 48, gap: 12 },
-  emptyText: { fontSize: 15, fontFamily: "Inter_400Regular" },
+  catName: { fontSize: 12, fontFamily: "Inter_700Bold" },
+  empty: { alignItems: "center", paddingVertical: 40, gap: 12 },
+  emptyText: { fontSize: 14, fontFamily: "Inter_400Regular" },
 });
