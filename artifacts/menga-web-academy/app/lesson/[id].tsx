@@ -1,8 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import * as Linking from "expo-linking";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -13,6 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CodePlayground } from "@/components/CodePlayground";
+import { InAppBrowser } from "@/components/InAppBrowser";
 import { useAcademy } from "@/context/AcademyContext";
 import { COURSES } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
@@ -23,6 +23,8 @@ export default function LessonScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { completeLesson, uncompleteLesson, isLessonCompleted } = useAcademy();
+  const [activeLinkUrl, setActiveLinkUrl] = useState<string | null>(null);
+  const [activeLinkTitle, setActiveLinkTitle] = useState("");
 
   const { lesson, course, prevLesson, nextLesson } = useMemo(() => {
     for (const c of COURSES) {
@@ -153,6 +155,11 @@ export default function LessonScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <InAppBrowser
+        url={activeLinkUrl}
+        title={activeLinkTitle}
+        onClose={() => setActiveLinkUrl(null)}
+      />
       <Stack.Screen
         options={{
           headerShown: false,
@@ -255,7 +262,7 @@ export default function LessonScreen() {
             {lesson.links.map((link, i) => (
               <Pressable
                 key={i}
-                onPress={() => Linking.openURL(link.url)}
+                onPress={() => { setActiveLinkTitle(link.title); setActiveLinkUrl(link.url); }}
                 style={({ pressed }) => [
                   styles.linkRow,
                   { borderColor: colors.border, backgroundColor: colors.card, opacity: pressed ? 0.8 : 1 },
