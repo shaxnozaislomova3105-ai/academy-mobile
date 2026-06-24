@@ -1,74 +1,71 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useColors } from "@/hooks/useColors";
+import { View, StyleSheet } from "react-native";
+import Svg, { Text as SvgText, G } from "react-native-svg";
 
 interface Props {
   size?: "sm" | "md" | "lg";
-  inverted?: boolean;
 }
 
-export const WALogo: React.FC<Props> = ({ size = "md", inverted = false }) => {
-  const colors = useColors();
-
+export const WALogo: React.FC<Props> = ({ size = "md" }) => {
   const scales = {
-    sm: { bracket: 13, wa: 11, text: 12, gap: 6 },
-    md: { bracket: 18, wa: 15, text: 16, gap: 8 },
-    lg: { bracket: 26, wa: 22, text: 22, gap: 12 },
+    sm: { bracket: 22, sub: 9, w: 110, h: 38 },
+    md: { bracket: 30, sub: 12, w: 152, h: 50 },
+    lg: { bracket: 42, sub: 16, w: 212, h: 68 },
   };
   const s = scales[size];
 
-  const bracketColor = colors.primary;
-  const textColor = inverted ? "#fff" : colors.foreground;
-
   return (
-    <View style={[styles.row, { gap: s.gap }]}>
-      <View
-        style={[
-          styles.badge,
-          {
-            backgroundColor: inverted ? "rgba(255,255,255,0.15)" : colors.primary + "15",
-            paddingHorizontal: s.bracket - 2,
-            paddingVertical: s.bracket / 3,
-            borderRadius: s.bracket / 2.5,
-          },
-        ]}
-      >
-        <Text
-          style={[
-            styles.bracket,
-            { fontSize: s.bracket, color: bracketColor },
-          ]}
+    <View style={{ width: s.w, height: s.h }}>
+      <Svg width={s.w} height={s.h} viewBox={`0 0 ${s.w} ${s.h}`}>
+        {/* <W in dark navy */}
+        <SvgText
+          x="2"
+          y={s.bracket}
+          fontFamily="Arial Black, Arial"
+          fontSize={s.bracket}
+          fontWeight="900"
+          fill="#1A3A5C"
         >
-          {"<"}
-          <Text style={{ color: inverted ? "#fff" : colors.foreground }}>WA</Text>
-          {">"}
-        </Text>
-      </View>
-      <View style={styles.wordmark}>
-        <Text style={[styles.webText, { fontSize: s.text, color: textColor }]}>
-          WEB{" "}
-          <Text style={[styles.academyText, { color: colors.primary }]}>
-            ACADEMY
-          </Text>
-        </Text>
-      </View>
+          {"<W"}
+        </SvgText>
+        {/* A> in teal */}
+        <SvgText
+          x={s.bracket * 1.38}
+          y={s.bracket}
+          fontFamily="Arial Black, Arial"
+          fontSize={s.bracket}
+          fontWeight="900"
+          fill="#00BCD4"
+        >
+          {"A>"}
+        </SvgText>
+        {/* WEB bold dark */}
+        <SvgText
+          x="4"
+          y={s.h - 2}
+          fontFamily="Arial Black, Arial"
+          fontSize={s.sub}
+          fontWeight="900"
+          letterSpacing="2"
+          fill="#1A3A5C"
+        >
+          {"WEB "}
+        </SvgText>
+        {/* ACADEMY light teal */}
+        <SvgText
+          x={s.sub * 3.2}
+          y={s.h - 2}
+          fontFamily="Arial, sans-serif"
+          fontSize={s.sub}
+          fontWeight="300"
+          letterSpacing="2"
+          fill="#00BCD4"
+        >
+          {"ACADEMY"}
+        </SvgText>
+      </Svg>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  row: { flexDirection: "row", alignItems: "center" },
-  badge: { alignItems: "center", justifyContent: "center" },
-  bracket: {
-    fontFamily: "Inter_700Bold",
-    lineHeight: undefined,
-  },
-  wordmark: {},
-  webText: {
-    fontFamily: "Inter_700Bold",
-    letterSpacing: 0.5,
-  },
-  academyText: {
-    fontFamily: "Inter_700Bold",
-  },
-});
+const styles = StyleSheet.create({});

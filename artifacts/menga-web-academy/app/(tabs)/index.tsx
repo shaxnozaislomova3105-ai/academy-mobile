@@ -102,35 +102,6 @@ export default function HomeScreen() {
         </View>
       ) : (
         <>
-          {/* Hero banner */}
-          <View style={[styles.hero, { backgroundColor: colors.navyDark }]}>
-            <View style={styles.heroLeft}>
-              <Text style={styles.heroSub}>Noldan professionalga</Text>
-              <Text style={styles.heroTitle}>
-                Web Academy{"\n"}bilan{" "}
-                <Text style={{ color: colors.primary }}>dasturlashni boshlang.</Text>
-              </Text>
-              <Pressable
-                onPress={() => router.push("/(tabs)/courses" as any)}
-                style={[styles.heroBtn, { backgroundColor: colors.primary }]}
-              >
-                <Text style={styles.heroBtnText}>Kurslarni ko'rish</Text>
-                <Feather name="arrow-right" size={14} color="#fff" />
-              </Pressable>
-            </View>
-            <View style={styles.heroRight}>
-              <View style={[styles.codeBox, { backgroundColor: colors.navyMid }]}>
-                <Text style={[styles.codeLine, { color: colors.primary }]}>{"<WA>"}</Text>
-                <Text style={styles.codeGray}>{"  learn("}</Text>
-                <Text style={styles.codeStr}>{"    'html',"}</Text>
-                <Text style={styles.codeStr}>{"    'css',"}</Text>
-                <Text style={styles.codeStr}>{"    'js'"}</Text>
-                <Text style={styles.codeGray}>{"  )"}</Text>
-                <Text style={[styles.codeLine, { color: colors.primary }]}>{"</WA>"}</Text>
-              </View>
-            </View>
-          </View>
-
           {/* Stats */}
           <View style={styles.statsRow}>
             {[
@@ -148,25 +119,6 @@ export default function HomeScreen() {
               </View>
             ))}
           </View>
-
-          {/* Premium banner */}
-          <Pressable
-            onPress={() => router.push("/(tabs)/courses" as any)}
-            style={[styles.premiumBanner, { backgroundColor: "#FEF3C7", borderColor: "#F59E0B40" }]}
-          >
-            <View style={[styles.premiumIcon, { backgroundColor: "#F59E0B20" }]}>
-              <Feather name="lock" size={18} color="#F59E0B" />
-            </View>
-            <View style={styles.premiumText}>
-              <Text style={[styles.premiumTitle, { color: colors.foreground }]}>
-                Web Academy Premium
-              </Text>
-              <Text style={[styles.premiumSub, { color: colors.mutedForeground }]}>
-                CSS, JS, React, Node.js va Full-Stack kurslariga kirish
-              </Text>
-            </View>
-            <Feather name="chevron-right" size={18} color="#F59E0B" />
-          </Pressable>
 
           {/* Enrolled courses */}
           {enrolledCourses.length > 0 && (
@@ -273,38 +225,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   searchInput: { flex: 1, fontSize: 14, fontFamily: "Inter_400Regular", padding: 0 },
-  hero: {
-    borderRadius: 20,
-    padding: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    overflow: "hidden",
-    minHeight: 160,
-  },
-  heroLeft: { flex: 1, gap: 8 },
-  heroSub: { color: "#00BCD4", fontSize: 11, fontFamily: "Inter_600SemiBold", textTransform: "uppercase", letterSpacing: 1 },
-  heroTitle: { color: "#fff", fontSize: 17, fontFamily: "Inter_700Bold", lineHeight: 24 },
-  heroBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    alignSelf: "flex-start",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginTop: 4,
-  },
-  heroBtnText: { fontSize: 13, fontFamily: "Inter_700Bold", color: "#fff" },
-  heroRight: { width: 110, marginLeft: 12 },
-  codeBox: {
-    borderRadius: 10,
-    padding: 10,
-    gap: 1,
-  },
-  codeLine: { fontSize: 11, fontFamily: "Inter_700Bold" },
-  codeGray: { fontSize: 10, fontFamily: "Inter_400Regular", color: "#8B9DB5" },
-  codeStr: { fontSize: 10, fontFamily: "Inter_400Regular", color: "#22C55E" },
   statsRow: { flexDirection: "row", gap: 10, marginBottom: 16 },
   stat: {
     flex: 1,
@@ -316,19 +236,6 @@ const styles = StyleSheet.create({
   },
   statVal: { fontSize: 16, fontFamily: "Inter_700Bold" },
   statLabel: { fontSize: 10, fontFamily: "Inter_400Regular" },
-  premiumBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 14,
-    borderWidth: 1,
-    padding: 14,
-    gap: 12,
-    marginBottom: 24,
-  },
-  premiumIcon: { width: 40, height: 40, borderRadius: 10, alignItems: "center", justifyContent: "center" },
-  premiumText: { flex: 1 },
-  premiumTitle: { fontSize: 14, fontFamily: "Inter_700Bold", marginBottom: 2 },
-  premiumSub: { fontSize: 12, fontFamily: "Inter_400Regular", lineHeight: 16 },
   section: { marginBottom: 24 },
   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
   sectionTitle: { fontSize: 18, fontFamily: "Inter_700Bold" },
