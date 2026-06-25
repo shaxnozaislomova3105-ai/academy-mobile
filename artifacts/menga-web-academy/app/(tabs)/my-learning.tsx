@@ -51,7 +51,7 @@ export default function MyLearningScreen() {
       showsVerticalScrollIndicator={false}
     >
       <Text style={[styles.pageTitle, { color: colors.foreground }]}>
-        O'rganishlarim
+        Faollik
       </Text>
 
       {/* Stats */}
