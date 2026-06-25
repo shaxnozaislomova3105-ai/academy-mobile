@@ -13,6 +13,7 @@ export interface Lesson {
   order: number;
   type: "video" | "article" | "quiz";
   links?: LessonLink[];
+  videoUrl?: string;
 }
 
 export interface Course {
@@ -69,8 +70,9 @@ export const COURSES: Course[] = [
         description: "HTML ning tarixi va asosiy maqsadi",
         content:
           "HTML (HyperText Markup Language) — veb sahifalarni yaratish uchun ishlatiladigan standart belgilash tili. 1991-yilda Tim Berners-Lee tomonidan yaratilgan.\n\n**HTML nimadan iborat:**\n- Element — sahifaning qurilish bloki\n- Teg — elementni belgilaydi: `<p>`, `<h1>`, `<div>`\n- Atribut — elementga qo'shimcha ma'lumot: `class`, `id`, `href`\n- Tarkib — element ichidagi ma'lumot",
+        videoUrl: "https://www.youtube.com/watch?v=mbeT8mpmtHA",
         order: 1,
-        type: "article",
+        type: "video",
       },
       {
         id: "hb-2",
@@ -80,8 +82,9 @@ export const COURSES: Course[] = [
         description: "DOCTYPE, html, head, body elementlari",
         content:
           "Har bir to'g'ri HTML sahifasi quyidagi asosiy tuzilmaga ega bo'lishi kerak:\n\n```html\n<!DOCTYPE html>\n<html lang=\"uz\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Sahifa nomi</title>\n</head>\n<body>\n  <!-- Kontent shu yerda -->\n  <h1>Salom Dunyo!</h1>\n</body>\n</html>\n```\n\n**Muhim elementlar:**\n- `<!DOCTYPE html>` — HTML5 standartini bildiradi\n- `<html lang>` — hujjat tili\n- `<head>` — meta ma'lumotlar\n- `<body>` — foydalanuvchi ko'radigan kontent",
+        videoUrl: "https://www.youtube.com/watch?v=oEKXn94CBMM",
         order: 2,
-        type: "article",
+        type: "video",
       },
       {
         id: "hb-3",
@@ -354,8 +357,9 @@ export const COURSES: Course[] = [
         description: "CSS nima, qanday ishlaydi",
         content:
           "CSS (Cascading Style Sheets) — HTML elementlarini qanday ko'rinishi kerakligini belgilovchi tizim.\n\n**3 ta uslash usuli:**\n\n```html\n<!-- 1. Inline -->\n<p style=\"color: teal; font-size: 18px;\">Matn</p>\n\n<!-- 2. Internal -->\n<style>\n  p { color: teal; }\n</style>\n\n<!-- 3. External (tavsiya etiladi) -->\n<link rel=\"stylesheet\" href=\"style.css\">\n```\n\n**Cascade nima?** CSS da keyingi qoidalar oldingilarni bekor qiladi.",
+        videoUrl: "https://www.youtube.com/watch?v=yfoY53QXEnI",
         order: 1,
-        type: "article",
+        type: "video",
       },
       {
         id: "cb-2",
@@ -502,7 +506,7 @@ export const COURSES: Course[] = [
     isPremium: true,
     topics: ["ES6+", "DOM", "Fetch API", "Async/Await", "OOP"],
     lessons: [
-      { id: "js-1", courseId: "javascript", title: "JavaScript ga kirish", duration: "10 daqiqa", description: "JS tarixi va imkoniyatlari", content: "JavaScript — brauzerda ishlaydigan yagona dasturlash tili bo'lib, hozirda server (Node.js), mobil (React Native) va desktop ilovalar uchun ham ishlatiladi.", order: 1, type: "article" },
+      { id: "js-1", courseId: "javascript", title: "JavaScript ga kirish", duration: "10 daqiqa", description: "JS tarixi va imkoniyatlari", content: "JavaScript — brauzerda ishlaydigan yagona dasturlash tili bo'lib, hozirda server (Node.js), mobil (React Native) va desktop ilovalar uchun ham ishlatiladi.", videoUrl: "https://www.youtube.com/watch?v=W6NZfCO5SIk", order: 1, type: "video" },
       { id: "js-2", courseId: "javascript", title: "O'zgaruvchilar", duration: "12 daqiqa", description: "let, const, var farqlari", content: "```js\nconst PI = 3.14;       // o'zgarmas\nlet name = 'Ali';       // o'zgaruvchan\nvar old = 'Eski usul'; // ishlatmang\n\n// Turlari: string, number, boolean, null, undefined, object, symbol\nconsole.log(typeof name);  // 'string'\n```", order: 2, type: "article" },
       { id: "js-3", courseId: "javascript", title: "Funksiyalar", duration: "15 daqiqa", description: "Arrow functions, closures", content: "```js\n// Arrow funksiya\nconst greet = (name) => `Salom, ${name}!`;\n\n// Default parametr\nconst add = (a, b = 0) => a + b;\n\n// Rest parametr\nconst sum = (...nums) => nums.reduce((a, b) => a + b, 0);\n```", order: 3, type: "article" },
       { id: "js-4", courseId: "javascript", title: "Massivlar", duration: "18 daqiqa", description: "map, filter, reduce, find", content: "```js\nconst courses = ['HTML', 'CSS', 'JS'];\n\nconst upper = courses.map(c => c.toUpperCase());\nconst long = courses.filter(c => c.length > 2);\nconst found = courses.find(c => c === 'CSS');\n```", order: 4, type: "article" },

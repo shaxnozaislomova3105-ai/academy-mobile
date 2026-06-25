@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CodePlayground } from "@/components/CodePlayground";
 import { InAppBrowser } from "@/components/InAppBrowser";
+import { VideoPlayer } from "@/components/VideoPlayer";
 import { useAcademy } from "@/context/AcademyContext";
 import { COURSES } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
@@ -233,6 +234,15 @@ export default function LessonScreen() {
             </Text>
           </View>
         </View>
+
+        {/* Video */}
+        {lesson.videoUrl && (
+          <VideoPlayer
+            videoUrl={lesson.videoUrl}
+            color={course.color}
+            title={lesson.title}
+          />
+        )}
 
         {/* Content */}
         <View style={styles.body}>{renderContent(lesson.content)}</View>
