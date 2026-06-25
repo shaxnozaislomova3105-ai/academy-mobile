@@ -63,23 +63,66 @@ export default function LessonScreen() {
   };
 
   const renderContent = (content: string) => {
+    const elements: React.ReactNode[] = [];
     const lines = content.split("\n");
     let inBlock = false;
-    return lines.map((line, i) => {
-      if (line.startsWith("```")) {
-        inBlock = !inBlock;
-        return null;
+    let blockLines: string[] = [];
+    let blockLang = "";
+
+    const flushBlock = (key: number) => {
+      if (blockLines.length === 0) return;
+      const isHtml = blockLang === "html";
+      if (!isHtml) {
+        elements.push(
+          <View
+            key={`block-${key}`}
+            style={[styles.codeBlock, { backgroundColor: "#1E293B" }]}
+          >
+            <View style={[styles.codeBlockHeader, { backgroundColor: "#0F172A" }]}>
+              <View style={styles.codeDots}>
+                <View style={[styles.codeDot, { backgroundColor: "#FF5F56" }]} />
+                <View style={[styles.codeDot, { backgroundColor: "#FFBD2E" }]} />
+                <View style={[styles.codeDot, { backgroundColor: "#27C93F" }]} />
+              </View>
+              {blockLang ? (
+                <Text style={styles.codeLang}>{blockLang.toUpperCase()}</Text>
+              ) : null}
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.codeScroll}>
+              <Text style={styles.codeText} selectable>
+                {blockLines.join("\n")}
+              </Text>
+            </ScrollView>
+          </View>
+        );
       }
-      if (inBlock) return null;
+      blockLines = [];
+      blockLang = "";
+    };
+
+    lines.forEach((line, i) => {
+      if (line.startsWith("```")) {
+        if (inBlock) {
+          flushBlock(i);
+          inBlock = false;
+        } else {
+          blockLang = line.slice(3).trim();
+          inBlock = true;
+        }
+        return;
+      }
+      if (inBlock) {
+        blockLines.push(line);
+        return;
+      }
       if (line.startsWith("**") && line.endsWith("**")) {
-        return (
+        elements.push(
           <Text key={i} style={[styles.bold, { color: colors.foreground }]}>
             {line.slice(2, -2)}
           </Text>
         );
-      }
-      if (line.startsWith("- ")) {
-        return (
+      } else if (line.startsWith("- ")) {
+        elements.push(
           <View key={i} style={styles.bulletRow}>
             <Text style={[styles.bullet, { color: course.color }]}>•</Text>
             <Text style={[styles.bulletText, { color: colors.foreground }]}>
@@ -87,32 +130,23 @@ export default function LessonScreen() {
             </Text>
           </View>
         );
-      }
-      if (line.startsWith("# ")) {
-        return (
+      } else if (line.startsWith("# ")) {
+        elements.push(
           <Text key={i} style={[styles.h1, { color: colors.foreground }]}>
             {line.slice(2)}
           </Text>
         );
-      }
-      if (line.trim() === "") {
-        return <View key={i} style={styles.spacer} />;
-      }
-      if (line.includes("`") && !line.startsWith("```")) {
+      } else if (line.trim() === "") {
+        elements.push(<View key={i} style={styles.spacer} />);
+      } else if (line.includes("`") && !line.startsWith("```")) {
         const parts = line.split("`");
-        return (
+        elements.push(
           <Text key={i} style={[styles.paragraph, { color: colors.foreground }]}>
             {parts.map((p, j) =>
               j % 2 === 1 ? (
                 <Text
                   key={j}
-                  style={[
-                    styles.inlineCode,
-                    {
-                      backgroundColor: course.color + "18",
-                      color: course.color,
-                    },
-                  ]}
+                  style={[styles.inlineCode, { backgroundColor: course.color + "18", color: course.color }]}
                 >
                   {p}
                 </Text>
@@ -122,13 +156,16 @@ export default function LessonScreen() {
             )}
           </Text>
         );
+      } else {
+        elements.push(
+          <Text key={i} style={[styles.paragraph, { color: colors.foreground }]}>
+            {line}
+          </Text>
+        );
       }
-      return (
-        <Text key={i} style={[styles.paragraph, { color: colors.foreground }]}>
-          {line}
-        </Text>
-      );
     });
+
+    return elements;
   };
 
   const codeBlocks = (() => {
@@ -139,7 +176,10 @@ export default function LessonScreen() {
     for (const line of lesson.content.split("\n")) {
       if (line.startsWith("```")) {
         if (inBlock) {
-          blocks.push({ code: current.trim(), lang });
+          // Only HTML blocks get the interactive playground
+          if (lang === "html") {
+            blocks.push({ code: current.trim(), lang });
+          }
           current = "";
           lang = "";
           inBlock = false;
@@ -469,4 +509,31 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_500Medium",
   },
   navEmpty: { flex: 1 },
+  codeBlock: {
+    borderRadius: 12,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  codeBlockHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  codeDots: { flexDirection: "row", gap: 6 },
+  codeDot: { width: 10, height: 10, borderRadius: 5 },
+  codeLang: {
+    fontSize: 11,
+    fontFamily: "Inter_600SemiBold",
+    color: "#64748B",
+    letterSpacing: 0.5,
+  },
+  codeScroll: { paddingHorizontal: 16, paddingVertical: 14 },
+  codeText: {
+    fontFamily: "Courier",
+    fontSize: 13,
+    lineHeight: 22,
+    color: "#E2E8F0",
+  },
 });
