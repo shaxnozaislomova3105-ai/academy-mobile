@@ -295,24 +295,7 @@ export default function LessonScreen() {
           </View>
         )}
 
-        {/* Complete button */}
-        <Pressable
-          onPress={handleToggleComplete}
-          style={({ pressed }) => [
-            styles.completeBtn,
-            {
-              backgroundColor: completed ? "#22C55E" : course.color,
-              opacity: pressed ? 0.85 : 1,
-            },
-          ]}
-        >
-          <Feather name={completed ? "check-circle" : "circle"} size={20} color="#fff" />
-          <Text style={styles.completeBtnText}>
-            {completed ? "Bajarildi!" : "Bajarildi deb belgilash"}
-          </Text>
-        </Pressable>
-
-        {/* Navigation */}
+        {/* Navigation + complete button */}
         <View style={styles.navRow}>
           {prevLesson ? (
             <Pressable
@@ -327,6 +310,25 @@ export default function LessonScreen() {
           ) : (
             <View style={styles.navEmpty} />
           )}
+
+          {/* Circle complete button */}
+          <Pressable
+            onPress={handleToggleComplete}
+            style={({ pressed }) => [
+              styles.circleBtn,
+              {
+                backgroundColor: completed ? "#22C55E" : colors.card,
+                borderColor: completed ? "#22C55E" : colors.border,
+                opacity: pressed ? 0.8 : 1,
+              },
+            ]}
+          >
+            <Feather
+              name="check"
+              size={20}
+              color={completed ? "#fff" : colors.mutedForeground}
+            />
+          </Pressable>
 
           {nextLesson ? (
             <Pressable
@@ -442,17 +444,15 @@ const styles = StyleSheet.create({
   linkInfo: { flex: 1 },
   linkTitle: { fontSize: 13, fontFamily: "Inter_600SemiBold", marginBottom: 2 },
   linkUrl: { fontSize: 11, fontFamily: "Inter_400Regular" },
-  completeBtn: {
-    flexDirection: "row",
+  circleBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
-    paddingVertical: 16,
-    borderRadius: 14,
-    marginBottom: 20,
   },
-  completeBtnText: { color: "#fff", fontSize: 16, fontFamily: "Inter_700Bold" },
-  navRow: { flexDirection: "row", gap: 10, marginBottom: 8 },
+  navRow: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 8 },
   navBtn: {
     flex: 1,
     flexDirection: "row",
