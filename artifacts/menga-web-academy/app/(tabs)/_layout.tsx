@@ -22,7 +22,7 @@ function NativeTabLayout() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="my-learning">
         <Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} />
-        <Label>Taraqqiyot</Label>
+        <Label>Faollik</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
         <Icon sf={{ default: "person", selected: "person.fill" }} />
@@ -97,7 +97,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="my-learning"
         options={{
-          title: "Taraqqiyot",
+          title: "Faollik",
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="chart.bar" tintColor={color} size={24} />
