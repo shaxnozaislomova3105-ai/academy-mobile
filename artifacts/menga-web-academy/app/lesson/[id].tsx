@@ -13,6 +13,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CodePlayground } from "@/components/CodePlayground";
 import { InAppBrowser } from "@/components/InAppBrowser";
+import { NotesSection } from "@/components/NotesSection";
+import { QuizSection } from "@/components/QuizSection";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { useAcademy } from "@/context/AcademyContext";
 import { COURSES } from "@/data/courses";
@@ -334,6 +336,18 @@ export default function LessonScreen() {
             ))}
           </View>
         )}
+
+        {/* Quiz */}
+        {lesson.questions && lesson.questions.length > 0 && (
+          <QuizSection
+            lessonId={lesson.id}
+            questions={lesson.questions}
+            color={course.color}
+          />
+        )}
+
+        {/* Notes */}
+        <NotesSection lessonId={lesson.id} color={course.color} />
 
         {/* Navigation + complete button */}
         <View style={styles.navRow}>

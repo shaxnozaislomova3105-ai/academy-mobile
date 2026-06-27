@@ -3,6 +3,13 @@ export interface LessonLink {
   url: string;
 }
 
+export interface QuizQuestion {
+  question: string;
+  options: string[];
+  correct: number;
+  explanation?: string;
+}
+
 export interface Lesson {
   id: string;
   courseId: string;
@@ -14,6 +21,7 @@ export interface Lesson {
   type: "video" | "article" | "quiz";
   links?: LessonLink[];
   videoUrl?: string;
+  questions?: QuizQuestion[];
 }
 
 export interface Course {
@@ -222,6 +230,38 @@ export const COURSES: Course[] = [
         ],
         order: 14,
         type: "article",
+        questions: [
+          {
+            question: "HTML da eng katta sarlavha tegi qaysi?",
+            options: ["<h6>", "<h1>", "<header>", "<title>"],
+            correct: 1,
+            explanation: "<h1> — eng katta va muhim sarlavha. <h6> — eng kichigi. Sahifada odatda bitta <h1> bo'lishi kerak.",
+          },
+          {
+            question: "Havola yaratish uchun qaysi teg ishlatiladi?",
+            options: ["<link>", "<url>", "<a>", "<href>"],
+            correct: 2,
+            explanation: "<a href='...'>Matn</a> — anchor tegi. href atributi havola manzilini ko'rsatadi.",
+          },
+          {
+            question: "Rasm qo'shish uchun to'g'ri usul qaysi?",
+            options: ["<image src='r.jpg'>", "<img src='r.jpg' alt='tavsif'>", "<img>r.jpg</img>", "<picture src='r.jpg'>"],
+            correct: 1,
+            explanation: "<img> — yopilmaydigan teg. src — rasm manzili, alt — ko'rinmasa chiqadigan matn (majburiy).",
+          },
+          {
+            question: "HTML da izoh (comment) qanday yoziladi?",
+            options: ["// Izoh", "/* Izoh */", "<!-- Izoh -->", "# Izoh"],
+            correct: 2,
+            explanation: "<!-- bu izoh --> — HTML dagi to'g'ri izoh yozish usuli. Brauzer bu matnni ko'rsatmaydi.",
+          },
+          {
+            question: "<div> va <span> farqi nima?",
+            options: ["Hech qanday farq yo'q", "<div> blok, <span> inline element", "<span> blok, <div> inline element", "<div> faqat matn uchun"],
+            correct: 1,
+            explanation: "<div> — blok element (yangi qatordan boshlanadi), <span> — inline element (matn ichida ishlatiladi).",
+          },
+        ],
       },
     ],
   },
@@ -486,6 +526,38 @@ export const COURSES: Course[] = [
         ],
         order: 12,
         type: "article",
+        questions: [
+          {
+            question: "CSS da Flexbox ni yoqish uchun qaysi xususiyat ishlatiladi?",
+            options: ["display: block", "display: flex", "position: flex", "flex: 1"],
+            correct: 1,
+            explanation: "display: flex — element ichidagi bolalarni Flexbox qoidalari asosida joylashtiradi.",
+          },
+          {
+            question: "CSS Box Model da to'g'ri tartib qaysi?",
+            options: ["margin → border → padding → content", "padding → margin → border → content", "content → padding → border → margin", "border → padding → content → margin"],
+            correct: 2,
+            explanation: "Box Model: content (matn) → padding (ichki bo'shliq) → border (chegara) → margin (tashqi bo'shliq).",
+          },
+          {
+            question: "Elementni markazga joylashtirish uchun Flexbox da qaysi xususiyatlar ishlatiladi?",
+            options: ["align: center", "justify-content: center + align-items: center", "text-align: center + vertical-align: middle", "center: true"],
+            correct: 1,
+            explanation: "justify-content: center — gorizontal, align-items: center — vertikal markazlash. Ikkalasi birga elementni to'liq markazga qo'yadi.",
+          },
+          {
+            question: "CSS o'zgaruvchisi (Custom Property) qanday e'lon qilinadi?",
+            options: ["$color: blue", "@color: blue", "--color: blue", "var color: blue"],
+            correct: 2,
+            explanation: "--o'zgaruvchi-nomi: qiymat — CSS o'zgaruvchisi. Ishlatish uchun: color: var(--o'zgaruvchi-nomi);",
+          },
+          {
+            question: "CSS Grid da 3 ta teng ustun yaratish usuli?",
+            options: ["columns: 3", "grid-template-columns: repeat(3, 1fr)", "flex: 3", "grid-columns: 3"],
+            correct: 1,
+            explanation: "grid-template-columns: repeat(3, 1fr) — 3 ta teng kenglikdagi ustun. 1fr = bo'sh joyning bir ulushi.",
+          },
+        ],
       },
     ],
   },
@@ -523,7 +595,12 @@ export const COURSES: Course[] = [
         content: "Funksiya — bir necha marta ishlatiladigan kod bloki. Funksiyalar yordamida kodni qismlarga bo'lish va qayta ishlatish mumkin.\n\n**Funksiya e'lon qilish usullari:**\n```js\n// 1. Function declaration (ko'tarish — hoisting bor)\nfunction salomlash(ism) {\n  return 'Salom, ' + ism + '!';\n}\n\n// 2. Function expression\nconst kvadrat = function(x) {\n  return x * x;\n};\n\n// 3. Arrow function (eng zamonaviy va qisqa)\nconst kub = (x) => x * x * x;\nconst qo'sh = (a, b) => a + b;\n\nconsole.log(salomlash('Nilufar'));  // 'Salom, Nilufar!'\nconsole.log(kvadrat(5));            // 25\nconsole.log(kub(3));                // 27\n```\n\n**Parametrlar va default qiymatlar:**\n```js\n// Default parametr — qiymat berilmasa ishlatiladi\nfunction chegirma(narx, foiz = 10) {\n  return narx - (narx * foiz / 100);\n}\n\nconsole.log(chegirma(100));      // 90 (10% chegirma)\nconsole.log(chegirma(100, 25));  // 75 (25% chegirma)\n\n// Rest parametr — cheksiz argument qabul qilish\nconst jami = (...sonlar) => {\n  let yigindi = 0;\n  for (const son of sonlar) {\n    yigindi += son;\n  }\n  return yigindi;\n};\n\nconsole.log(jami(1, 2, 3));        // 6\nconsole.log(jami(10, 20, 30, 40)); // 100\n```\n\n**Funksiya ichida funksiya (closure):**\n```js\nfunction hisoblagich() {\n  let son = 0;  // tashqaridan ko'rinmaydi\n  return {\n    oshir: () => ++son,\n    kamayt: () => --son,\n    qiymat: () => son,\n  };\n}\n\nconst h = hisoblagich();\nconsole.log(h.oshir());   // 1\nconsole.log(h.oshir());   // 2\nconsole.log(h.kamayt());  // 1\nconsole.log(h.qiymat());  // 1\n```\n\n**Higher-order funksiyalar (funksiyani argument sifatida uzatish):**\n```js\nconst sonlar = [1, 2, 3, 4, 5];\n\n// forEach — har bir element uchun amal bajarish\nsonlar.forEach(n => console.log(n * 2));\n\n// map — yangi massiv yaratish\nconst ikkilangan = sonlar.map(n => n * 2);\nconsole.log(ikkilangan);  // [2, 4, 6, 8, 10]\n\n// filter — shartga moslarini tanlash\nconst juftlar = sonlar.filter(n => n % 2 === 0);\nconsole.log(juftlar);  // [2, 4]\n```",
       },
       {
-        id: "js-5", courseId: "javascript", title: "Massivlar (Array)", duration: "20 daqiqa", description: "Massiv metodlari: map, filter, reduce, sort", order: 5, type: "article",
+        id: "js-5", courseId: "javascript", title: "Massivlar (Array)", duration: "20 daqiqa", description: "Massiv metodlari: map, filter, reduce, sort", order: 5, type: "article", questions: [
+          { question: "Massivning oxiriga element qo'shish uchun qaysi metod ishlatiladi?", options: ["push()", "pop()", "shift()", "unshift()"], correct: 0, explanation: "push() — massiv oxiriga element qo'shadi. pop() — oxirgisini o'chiradi, shift() — birinchisini o'chiradi, unshift() — boshiga qo'shadi." },
+          { question: "map() metodining vazifasi nima?", options: ["Massivni filtrlash", "Har bir elementni o'zgartirib yangi massiv qaytarish", "Massiv elementlarini yig'indisi", "Massivni saralash"], correct: 1, explanation: "map() — har bir elementga funksiya qo'llab, yangi massiv qaytaradi. Asl massiv o'zgarmaydi." },
+          { question: "filter() metodi nima qaytaradi?", options: ["Bitta element", "Shartga mos elementlardan yangi massiv", "Boolean qiymat", "Element indeksi"], correct: 1, explanation: "filter() — shartga mos elementlardan iborat yangi massiv qaytaradi. Mos kelmaganlar o'tkazib yuboriladi." },
+          { question: "[1,2,3,4,5].reduce((a, b) => a + b, 0) natijasi nima?", options: ["[1,2,3,4,5]", "5", "15", "1"], correct: 2, explanation: "reduce() — massivni bitta qiymatga kamaytiradi. Bu misol barcha sonlarni qo'shadi: 1+2+3+4+5 = 15." },
+        ],
         content: "Massiv — tartibli elementlar to'plami. JavaScript da massivlar juda kuchli metodlarga ega.\n\n**Massiv yaratish va asosiy amallar:**\n```js\nconst mevalar = ['olma', 'nok', 'uzum', 'shaftoli'];\n\nconsole.log(mevalar[0]);         // 'olma' (indeks 0 dan boshlanadi)\nconsole.log(mevalar.length);     // 4\nconsole.log(mevalar[mevalar.length - 1]);  // 'shaftoli' (oxirgi)\n\n// Qo'shish\nmevalar.push('gilos');           // oxiriga qo'shish\nmevalar.unshift('anor');         // boshiga qo'shish\nconsole.log(mevalar);  // ['anor', 'olma', 'nok', 'uzum', 'shaftoli', 'gilos']\n\n// O'chirish\nmevalar.pop();    // oxirgisini o'chirish\nmevalar.shift();  // birinchisini o'chirish\n\n// Qidiruv\nconsole.log(mevalar.indexOf('nok'));     // 1\nconsole.log(mevalar.includes('uzum'));   // true\n```\n\n**map — har elementni o'zgartirib yangi massiv:**\n```js\nconst narxlar = [10000, 25000, 8000, 50000];\nconst chegirmali = narxlar.map(narx => narx * 0.8);  // 20% chegirma\nconsole.log(chegirmali);  // [8000, 20000, 6400, 40000]\n\nconst talabalar = [\n  { ism: 'Ali', ball: 85 },\n  { ism: 'Vali', ball: 92 },\n  { ism: 'Guli', ball: 78 },\n];\nconst ismlar = talabalar.map(t => t.ism);\nconsole.log(ismlar);  // ['Ali', 'Vali', 'Guli']\n```\n\n**filter — shartga moslarini tanlash:**\n```js\nconst balllar = [45, 82, 67, 91, 55, 88, 73];\nconst a'lo = balllar.filter(b => b >= 80);\nconsole.log(a'lo);  // [82, 91, 88]\n\nconst mahsulotlar = [\n  { nomi: 'Kitob', mavjud: true },\n  { nomi: 'Daftar', mavjud: false },\n  { nomi: 'Ruchka', mavjud: true },\n];\nconst bor = mahsulotlar.filter(m => m.mavjud);\nconsole.log(bor.map(m => m.nomi));  // ['Kitob', 'Ruchka']\n```\n\n**reduce — massivni bitta qiymatga kamaytirish:**\n```js\nconst sonlar = [1, 2, 3, 4, 5];\nconst yigindi = sonlar.reduce((jam, son) => jam + son, 0);\nconsole.log(yigindi);  // 15\n\nconst narxlar2 = [500, 1200, 800, 2400];\nconst umumiy = narxlar2.reduce((a, b) => a + b, 0);\nconsole.log(umumiy + ' so\\'m');  // '4900 so\\'m'\n```\n\n**sort — tartiblash:**\n```js\nconst ismlar2 = ['Zafar', 'Ali', 'Munira', 'Bobur'];\nismlar2.sort();  // alifbo tartibida\nconsole.log(ismlar2);  // ['Ali', 'Bobur', 'Munira', 'Zafar']\n\nconst sonlar2 = [10, 2, 30, 5, 20];\nsonlar2.sort((a, b) => a - b);  // o'sish tartibida\nconsole.log(sonlar2);  // [2, 5, 10, 20, 30]\n\nsonlar2.sort((a, b) => b - a);  // kamayish tartibida\nconsole.log(sonlar2);  // [30, 20, 10, 5, 2]\n```\n\n**find va findIndex:**\n```js\nconst talabalar2 = [\n  { id: 1, ism: 'Kamola', ball: 95 },\n  { id: 2, ism: 'Sardor', ball: 72 },\n  { id: 3, ism: 'Dilnoza', ball: 88 },\n];\n\nconst topildi = talabalar2.find(t => t.id === 2);\nconsole.log(topildi);  // { id: 2, ism: 'Sardor', ball: 72 }\n\nconst indeks = talabalar2.findIndex(t => t.ball > 90);\nconsole.log(indeks);  // 0\n```",
       },
       {
@@ -569,6 +646,13 @@ export const COURSES: Course[] = [
           { title: "TodoMVC — Turli frameworklarda To-do", url: "https://todomvc.com" },
           { title: "JavaScript30 — 30 kun JS mashqlari", url: "https://javascript30.com" },
           { title: "Vanilla JavaScript Projects", url: "https://vanillawebprojects.com" },
+        ],
+        questions: [
+          { question: "JavaScript da const va let farqi nima?", options: ["Hech qanday farq yo'q", "const — o'zgarmas, let — o'zgaruvchan", "let — o'zgarmas, const — o'zgaruvchan", "Ikkalasi ham o'zgarmas"], correct: 1, explanation: "const — bir marta qiymat beriladi va o'zgartirib bo'lmaydi. let — qiymati keyinchalik o'zgartirilishi mumkin." },
+          { question: "async/await nima uchun ishlatiladi?", options: ["CSS animatsiyalari uchun", "Asinxron operatsiyalarni sinxron ko'rinishda yozish uchun", "HTML teglari yaratish uchun", "Massivlarni saralash uchun"], correct: 1, explanation: "async/await — Promise asosidagi asinxron kodni yanada o'qilishi oson qilib yozish imkonini beradi." },
+          { question: "localStorage.setItem() nima qiladi?", options: ["Ma'lumotni serverga yuboradi", "Ma'lumotni brauzerda doimiy saqlaydi", "O'zgaruvchi yaratadi", "Cookie o'rnatadi"], correct: 1, explanation: "localStorage — brauzerda doimiy ma'lumot saqlash. Sahifa yopilsa ham ma'lumot saqlanib qoladi." },
+          { question: "DOM da getElementById() nima qaytaradi?", options: ["Barcha elementlar ro'yxati", "Bitta HTML element", "Element matnini", "CSS uslublarini"], correct: 1, explanation: "getElementById() — berilgan id ga mos bitta HTML elementni qaytaradi. Topilmasa null qaytaradi." },
+          { question: "try/catch bloki nima uchun?", options: ["Tsikl yaratish uchun", "Xatolarni ushlash va boshqarish uchun", "Funksiya yaratish uchun", "Shartni tekshirish uchun"], correct: 1, explanation: "try {} ichidagi kod bajariladi. Xato yuz bersa catch(e) {} ishga tushadi. finally {} har doim bajariladi." },
         ],
       },
     ],
