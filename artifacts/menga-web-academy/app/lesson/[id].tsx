@@ -274,6 +274,14 @@ export default function LessonScreen() {
             <Text style={[styles.lessonType, { color: colors.mutedForeground }]}>
               {lesson.type === "video" ? "Video" : lesson.type === "quiz" ? "Test" : "Maqola"}
             </Text>
+            {lesson.questions && lesson.questions.length > 0 && (
+              <View style={[styles.quizBadge, { backgroundColor: course.color + "18", borderColor: course.color + "40" }]}>
+                <Feather name="check-square" size={11} color={course.color} />
+                <Text style={[styles.quizBadgeText, { color: course.color }]}>
+                  {lesson.questions.length} ta test
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -458,9 +466,11 @@ const styles = StyleSheet.create({
   courseTagText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
   lessonNum: { fontSize: 12, fontFamily: "Inter_400Regular" },
   lessonTitle: { fontSize: 20, fontFamily: "Inter_700Bold", lineHeight: 26 },
-  lessonMetaRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  lessonMetaRow: { flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap" },
   lessonDuration: { fontSize: 12, fontFamily: "Inter_400Regular" },
   lessonType: { fontSize: 12, fontFamily: "Inter_400Regular" },
+  quizBadge: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20, borderWidth: 1 },
+  quizBadgeText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
   dot: { width: 3, height: 3, borderRadius: 1.5 },
   body: { marginBottom: 24 },
   paragraph: { fontSize: 15, fontFamily: "Inter_400Regular", lineHeight: 24, marginBottom: 4 },
