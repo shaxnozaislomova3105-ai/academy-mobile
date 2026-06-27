@@ -16,7 +16,6 @@ import { InAppBrowser } from "@/components/InAppBrowser";
 import { NotesSection } from "@/components/NotesSection";
 import { QuizSection } from "@/components/QuizSection";
 import { VideoPlayer } from "@/components/VideoPlayer";
-import { WALogo } from "@/components/WALogo";
 import { useAcademy } from "@/context/AcademyContext";
 import { COURSES } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
@@ -228,10 +227,9 @@ export default function LessonScreen() {
         >
           <Feather name="chevron-left" size={20} color={colors.foreground} />
         </Pressable>
-        <Text style={[styles.topBarTitle, { color: colors.foreground }]} numberOfLines={1}>
+        <Text style={[styles.topBarTitle, { color: colors.foreground }]}>
           {lesson.order}. {lesson.title}
         </Text>
-        <WALogo size="sm" />
       </View>
 
       <ScrollView
