@@ -185,32 +185,6 @@ export const CourseCard: React.FC<Props> = ({
           {course.description}
         </Text>
 
-        <View style={styles.meta}>
-          <View style={styles.metaItem}>
-            <Feather name="book-open" size={12} color={colors.mutedForeground} />
-            <Text style={[styles.metaTxt, { color: colors.mutedForeground }]}>
-              {course.lessonsCount} dars
-            </Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Feather name="clock" size={12} color={colors.mutedForeground} />
-            <Text style={[styles.metaTxt, { color: colors.mutedForeground }]}>
-              {course.duration}
-            </Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Feather name="star" size={12} color="#F59E0B" />
-            <Text style={[styles.metaTxt, { color: colors.mutedForeground }]}>
-              {course.rating}
-            </Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Feather name="users" size={12} color={colors.mutedForeground} />
-            <Text style={[styles.metaTxt, { color: colors.mutedForeground }]}>
-              {course.studentsCount.toLocaleString()}
-            </Text>
-          </View>
-        </View>
 
         {showProgress && (
           <View style={styles.progressWrap}>
