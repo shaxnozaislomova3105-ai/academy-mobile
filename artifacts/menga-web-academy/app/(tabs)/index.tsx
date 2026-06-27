@@ -32,7 +32,6 @@ export default function HomeScreen() {
       c.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  const freeCourses = COURSES.filter((c) => !c.isPremium).slice(0, 3);
   const enrolledCourses = getEnrolledCourses().slice(0, 3);
 
   return (
@@ -126,25 +125,6 @@ export default function HomeScreen() {
             </View>
           )}
 
-          {/* Free courses */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-                Bepul kurslar
-              </Text>
-              <Pressable onPress={() => router.push("/(tabs)/courses" as any)}>
-                <Text style={[styles.seeAll, { color: colors.primary }]}>Barchasi</Text>
-              </Pressable>
-            </View>
-            {freeCourses.map((c) => (
-              <CourseCard
-                key={c.id}
-                course={c}
-                onPress={() => router.push(`/course/${c.id}` as any)}
-              />
-            ))}
-          </View>
-
           {/* Categories */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
@@ -161,7 +141,7 @@ export default function HomeScreen() {
               ].map((cat) => (
                 <Pressable
                   key={cat.name}
-                  onPress={() => router.push("/(tabs)/courses" as any)}
+                  onPress={() => router.push(`/(tabs)/courses?category=${encodeURIComponent(cat.name)}` as any)}
                   style={({ pressed }) => [
                     styles.catCard,
                     { backgroundColor: cat.color + "12", borderColor: cat.color + "30", opacity: pressed ? 0.8 : 1 },

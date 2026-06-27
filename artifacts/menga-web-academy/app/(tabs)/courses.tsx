@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -22,8 +22,15 @@ export default function CoursesScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { isEnrolled, getCourseProgress } = useAcademy();
-  const [activeCategory, setActiveCategory] = useState("Barchasi");
+  const { category } = useLocalSearchParams<{ category?: string }>();
+  const [activeCategory, setActiveCategory] = useState(category || "Barchasi");
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (category) {
+      setActiveCategory(category);
+    }
+  }, [category]);
 
   const filtered = COURSES.filter((c) => {
     const matchesCat = activeCategory === "Barchasi" || c.category === activeCategory;
