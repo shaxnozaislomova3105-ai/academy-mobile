@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
-  Image,
   Platform,
   Pressable,
   StyleSheet,
@@ -19,20 +19,66 @@ interface Props {
   compact?: boolean;
 }
 
-const IMAGES: Record<string, ReturnType<typeof require>> = {
-  "course-web-basics": require("@/assets/images/course-web-basics.png"),
-  "course-react": require("@/assets/images/course-react.png"),
-  "course-nodejs": require("@/assets/images/course-nodejs.png"),
-  "course-html": require("@/assets/images/course-html.png"),
-  "course-css": require("@/assets/images/course-css.png"),
-  "course-fullstack": require("@/assets/images/course-fullstack.png"),
-};
-
 const LEVEL_COLORS: Record<string, string> = {
   "Boshlang'ich": "#22C55E",
   "O'rta": "#F59E0B",
   "Murakkab": "#EF4444",
 };
+
+const CATEGORY_META: Record<string, { icon: string; label: string; sub: string }> = {
+  HTML: { icon: "code", label: "HTML", sub: "WEB DEVELOPMENT" },
+  CSS: { icon: "layout", label: "CSS", sub: "STYLING & DESIGN" },
+  JavaScript: { icon: "zap", label: "JS", sub: "PROGRAMMING" },
+  React: { icon: "layers", label: "REACT", sub: "UI LIBRARY" },
+  "Node.js": { icon: "server", label: "NODE", sub: "BACKEND DEV" },
+  "Full-Stack": { icon: "package", label: "FULL", sub: "STACK DEV" },
+};
+
+function CourseThumbnail({ course, height = 150 }: { course: Course; height?: number }) {
+  const meta = CATEGORY_META[course.category] ?? { icon: "book-open", label: course.category, sub: "COURSE" };
+  const c = course.color;
+
+  return (
+    <View style={{ height, position: "relative", overflow: "hidden", backgroundColor: c + "10" }}>
+      <LinearGradient
+        colors={[c + "20", c + "06"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
+
+      {/* Book shape */}
+      <View style={[thumbStyles.book, { backgroundColor: c }]}>
+        <LinearGradient
+          colors={[c + "CC", c]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFillObject}
+        />
+        {/* Book spine highlight */}
+        <View style={thumbStyles.spine} />
+        {/* Book icon badge */}
+        <View style={[thumbStyles.badge, { backgroundColor: "#ffffff22" }]}>
+          <Feather name={meta.icon as any} size={22} color="#fff" />
+        </View>
+        {/* Book lines */}
+        <View style={thumbStyles.lines}>
+          <View style={[thumbStyles.line, { backgroundColor: "#ffffff50", width: "70%" }]} />
+          <View style={[thumbStyles.line, { backgroundColor: "#ffffff30", width: "50%" }]} />
+          <View style={[thumbStyles.line, { backgroundColor: "#ffffff20", width: "60%" }]} />
+        </View>
+      </View>
+
+      {/* Text side */}
+      <View style={thumbStyles.textSide}>
+        <Text style={[thumbStyles.catLabel, { color: c }]}>{meta.label}</Text>
+        <Text style={[thumbStyles.catSub, { color: c + "CC" }]}>{meta.sub}</Text>
+        <Text style={[thumbStyles.catCourse, { color: c + "99" }]}>COURSE</Text>
+        <View style={[thumbStyles.underline, { backgroundColor: c }]} />
+      </View>
+    </View>
+  );
+}
 
 export const CourseCard: React.FC<Props> = ({
   course,
@@ -42,7 +88,6 @@ export const CourseCard: React.FC<Props> = ({
   compact = false,
 }) => {
   const colors = useColors();
-  const imageSource = course.image ? IMAGES[course.image] : null;
   const levelColor = LEVEL_COLORS[course.level] ?? colors.primary;
 
   if (compact) {
@@ -58,34 +103,20 @@ export const CourseCard: React.FC<Props> = ({
           },
         ]}
       >
-        <View
-          style={[styles.compactThumb, { backgroundColor: course.color + "18" }]}
-        >
-          {imageSource ? (
-            <Image source={imageSource} style={styles.compactImage} />
-          ) : (
-            <Text style={[styles.compactEmoji, { color: course.color }]}>
-              {"</>"}
-            </Text>
-          )}
-        </View>
+        <CompactThumbnail course={course} />
         <View style={styles.compactInfo}>
-          <View style={styles.compactTitleRow}>
-            <Text
-              style={[styles.compactTitle, { color: colors.foreground }]}
-              numberOfLines={2}
-            >
-              {course.title}
-            </Text>
-          </View>
+          <Text
+            style={[styles.compactTitle, { color: colors.foreground }]}
+            numberOfLines={2}
+          >
+            {course.title}
+          </Text>
           <Text style={[styles.compactMeta, { color: colors.mutedForeground }]}>
             {course.lessonsCount} dars · {course.duration}
           </Text>
           {showProgress && (
             <View style={styles.progressRow}>
-              <View
-                style={[styles.progressTrack, { backgroundColor: colors.border }]}
-              >
+              <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
                 <View
                   style={[
                     styles.progressFill,
@@ -117,24 +148,19 @@ export const CourseCard: React.FC<Props> = ({
       ]}
     >
       {/* Thumbnail */}
-      <View style={[styles.thumb, { backgroundColor: course.color + "12" }]}>
-        {imageSource ? (
-          <Image source={imageSource} style={styles.thumbImage} />
-        ) : (
-          <View style={styles.thumbPlaceholder}>
-            <Feather name="book-open" size={28} color={course.color} />
-          </View>
-        )}
+      <View style={{ position: "relative" }}>
+        <CourseThumbnail course={course} height={150} />
 
-        {/* Badges */}
+        {/* Category badge */}
         <View style={styles.thumbBadges}>
-          <View style={[styles.badge, { backgroundColor: colors.card + "F0" }]}>
+          <View style={[styles.badge, { backgroundColor: colors.card + "F2" }]}>
             <Text style={[styles.badgeCat, { color: course.color }]}>
               {course.category}
             </Text>
           </View>
         </View>
 
+        {/* Level badge */}
         <View
           style={[
             styles.levelBadge,
@@ -149,10 +175,7 @@ export const CourseCard: React.FC<Props> = ({
 
       {/* Body */}
       <View style={styles.body}>
-        <Text
-          style={[styles.title, { color: colors.foreground }]}
-          numberOfLines={2}
-        >
+        <Text style={[styles.title, { color: colors.foreground }]} numberOfLines={2}>
           {course.title}
         </Text>
         <Text
@@ -192,9 +215,7 @@ export const CourseCard: React.FC<Props> = ({
         {showProgress && (
           <View style={styles.progressWrap}>
             <View style={styles.progressRow}>
-              <View
-                style={[styles.progressTrack, { backgroundColor: colors.border }]}
-              >
+              <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
                 <View
                   style={[
                     styles.progressFill,
@@ -213,6 +234,94 @@ export const CourseCard: React.FC<Props> = ({
   );
 };
 
+function CompactThumbnail({ course }: { course: Course }) {
+  const meta = CATEGORY_META[course.category] ?? { icon: "book-open", label: course.category, sub: "" };
+  const c = course.color;
+  return (
+    <View style={[styles.compactThumb, { backgroundColor: c + "12", overflow: "hidden" }]}>
+      <LinearGradient
+        colors={[c + "25", c + "08"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
+      <View style={[styles.compactIcon, { backgroundColor: c }]}>
+        <Feather name={meta.icon as any} size={16} color="#fff" />
+      </View>
+      <Text style={[styles.compactLabel, { color: c }]} numberOfLines={1}>
+        {meta.label}
+      </Text>
+    </View>
+  );
+}
+
+const thumbStyles = StyleSheet.create({
+  book: {
+    position: "absolute",
+    left: 28,
+    top: "50%",
+    marginTop: -44,
+    width: 72,
+    height: 88,
+    borderRadius: 6,
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    ...Platform.select({
+      ios: { shadowColor: "#000", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.25, shadowRadius: 8 },
+      android: { elevation: 6 },
+    }),
+  },
+  spine: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 8,
+    backgroundColor: "#00000020",
+  },
+  badge: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
+  lines: { gap: 5, alignItems: "flex-start", paddingHorizontal: 10, width: "100%" },
+  line: { height: 3, borderRadius: 2 },
+  textSide: {
+    position: "absolute",
+    left: 120,
+    top: "50%",
+    marginTop: -38,
+  },
+  catLabel: {
+    fontSize: 26,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: -0.5,
+    lineHeight: 30,
+  },
+  catSub: {
+    fontSize: 9,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: 1,
+    lineHeight: 13,
+  },
+  catCourse: {
+    fontSize: 9,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: 1,
+    lineHeight: 13,
+  },
+  underline: {
+    height: 3,
+    width: 40,
+    borderRadius: 2,
+    marginTop: 6,
+  },
+});
+
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
@@ -224,9 +333,6 @@ const styles = StyleSheet.create({
       android: { elevation: 2 },
     }),
   },
-  thumb: { height: 150, position: "relative" },
-  thumbImage: { width: "100%", height: "100%", resizeMode: "cover" },
-  thumbPlaceholder: { flex: 1, alignItems: "center", justifyContent: "center" },
   thumbBadges: {
     position: "absolute",
     top: 10,
@@ -235,15 +341,11 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
   },
   badgeCat: { fontSize: 11, fontFamily: "Inter_700Bold" },
-  badgePremium: { fontSize: 11, fontFamily: "Inter_700Bold", color: "#fff" },
   levelBadge: {
     position: "absolute",
     bottom: 10,
@@ -277,11 +379,17 @@ const styles = StyleSheet.create({
     height: 80,
     alignItems: "center",
     justifyContent: "center",
+    gap: 4,
   },
-  compactImage: { width: 80, height: 80, resizeMode: "cover" },
-  compactEmoji: { fontSize: 16, fontFamily: "Inter_700Bold" },
+  compactIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  compactLabel: { fontSize: 10, fontFamily: "Inter_700Bold", letterSpacing: 0.5 },
   compactInfo: { flex: 1, padding: 12, justifyContent: "center", gap: 4 },
-  compactTitleRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  compactTitle: { flex: 1, fontSize: 14, fontFamily: "Inter_600SemiBold", lineHeight: 18 },
+  compactTitle: { fontSize: 14, fontFamily: "Inter_600SemiBold", lineHeight: 18 },
   compactMeta: { fontSize: 12, fontFamily: "Inter_400Regular" },
 });
