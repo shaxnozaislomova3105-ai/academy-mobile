@@ -210,7 +210,7 @@ export default function ProfileScreen() {
       {/* App info */}
       <View style={styles.appInfo}>
         <Text style={[styles.appName, { color: colors.mutedForeground }]}>
-          Menga Web Academy
+          Web Academy
         </Text>
         <Text style={[styles.appVersion, { color: colors.mutedForeground }]}>
           Version 1.0.0
