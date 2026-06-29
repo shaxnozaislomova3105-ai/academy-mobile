@@ -264,24 +264,6 @@ export default function LessonScreen() {
           <Text style={[styles.lessonTitle, { color: colors.foreground }]}>
             {lesson.title}
           </Text>
-          <View style={styles.lessonMetaRow}>
-            <Feather name="clock" size={13} color={colors.mutedForeground} />
-            <Text style={[styles.lessonDuration, { color: colors.mutedForeground }]}>
-              {lesson.duration}
-            </Text>
-            <View style={[styles.dot, { backgroundColor: colors.mutedForeground }]} />
-            <Text style={[styles.lessonType, { color: colors.mutedForeground }]}>
-              {lesson.type === "video" ? "Video" : lesson.type === "quiz" ? "Test" : "Maqola"}
-            </Text>
-            {lesson.questions && lesson.questions.length > 0 && (
-              <View style={[styles.quizBadge, { backgroundColor: course.color + "18", borderColor: course.color + "40" }]}>
-                <Feather name="check-square" size={11} color={course.color} />
-                <Text style={[styles.quizBadgeText, { color: course.color }]}>
-                  {lesson.questions.length} ta test
-                </Text>
-              </View>
-            )}
-          </View>
         </View>
 
         {/* Video */}

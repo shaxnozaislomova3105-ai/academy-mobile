@@ -119,8 +119,6 @@ export default function CourseDetailScreen() {
               { icon: "user" as const, val: course.instructor },
               { icon: "book-open" as const, val: `${course.lessonsCount} dars` },
               { icon: "clock" as const, val: course.duration },
-              { icon: "star" as const, val: `${course.rating}` },
-              { icon: "users" as const, val: `${course.studentsCount.toLocaleString()} o'quvchi` },
             ].map((m, i) => (
               <View key={i} style={styles.metaItem}>
                 <Feather name={m.icon} size={13} color={colors.primary} />
