@@ -1,5 +1,5 @@
-import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Code, Layers, Layout, Package, Search, Server, User, X, Zap } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Image,
@@ -17,6 +17,17 @@ import { WALogo } from "@/components/WALogo";
 import { COURSES } from "@/data/courses";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
+
+type CategoryIcon = React.ComponentType<{ size: number; color: string }>;
+
+const CATEGORY_ICONS: { name: string; color: string; Icon: CategoryIcon }[] = [
+  { name: "HTML", color: "#E44D26", Icon: Code },
+  { name: "CSS", color: "#264DE4", Icon: Layout },
+  { name: "JavaScript", color: "#F7DF1E", Icon: Zap },
+  { name: "React", color: "#61DAFB", Icon: Layers },
+  { name: "Node.js", color: "#339933", Icon: Server },
+  { name: "Full-Stack", color: "#7C3AED", Icon: Package },
+];
 
 export default function HomeScreen() {
   const colors = useColors();
@@ -53,7 +64,7 @@ export default function HomeScreen() {
           onPress={() => router.push("/(tabs)/profile" as any)}
           style={[styles.avatarBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
         >
-          <Feather name="user" size={18} color={colors.mutedForeground} />
+          <User size={18} color={colors.mutedForeground} />
         </Pressable>
       </View>
 
@@ -61,7 +72,7 @@ export default function HomeScreen() {
       <View
         style={[styles.searchBox, { backgroundColor: colors.card, borderColor: colors.border }]}
       >
-        <Feather name="search" size={16} color={colors.mutedForeground} />
+        <Search size={16} color={colors.mutedForeground} />
         <TextInput
           value={search}
           onChangeText={setSearch}
@@ -71,7 +82,7 @@ export default function HomeScreen() {
         />
         {search.length > 0 && (
           <Pressable onPress={() => setSearch("")}>
-            <Feather name="x" size={14} color={colors.mutedForeground} />
+            <X size={14} color={colors.mutedForeground} />
           </Pressable>
         )}
       </View>
@@ -84,7 +95,7 @@ export default function HomeScreen() {
           </Text>
           {filtered.length === 0 ? (
             <View style={styles.empty}>
-              <Feather name="search" size={32} color={colors.mutedForeground} />
+              <Search size={32} color={colors.mutedForeground} />
               <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
                 Kurs topilmadi
               </Text>
@@ -131,14 +142,7 @@ export default function HomeScreen() {
               Yo'nalishlar
             </Text>
             <View style={styles.catGrid}>
-              {[
-                { name: "HTML", color: "#E44D26", icon: "code" as const },
-                { name: "CSS", color: "#264DE4", icon: "layout" as const },
-                { name: "JavaScript", color: "#F7DF1E", icon: "zap" as const },
-                { name: "React", color: "#61DAFB", icon: "layers" as const },
-                { name: "Node.js", color: "#339933", icon: "server" as const },
-                { name: "Full-Stack", color: "#7C3AED", icon: "package" as const },
-              ].map((cat) => (
+              {CATEGORY_ICONS.map((cat) => (
                 <Pressable
                   key={cat.name}
                   onPress={() => router.push(`/(tabs)/courses?category=${encodeURIComponent(cat.name)}` as any)}
@@ -147,7 +151,7 @@ export default function HomeScreen() {
                     { backgroundColor: cat.color + "12", borderColor: cat.color + "30", opacity: pressed ? 0.8 : 1 },
                   ]}
                 >
-                  <Feather name={cat.icon} size={20} color={cat.color} />
+                  <cat.Icon size={20} color={cat.color} />
                   <Text style={[styles.catName, { color: cat.color }]}>{cat.name}</Text>
                 </Pressable>
               ))}

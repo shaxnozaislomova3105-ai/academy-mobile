@@ -1,5 +1,5 @@
-import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { BookOpen, Calendar, CheckCircle, Edit2, Mail, TrendingUp, User } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Alert,
@@ -15,6 +15,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAcademy } from "@/context/AcademyContext";
 import { COURSES } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
+
+type IconComponent = React.ComponentType<{ size: number; color: string }>;
 
 export default function ProfileScreen() {
   const colors = useColors();
@@ -38,11 +40,11 @@ export default function ProfileScreen() {
     if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
-  const menuItems = [
-    { icon: "book-open", label: "Kurslarim", value: `${enrolledCourseIds.length} ta` },
-    { icon: "check-circle", label: "Tugatilgan darslar", value: `${completedLessonIds.length} ta` },
-    { icon: "trending-up", label: "Umumiy progress", value: `${progressPercent}%` },
-    { icon: "calendar", label: "Qo'shilgan sana", value: new Date(profile.joinedAt).toLocaleDateString("uz-UZ") },
+  const menuItems: { Icon: IconComponent; label: string; value: string }[] = [
+    { Icon: BookOpen, label: "Kurslarim", value: `${enrolledCourseIds.length} ta` },
+    { Icon: CheckCircle, label: "Tugatilgan darslar", value: `${completedLessonIds.length} ta` },
+    { Icon: TrendingUp, label: "Umumiy progress", value: `${progressPercent}%` },
+    { Icon: Calendar, label: "Qo'shilgan sana", value: new Date(profile.joinedAt).toLocaleDateString("uz-UZ") },
   ];
 
   return (
@@ -88,7 +90,7 @@ export default function ProfileScreen() {
               onPress={() => setEditing(true)}
               style={[styles.editBtn, { borderColor: colors.border }]}
             >
-              <Feather name="edit-2" size={14} color={colors.mutedForeground} />
+              <Edit2 size={14} color={colors.mutedForeground} />
               <Text style={[styles.editBtnText, { color: colors.mutedForeground }]}>
                 Tahrirlash
               </Text>
@@ -102,7 +104,7 @@ export default function ProfileScreen() {
                 { backgroundColor: colors.card, borderColor: colors.border },
               ]}
             >
-              <Feather name="user" size={16} color={colors.mutedForeground} />
+              <User size={16} color={colors.mutedForeground} />
               <TextInput
                 value={name}
                 onChangeText={setName}
@@ -117,7 +119,7 @@ export default function ProfileScreen() {
                 { backgroundColor: colors.card, borderColor: colors.border },
               ]}
             >
-              <Feather name="mail" size={16} color={colors.mutedForeground} />
+              <Mail size={16} color={colors.mutedForeground} />
               <TextInput
                 value={email}
                 onChangeText={setEmail}
@@ -150,7 +152,7 @@ export default function ProfileScreen() {
         )}
       </View>
 
-      {/* Progress ring section */}
+      {/* Progress card */}
       <View
         style={[
           styles.progressCard,
@@ -189,7 +191,7 @@ export default function ProfileScreen() {
                   { backgroundColor: colors.primary + "15" },
                 ]}
               >
-                <Feather name={item.icon as any} size={16} color={colors.primary} />
+                <item.Icon size={16} color={colors.primary} />
               </View>
               <Text style={[styles.statLabel, { color: colors.foreground }]}>
                 {item.label}

@@ -1,6 +1,6 @@
-import { Feather } from "@expo/vector-icons";
 import { createElement } from "react";
 import React from "react";
+import { ChevronLeft } from "lucide-react-native";
 import {
   Modal,
   Pressable,
@@ -45,7 +45,7 @@ export function InAppBrowser({ url, title, onClose }: Props) {
               { backgroundColor: colors.background, borderColor: colors.border, opacity: pressed ? 0.7 : 1 },
             ]}
           >
-            <Feather name="chevron-left" size={20} color={colors.foreground} />
+            <ChevronLeft size={20} color={colors.foreground} />
           </Pressable>
           <Text style={[styles.titleText, { color: colors.foreground }]} numberOfLines={1}>
             {title}

@@ -10,37 +10,21 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { KeyboardProvider } from "react-native-keyboard-controller";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AcademyProvider } from "@/context/AcademyContext";
 
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
-
-function RootLayoutNav() {
+function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <Stack screenOptions={{ headerBackTitle: "Orqaga" }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="course/[id]"
-        options={{ headerShown: true, presentation: "card" }}
-      />
-      <Stack.Screen
-        name="lesson/[id]"
-        options={{ headerShown: true, presentation: "card" }}
-      />
-    </Stack>
+    <QueryClientProvider client={new QueryClient()}>
+      <AcademyProvider>{children}</AcademyProvider>
+    </QueryClientProvider>
   );
 }
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    // feather (lowercase) = font family name used by @expo/vector-icons Feather
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    feather: require("@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Feather.ttf"),
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
@@ -56,18 +40,10 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null;
 
   return (
-    <SafeAreaProvider>
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <AcademyProvider>
-            <GestureHandlerRootView>
-              <KeyboardProvider>
-                <RootLayoutNav />
-              </KeyboardProvider>
-            </GestureHandlerRootView>
-          </AcademyProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Providers>
+        <Stack screenOptions={{ headerShown: false }} />
+      </Providers>
+    </GestureHandlerRootView>
   );
 }

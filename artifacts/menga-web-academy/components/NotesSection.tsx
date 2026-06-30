@@ -1,5 +1,5 @@
-import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Check, ChevronDown, ChevronUp, Edit3, Trash2 } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { useColors } from "@/hooks/useColors";
@@ -45,7 +45,7 @@ export function NotesSection({ lessonId, color }: Props) {
     <View style={[styles.wrap, { borderColor: color + "30", backgroundColor: color + "05" }]}>
       <Pressable style={styles.header} onPress={() => setExpanded((e) => !e)}>
         <View style={[styles.iconWrap, { backgroundColor: color + "20" }]}>
-          <Feather name="edit-3" size={16} color={color} />
+          <Edit3 size={16} color={color} />
         </View>
         <View style={styles.headerInfo}>
           <Text style={[styles.headerTitle, { color: colors.foreground }]}>
@@ -58,11 +58,10 @@ export function NotesSection({ lessonId, color }: Props) {
         {hasNote && (
           <View style={[styles.dot, { backgroundColor: color }]} />
         )}
-        <Feather
-          name={expanded ? "chevron-up" : "chevron-down"}
-          size={18}
-          color={colors.mutedForeground}
-        />
+        {expanded
+          ? <ChevronUp size={18} color={colors.mutedForeground} />
+          : <ChevronDown size={18} color={colors.mutedForeground} />
+        }
       </Pressable>
 
       {expanded && (
@@ -90,13 +89,13 @@ export function NotesSection({ lessonId, color }: Props) {
             <View style={styles.footerRight}>
               {saved && (
                 <View style={styles.savedBadge}>
-                  <Feather name="check" size={12} color="#22C55E" />
+                  <Check size={12} color="#22C55E" />
                   <Text style={styles.savedText}>Saqlandi</Text>
                 </View>
               )}
               {hasNote && (
                 <Pressable onPress={handleClear} style={styles.clearBtn}>
-                  <Feather name="trash-2" size={14} color="#EF4444" />
+                  <Trash2 size={14} color="#EF4444" />
                   <Text style={styles.clearText}>O'chirish</Text>
                 </Pressable>
               )}

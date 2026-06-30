@@ -1,4 +1,4 @@
-import { Feather } from "@expo/vector-icons";
+import { Check, CheckCircle, ChevronRight, FileText, HelpCircle, Lock, PlayCircle } from "lucide-react-native";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Lesson } from "@/data/courses";
@@ -12,10 +12,12 @@ interface Props {
   onPress: () => void;
 }
 
-const TYPE_ICONS: Record<Lesson["type"], string> = {
-  video: "play-circle",
-  article: "file-text",
-  quiz: "help-circle",
+type IconComp = React.ComponentType<{ size: number; color: string }>;
+
+const TYPE_ICON_MAP: Record<Lesson["type"], IconComp> = {
+  video: PlayCircle,
+  article: FileText,
+  quiz: HelpCircle,
 };
 
 export const LessonItem: React.FC<Props> = ({
@@ -26,6 +28,7 @@ export const LessonItem: React.FC<Props> = ({
   onPress,
 }) => {
   const colors = useColors();
+  const TypeIcon = TYPE_ICON_MAP[lesson.type];
 
   return (
     <Pressable
@@ -50,15 +53,11 @@ export const LessonItem: React.FC<Props> = ({
         ]}
       >
         {isCompleted ? (
-          <Feather name="check" size={16} color={accentColor} />
+          <Check size={16} color={accentColor} />
         ) : isLocked ? (
-          <Feather name="lock" size={14} color={colors.mutedForeground} />
+          <Lock size={14} color={colors.mutedForeground} />
         ) : (
-          <Feather
-            name={TYPE_ICONS[lesson.type] as any}
-            size={15}
-            color={colors.mutedForeground}
-          />
+          <TypeIcon size={15} color={colors.mutedForeground} />
         )}
       </View>
 
@@ -77,11 +76,9 @@ export const LessonItem: React.FC<Props> = ({
       </View>
 
       {!isLocked && (
-        <Feather
-          name={isCompleted ? "check-circle" : "chevron-right"}
-          size={18}
-          color={isCompleted ? accentColor : colors.mutedForeground}
-        />
+        isCompleted
+          ? <CheckCircle size={18} color={accentColor} />
+          : <ChevronRight size={18} color={colors.mutedForeground} />
       )}
     </Pressable>
   );
@@ -111,9 +108,5 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontFamily: "Inter_600SemiBold",
-  },
-  meta: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
   },
 });

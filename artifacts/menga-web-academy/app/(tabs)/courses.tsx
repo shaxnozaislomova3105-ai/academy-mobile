@@ -1,5 +1,5 @@
-import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Search, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Platform,
@@ -40,9 +40,6 @@ export default function CoursesScreen() {
     return matchesCat && matchesSearch;
   });
 
-  const freeCourses = filtered.filter((c) => !c.isPremium);
-  const premiumCourses = filtered.filter((c) => c.isPremium);
-
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -67,7 +64,7 @@ export default function CoursesScreen() {
       <View
         style={[styles.searchBox, { backgroundColor: colors.card, borderColor: colors.border }]}
       >
-        <Feather name="search" size={16} color={colors.mutedForeground} />
+        <Search size={16} color={colors.mutedForeground} />
         <TextInput
           value={search}
           onChangeText={setSearch}
@@ -77,7 +74,7 @@ export default function CoursesScreen() {
         />
         {search.length > 0 && (
           <Pressable onPress={() => setSearch("")}>
-            <Feather name="x" size={14} color={colors.mutedForeground} />
+            <X size={14} color={colors.mutedForeground} />
           </Pressable>
         )}
       </View>
@@ -101,14 +98,13 @@ export default function CoursesScreen() {
 
       {filtered.length === 0 ? (
         <View style={styles.empty}>
-          <Feather name="search" size={32} color={colors.mutedForeground} />
+          <Search size={32} color={colors.mutedForeground} />
           <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
             Kurs topilmadi
           </Text>
         </View>
       ) : (
         <>
-          {/* Free courses */}
           <View style={styles.section}>
             {filtered.map((c) => {
               const enrolled = isEnrolled(c.id);
@@ -148,10 +144,6 @@ const styles = StyleSheet.create({
   chipsScroll: { marginBottom: 4 },
   chips: { paddingBottom: 14, paddingRight: 20 },
   section: { marginBottom: 24 },
-  sectionHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 },
-  sectionTitle: { fontSize: 16, fontFamily: "Inter_700Bold" },
-  countBadge: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
-  countText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
   empty: { alignItems: "center", paddingVertical: 48, gap: 12 },
   emptyText: { fontSize: 14, fontFamily: "Inter_400Regular" },
 });

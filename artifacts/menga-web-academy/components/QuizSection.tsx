@@ -1,6 +1,6 @@
-import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
+import { ArrowRight, Check, CheckSquare, ChevronDown, ChevronUp, Info, RotateCcw, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useColors } from "@/hooks/useColors";
@@ -57,7 +57,6 @@ export function QuizSection({ lessonId, questions, color }: Props) {
       setSelected(null);
       setAnswerState("idle");
     } else {
-      const finalScore = score + (answerState === "correct" ? 0 : 0); // already counted
       const realScore = answerState === "correct" ? score : score;
       setFinished(true);
       const best = bestScore ?? 0;
@@ -98,7 +97,7 @@ export function QuizSection({ lessonId, questions, color }: Props) {
       {/* Header */}
       <Pressable style={styles.header} onPress={() => setExpanded((e) => !e)}>
         <View style={[styles.iconWrap, { backgroundColor: color + "20" }]}>
-          <Feather name="check-square" size={16} color={color} />
+          <CheckSquare size={16} color={color} />
         </View>
         <View style={styles.headerInfo}>
           <Text style={[styles.headerTitle, { color: colors.foreground }]}>
@@ -109,17 +108,15 @@ export function QuizSection({ lessonId, questions, color }: Props) {
             {bestScore !== null ? `  •  Eng yuqori: ${bestScore}/${questions.length}` : ""}
           </Text>
         </View>
-        <Feather
-          name={expanded ? "chevron-up" : "chevron-down"}
-          size={18}
-          color={colors.mutedForeground}
-        />
+        {expanded
+          ? <ChevronUp size={18} color={colors.mutedForeground} />
+          : <ChevronDown size={18} color={colors.mutedForeground} />
+        }
       </Pressable>
 
       {expanded && (
         <View style={styles.body}>
           {finished ? (
-            /* Results */
             <View style={styles.result}>
               <View style={[styles.resultCircle, { borderColor: pct >= 70 ? "#22C55E" : "#F59E0B" }]}>
                 <Text style={[styles.resultPct, { color: pct >= 70 ? "#22C55E" : "#F59E0B" }]}>
@@ -136,12 +133,11 @@ export function QuizSection({ lessonId, questions, color }: Props) {
                 onPress={handleRestart}
                 style={[styles.restartBtn, { backgroundColor: color }]}
               >
-                <Feather name="rotate-ccw" size={14} color="#fff" />
+                <RotateCcw size={14} color="#fff" />
                 <Text style={styles.restartText}>Qayta boshlash</Text>
               </Pressable>
             </View>
           ) : (
-            /* Question */
             <View>
               {/* Progress */}
               <View style={styles.progressRow}>
@@ -158,7 +154,7 @@ export function QuizSection({ lessonId, questions, color }: Props) {
                 </View>
               </View>
 
-              {/* Question text */}
+              {/* Question */}
               <Text style={[styles.questionText, { color: colors.foreground }]}>
                 {q.question}
               </Text>
@@ -175,10 +171,10 @@ export function QuizSection({ lessonId, questions, color }: Props) {
                 >
                   <View style={[styles.optionCircle, { borderColor: optionBorder(idx) }]}>
                     {answerState !== "idle" && idx === questions[current].correct && (
-                      <Feather name="check" size={12} color="#22C55E" />
+                      <Check size={12} color="#22C55E" />
                     )}
                     {answerState === "wrong" && idx === selected && (
-                      <Feather name="x" size={12} color="#EF4444" />
+                      <X size={12} color="#EF4444" />
                     )}
                     {(answerState === "idle" || (idx !== selected && idx !== questions[current].correct)) && (
                       <Text style={[styles.optionLetter, { color: optionBorder(idx) }]}>
@@ -195,7 +191,7 @@ export function QuizSection({ lessonId, questions, color }: Props) {
                 <View>
                   {q.explanation && (
                     <View style={[styles.explanation, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                      <Feather name="info" size={13} color={colors.mutedForeground} />
+                      <Info size={13} color={colors.mutedForeground} />
                       <Text style={[styles.explanationText, { color: colors.mutedForeground }]}>
                         {q.explanation}
                       </Text>
@@ -208,7 +204,7 @@ export function QuizSection({ lessonId, questions, color }: Props) {
                     <Text style={styles.nextText}>
                       {current + 1 < questions.length ? "Keyingi savol" : "Natijani ko'rish"}
                     </Text>
-                    <Feather name="arrow-right" size={16} color="#fff" />
+                    <ArrowRight size={16} color="#fff" />
                   </Pressable>
                 </View>
               )}

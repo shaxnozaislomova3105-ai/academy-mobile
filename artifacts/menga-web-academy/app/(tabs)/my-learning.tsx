@@ -1,5 +1,5 @@
-import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Award, Book } from "lucide-react-native";
 import React from "react";
 import {
   Platform,
@@ -93,7 +93,7 @@ export default function MyLearningScreen() {
           <View
             style={[styles.emptyIcon, { backgroundColor: colors.primary + "15" }]}
           >
-            <Feather name="book" size={36} color={colors.primary} />
+            <Book size={36} color={colors.primary} />
           </View>
           <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
             Hali kurs yo'q
@@ -155,7 +155,7 @@ export default function MyLearningScreen() {
                 <View
                   style={[styles.badge, { backgroundColor: "#22C55E20" }]}
                 >
-                  <Feather name="award" size={12} color="#22C55E" />
+                  <Award size={12} color="#22C55E" />
                   <Text style={[styles.badgeText, { color: "#22C55E" }]}>
                     {completed.length} ta
                   </Text>

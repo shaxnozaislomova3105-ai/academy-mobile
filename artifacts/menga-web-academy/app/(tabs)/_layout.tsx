@@ -3,7 +3,7 @@ import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
-import { Feather } from "@expo/vector-icons";
+import { BarChart2, BookOpen, Home, User } from "lucide-react-native";
 import React from "react";
 import { Platform, StyleSheet, View, useColorScheme } from "react-native";
 
@@ -78,7 +78,7 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name="house" tintColor={color} size={24} />
             ) : (
-              <Feather name="home" size={22} color={color} />
+              <Home size={22} color={color} />
             ),
         }}
       />
@@ -90,7 +90,7 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name="book" tintColor={color} size={24} />
             ) : (
-              <Feather name="book-open" size={22} color={color} />
+              <BookOpen size={22} color={color} />
             ),
         }}
       />
@@ -102,7 +102,7 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name="chart.bar" tintColor={color} size={24} />
             ) : (
-              <Feather name="bar-chart-2" size={22} color={color} />
+              <BarChart2 size={22} color={color} />
             ),
         }}
       />
@@ -114,7 +114,7 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name="person" tintColor={color} size={24} />
             ) : (
-              <Feather name="user" size={22} color={color} />
+              <User size={22} color={color} />
             ),
         }}
       />

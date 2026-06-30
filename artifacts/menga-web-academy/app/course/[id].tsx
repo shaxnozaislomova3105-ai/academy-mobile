@@ -1,6 +1,6 @@
-import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { BookOpen, Check, CheckCircle, Clock, PlayCircle, User } from "lucide-react-native";
 import React from "react";
 import {
   Image,
@@ -92,7 +92,7 @@ export default function CourseDetailScreen() {
             <Image source={imageSource} style={styles.heroImage} />
           ) : (
             <View style={styles.heroPlaceholder}>
-              <Feather name="book-open" size={48} color={course.color} />
+              <BookOpen size={48} color={course.color} />
             </View>
           )}
         </View>
@@ -116,12 +116,12 @@ export default function CourseDetailScreen() {
           {/* Meta row */}
           <View style={[styles.metaCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             {[
-              { icon: "user" as const, val: course.instructor },
-              { icon: "book-open" as const, val: `${course.lessonsCount} dars` },
-              { icon: "clock" as const, val: course.duration },
+              { Icon: User, val: course.instructor },
+              { Icon: BookOpen, val: `${course.lessonsCount} dars` },
+              { Icon: Clock, val: course.duration },
             ].map((m, i) => (
               <View key={i} style={styles.metaItem}>
-                <Feather name={m.icon} size={13} color={colors.primary} />
+                <m.Icon size={13} color={colors.primary} />
                 <Text style={[styles.metaVal, { color: colors.foreground }]}>{m.val}</Text>
               </View>
             ))}
@@ -136,7 +136,7 @@ export default function CourseDetailScreen() {
                   key={t}
                   style={[styles.topicTag, { backgroundColor: colors.muted, borderColor: colors.border }]}
                 >
-                  <Feather name="check" size={11} color={colors.primary} />
+                  <Check size={11} color={colors.primary} />
                   <Text style={[styles.topicText, { color: colors.foreground }]}>{t}</Text>
                 </View>
               ))}
@@ -171,11 +171,10 @@ export default function CourseDetailScreen() {
               },
             ]}
           >
-            <Feather
-              name={enrolled ? "check-circle" : "play-circle"}
-              size={18}
-              color={enrolled ? colors.mutedForeground : "#fff"}
-            />
+            {enrolled
+              ? <CheckCircle size={18} color={colors.mutedForeground} />
+              : <PlayCircle size={18} color="#fff" />
+            }
             <Text style={[styles.enrollText, { color: enrolled ? colors.mutedForeground : "#fff" }]}>
               {enrolled ? "Ro'yxatdan chiqish" : "Kursga yozilish"}
             </Text>
@@ -207,20 +206,15 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: {},
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  hero: { height: 200, overflow: "hidden", position: "relative" },
+  hero: { height: 200, overflow: "hidden" },
   heroImage: { width: "100%", height: "100%", resizeMode: "cover" },
   heroPlaceholder: { flex: 1, alignItems: "center", justifyContent: "center" },
-  premiumOverlay: { position: "absolute", top: 12, right: 12 },
-  premiumBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20 },
-  premiumText: { fontSize: 12, fontFamily: "Inter_700Bold", color: "#fff" },
   body: { padding: 20 },
   tagRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
   catTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
   catTagText: { fontSize: 12, fontFamily: "Inter_700Bold" },
   levelTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
   levelTagText: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
-  freeTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
-  freeTagText: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
   title: { fontSize: 22, fontFamily: "Inter_700Bold", marginBottom: 8, lineHeight: 28 },
   description: { fontSize: 14, fontFamily: "Inter_400Regular", lineHeight: 20, marginBottom: 16 },
   metaCard: { borderRadius: 14, borderWidth: 1, padding: 14, gap: 8, marginBottom: 24 },
@@ -238,15 +232,6 @@ const styles = StyleSheet.create({
   progressTrack: { height: 6, borderRadius: 3, overflow: "hidden" },
   progressFill: { height: "100%", borderRadius: 3 },
   progressSub: { fontSize: 12, fontFamily: "Inter_400Regular" },
-  enrollBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    paddingVertical: 15,
-    borderRadius: 14,
-    borderWidth: 1,
-    marginBottom: 28,
-  },
+  enrollBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, paddingVertical: 15, borderRadius: 14, borderWidth: 1, marginBottom: 28 },
   enrollText: { fontSize: 16, fontFamily: "Inter_700Bold" },
 });

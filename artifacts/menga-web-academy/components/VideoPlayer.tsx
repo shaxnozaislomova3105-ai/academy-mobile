@@ -1,4 +1,4 @@
-import { Feather } from "@expo/vector-icons";
+import { Play, X, Youtube } from "lucide-react-native";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import WebView from "react-native-webview";
@@ -36,7 +36,7 @@ export function VideoPlayer({ videoUrl, color, title }: Props) {
         ]}
       >
         <View style={[styles.playCircle, { backgroundColor: color }]}>
-          <Feather name="play" size={22} color="#fff" style={{ marginLeft: 3 }} />
+          <Play size={22} color="#fff" />
         </View>
         <View style={styles.thumbInfo}>
           <Text style={[styles.thumbLabel, { color: colors.mutedForeground }]}>
@@ -48,7 +48,7 @@ export function VideoPlayer({ videoUrl, color, title }: Props) {
             </Text>
           ) : null}
           <View style={styles.ytBadge}>
-            <Feather name="youtube" size={12} color="#FF0000" />
+            <Youtube size={12} color="#FF0000" />
             <Text style={styles.ytText}>YouTube</Text>
           </View>
         </View>
@@ -60,11 +60,11 @@ export function VideoPlayer({ videoUrl, color, title }: Props) {
     <View style={[styles.playerWrap, { borderColor: color + "30" }]}>
       <View style={[styles.playerHeader, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <View style={styles.ytBadge}>
-          <Feather name="youtube" size={13} color="#FF0000" />
+          <Youtube size={13} color="#FF0000" />
           <Text style={[styles.ytText, { color: colors.foreground }]}>Video dars</Text>
         </View>
         <Pressable onPress={() => setIsOpen(false)} style={styles.closeBtn}>
-          <Feather name="x" size={16} color={colors.mutedForeground} />
+          <X size={16} color={colors.mutedForeground} />
         </Pressable>
       </View>
       <WebView

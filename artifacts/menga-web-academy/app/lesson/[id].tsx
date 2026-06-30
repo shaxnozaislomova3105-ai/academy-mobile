@@ -1,6 +1,6 @@
-import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Check, ChevronLeft, ChevronRight, ExternalLink, Globe } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
 import {
   Platform,
@@ -76,10 +76,7 @@ export default function LessonScreen() {
       const isHtml = blockLang === "html";
       if (!isHtml) {
         elements.push(
-          <View
-            key={`block-${key}`}
-            style={[styles.codeBlock, { backgroundColor: "#1E293B" }]}
-          >
+          <View key={`block-${key}`} style={[styles.codeBlock, { backgroundColor: "#1E293B" }]}>
             <View style={[styles.codeBlockHeader, { backgroundColor: "#0F172A" }]}>
               <View style={styles.codeDots}>
                 <View style={[styles.codeDot, { backgroundColor: "#FF5F56" }]} />
@@ -146,15 +143,10 @@ export default function LessonScreen() {
           <Text key={i} style={[styles.paragraph, { color: colors.foreground }]}>
             {parts.map((p, j) =>
               j % 2 === 1 ? (
-                <Text
-                  key={j}
-                  style={[styles.inlineCode, { backgroundColor: course.color + "18", color: course.color }]}
-                >
+                <Text key={j} style={[styles.inlineCode, { backgroundColor: course.color + "18", color: course.color }]}>
                   {p}
                 </Text>
-              ) : (
-                p
-              )
+              ) : (p)
             )}
           </Text>
         );
@@ -178,10 +170,7 @@ export default function LessonScreen() {
     for (const line of lesson.content.split("\n")) {
       if (line.startsWith("```")) {
         if (inBlock) {
-          // Only HTML blocks get the interactive playground
-          if (lang === "html") {
-            blocks.push({ code: current.trim(), lang });
-          }
+          if (lang === "html") blocks.push({ code: current.trim(), lang });
           current = "";
           lang = "";
           inBlock = false;
@@ -203,11 +192,7 @@ export default function LessonScreen() {
         title={activeLinkTitle}
         onClose={() => setActiveLinkUrl(null)}
       />
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
       <View
         style={[
           styles.topBar,
@@ -225,7 +210,7 @@ export default function LessonScreen() {
             { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.7 : 1 },
           ]}
         >
-          <Feather name="chevron-left" size={20} color={colors.foreground} />
+          <ChevronLeft size={20} color={colors.foreground} />
         </Pressable>
         <Text style={[styles.topBarTitle, { color: colors.foreground }]}>
           {lesson.order}. {lesson.title}
@@ -236,23 +221,14 @@ export default function LessonScreen() {
         style={[styles.container, { backgroundColor: colors.background }]}
         contentContainerStyle={[
           styles.content,
-          {
-            paddingBottom:
-              Platform.OS === "web"
-                ? insets.bottom + 34
-                : insets.bottom + 24,
-          },
+          { paddingBottom: Platform.OS === "web" ? insets.bottom + 34 : insets.bottom + 24 },
         ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View
-          style={[styles.lessonHeader, { borderColor: course.color + "30", backgroundColor: course.color + "08" }]}
-        >
+        <View style={[styles.lessonHeader, { borderColor: course.color + "30", backgroundColor: course.color + "08" }]}>
           <View style={styles.lessonMeta}>
-            <View
-              style={[styles.courseTag, { backgroundColor: course.color + "20" }]}
-            >
+            <View style={[styles.courseTag, { backgroundColor: course.color + "20" }]}>
               <Text style={[styles.courseTagText, { color: course.color }]}>
                 {course.title}
               </Text>
@@ -268,11 +244,7 @@ export default function LessonScreen() {
 
         {/* Video */}
         {lesson.videoUrl && (
-          <VideoPlayer
-            videoUrl={lesson.videoUrl}
-            color={course.color}
-            title={lesson.title}
-          />
+          <VideoPlayer videoUrl={lesson.videoUrl} color={course.color} title={lesson.title} />
         )}
 
         {/* Content */}
@@ -280,19 +252,14 @@ export default function LessonScreen() {
 
         {/* Code playgrounds */}
         {codeBlocks.map((block, i) => (
-          <CodePlayground
-            key={i}
-            code={block.code}
-            language={block.lang}
-            color={course.color}
-          />
+          <CodePlayground key={i} code={block.code} language={block.lang} color={course.color} />
         ))}
 
         {/* Example project links */}
         {lesson.links && lesson.links.length > 0 && (
           <View style={[styles.linksCard, { backgroundColor: course.color + "08", borderColor: course.color + "25" }]}>
             <View style={styles.linksHeader}>
-              <Feather name="globe" size={15} color={course.color} />
+              <Globe size={15} color={course.color} />
               <Text style={[styles.linksTitle, { color: course.color }]}>
                 Namuna loyihalar
               </Text>
@@ -310,7 +277,7 @@ export default function LessonScreen() {
                 ]}
               >
                 <View style={[styles.linkIcon, { backgroundColor: course.color + "15" }]}>
-                  <Feather name="external-link" size={13} color={course.color} />
+                  <ExternalLink size={13} color={course.color} />
                 </View>
                 <View style={styles.linkInfo}>
                   <Text style={[styles.linkTitle, { color: colors.foreground }]} numberOfLines={1}>
@@ -320,7 +287,7 @@ export default function LessonScreen() {
                     {link.url.replace(/^https?:\/\//, "")}
                   </Text>
                 </View>
-                <Feather name="chevron-right" size={14} color={colors.mutedForeground} />
+                <ChevronRight size={14} color={colors.mutedForeground} />
               </Pressable>
             ))}
           </View>
@@ -328,11 +295,7 @@ export default function LessonScreen() {
 
         {/* Quiz */}
         {lesson.questions && lesson.questions.length > 0 && (
-          <QuizSection
-            lessonId={lesson.id}
-            questions={lesson.questions}
-            color={course.color}
-          />
+          <QuizSection lessonId={lesson.id} questions={lesson.questions} color={course.color} />
         )}
 
         {/* Notes */}
@@ -345,7 +308,7 @@ export default function LessonScreen() {
               onPress={() => router.replace(`/lesson/${prevLesson.id}` as any)}
               style={[styles.navBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
             >
-              <Feather name="chevron-left" size={16} color={colors.foreground} />
+              <ChevronLeft size={16} color={colors.foreground} />
               <Text style={[styles.navBtnText, { color: colors.foreground }]} numberOfLines={1}>
                 {prevLesson.title}
               </Text>
@@ -354,7 +317,6 @@ export default function LessonScreen() {
             <View style={styles.navEmpty} />
           )}
 
-          {/* Circle complete button */}
           <Pressable
             onPress={handleToggleComplete}
             style={({ pressed }) => [
@@ -366,11 +328,7 @@ export default function LessonScreen() {
               },
             ]}
           >
-            <Feather
-              name="check"
-              size={20}
-              color={completed ? "#fff" : colors.mutedForeground}
-            />
+            <Check size={20} color={completed ? "#fff" : colors.mutedForeground} />
           </Pressable>
 
           {nextLesson ? (
@@ -381,7 +339,7 @@ export default function LessonScreen() {
               <Text style={[styles.navBtnText, { color: colors.foreground }]} numberOfLines={1}>
                 {nextLesson.title}
               </Text>
-              <Feather name="chevron-right" size={16} color={colors.foreground} />
+              <ChevronRight size={16} color={colors.foreground} />
             </Pressable>
           ) : (
             <Pressable
@@ -391,7 +349,7 @@ export default function LessonScreen() {
               <Text style={[styles.navBtnText, { color: course.color }]}>
                 Kursga qaytish
               </Text>
-              <Feather name="check" size={16} color={course.color} />
+              <Check size={16} color={course.color} />
             </Pressable>
           )}
         </View>
@@ -402,57 +360,18 @@ export default function LessonScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    gap: 12,
-  },
-  backBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  topBarTitle: {
-    flex: 1,
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-    textAlign: "center",
-  },
+  topBar: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingBottom: 12, borderBottomWidth: 1, gap: 12 },
+  backBtn: { width: 38, height: 38, borderRadius: 10, borderWidth: 1, alignItems: "center", justifyContent: "center" },
+  topBarTitle: { flex: 1, fontSize: 15, fontFamily: "Inter_600SemiBold", textAlign: "center" },
   container: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 16 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  lessonHeader: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16,
-    marginBottom: 24,
-    gap: 8,
-  },
-  lessonMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  courseTag: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
-  },
+  lessonHeader: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 24, gap: 8 },
+  lessonMeta: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  courseTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
   courseTagText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
   lessonNum: { fontSize: 12, fontFamily: "Inter_400Regular" },
   lessonTitle: { fontSize: 20, fontFamily: "Inter_700Bold", lineHeight: 26 },
-  lessonMetaRow: { flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap" },
-  lessonDuration: { fontSize: 12, fontFamily: "Inter_400Regular" },
-  lessonType: { fontSize: 12, fontFamily: "Inter_400Regular" },
-  quizBadge: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20, borderWidth: 1 },
-  quizBadgeText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
-  dot: { width: 3, height: 3, borderRadius: 1.5 },
   body: { marginBottom: 24 },
   paragraph: { fontSize: 15, fontFamily: "Inter_400Regular", lineHeight: 24, marginBottom: 4 },
   bold: { fontSize: 15, fontFamily: "Inter_700Bold", marginBottom: 8 },
@@ -461,84 +380,27 @@ const styles = StyleSheet.create({
   bullet: { fontSize: 18, lineHeight: 24 },
   bulletText: { flex: 1, fontSize: 15, fontFamily: "Inter_400Regular", lineHeight: 24 },
   spacer: { height: 8 },
-  inlineCode: {
-    fontFamily: "Inter_500Medium",
-    fontSize: 13,
-    paddingHorizontal: 4,
-    borderRadius: 4,
-  },
-  linksCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16,
-    marginBottom: 20,
-    gap: 12,
-  },
+  inlineCode: { fontFamily: "Inter_500Medium", fontSize: 13, paddingHorizontal: 4, borderRadius: 4 },
+  linksCard: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 20, gap: 12 },
   linksHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
   linksTitle: { fontSize: 14, fontFamily: "Inter_700Bold" },
   linksSub: { fontSize: 13, fontFamily: "Inter_400Regular", marginTop: -4 },
-  linkRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
+  linkRow: { flexDirection: "row", alignItems: "center", gap: 12, padding: 12, borderRadius: 12, borderWidth: 1 },
   linkIcon: { width: 32, height: 32, borderRadius: 8, alignItems: "center", justifyContent: "center" },
   linkInfo: { flex: 1 },
   linkTitle: { fontSize: 13, fontFamily: "Inter_600SemiBold", marginBottom: 2 },
   linkUrl: { fontSize: 11, fontFamily: "Inter_400Regular" },
-  circleBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1.5,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  circleBtn: { width: 48, height: 48, borderRadius: 24, borderWidth: 1.5, alignItems: "center", justifyContent: "center" },
   navRow: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 8 },
-  navBtn: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    padding: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
+  navBtn: { flex: 1, flexDirection: "row", alignItems: "center", gap: 6, padding: 14, borderRadius: 12, borderWidth: 1 },
   navBtnRight: { justifyContent: "flex-end" },
-  navBtnText: {
-    flex: 1,
-    fontSize: 13,
-    fontFamily: "Inter_500Medium",
-  },
+  navBtnText: { flex: 1, fontSize: 13, fontFamily: "Inter_500Medium" },
   navEmpty: { flex: 1 },
-  codeBlock: {
-    borderRadius: 12,
-    overflow: "hidden",
-    marginBottom: 16,
-  },
-  codeBlockHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
+  codeBlock: { borderRadius: 12, overflow: "hidden", marginBottom: 16 },
+  codeBlockHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14, paddingVertical: 8 },
   codeDots: { flexDirection: "row", gap: 6 },
   codeDot: { width: 10, height: 10, borderRadius: 5 },
-  codeLang: {
-    fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
-    color: "#64748B",
-    letterSpacing: 0.5,
-  },
+  codeLang: { fontSize: 11, fontFamily: "Inter_600SemiBold", color: "#64748B", letterSpacing: 0.5 },
   codeScroll: { paddingHorizontal: 16, paddingVertical: 14 },
-  codeText: {
-    fontFamily: "Courier",
-    fontSize: 13,
-    lineHeight: 22,
-    color: "#E2E8F0",
-  },
+  codeText: { fontFamily: "Courier", fontSize: 13, lineHeight: 22, color: "#E2E8F0" },
 });
