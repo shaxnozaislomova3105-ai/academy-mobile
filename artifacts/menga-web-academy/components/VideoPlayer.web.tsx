@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import React, { useState } from "react";
-import { Play, X, Youtube } from "lucide-react-native";
+import { Play, X } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useColors } from "@/hooks/useColors";
 
@@ -48,7 +48,7 @@ export function VideoPlayer({ videoUrl, color, title }: Props) {
             </Text>
           ) : null}
           <View style={styles.ytBadge}>
-            <Youtube size={12} color="#FF0000" />
+            <View style={styles.ytDot} />
             <Text style={styles.ytText}>YouTube</Text>
           </View>
         </View>
@@ -60,7 +60,7 @@ export function VideoPlayer({ videoUrl, color, title }: Props) {
     <View style={[styles.playerWrap, { borderColor: color + "30" }]}>
       <View style={[styles.playerHeader, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <View style={styles.ytBadge}>
-          <Youtube size={13} color="#FF0000" />
+          <View style={styles.ytDot} />
           <Text style={[styles.ytText, { color: colors.foreground }]}>Video dars</Text>
         </View>
         <Pressable onPress={() => setIsOpen(false)} style={styles.closeBtn}>
@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   thumbLabel: { fontSize: 11, fontFamily: "Inter_400Regular", textTransform: "uppercase", letterSpacing: 0.5 },
   thumbTitle: { fontSize: 14, fontFamily: "Inter_600SemiBold", lineHeight: 20 },
   ytBadge: { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 2 },
+  ytDot: { width: 10, height: 10, borderRadius: 2, backgroundColor: "#FF0000" },
   ytText: { fontSize: 11, fontFamily: "Inter_600SemiBold", color: "#FF0000" },
   playerWrap: { borderRadius: 14, borderWidth: 1, overflow: "hidden", marginBottom: 20 },
   playerHeader: {
