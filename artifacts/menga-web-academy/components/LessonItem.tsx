@@ -74,14 +74,6 @@ export const LessonItem: React.FC<Props> = ({
         >
           {lesson.order}. {lesson.title}
         </Text>
-        <Text style={[styles.meta, { color: colors.mutedForeground }]}>
-          {lesson.type === "video"
-            ? "Video"
-            : lesson.type === "quiz"
-            ? "Test"
-            : "Maqola"}{" "}
-          · {lesson.duration}
-        </Text>
       </View>
 
       {!isLocked && (
