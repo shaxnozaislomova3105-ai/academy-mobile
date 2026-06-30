@@ -5,7 +5,6 @@ import {
   Inter_700Bold,
   useFonts,
 } from "@expo-google-fonts/inter";
-import { Feather } from "@expo/vector-icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -39,8 +38,9 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ...(Feather as any).font,
+    // feather (lowercase) = font family name used by @expo/vector-icons Feather
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    feather: require("@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Feather.ttf"),
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
