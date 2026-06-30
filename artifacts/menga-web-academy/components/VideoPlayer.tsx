@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
-import React from "react";
-import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import WebView from "react-native-webview";
 import { useColors } from "@/hooks/useColors";
 
 interface Props {
@@ -9,42 +10,72 @@ interface Props {
   title?: string;
 }
 
+function getEmbedUrl(url: string): string {
+  const ytMatch =
+    url.match(/youtube\.com\/watch\?v=([^&]+)/) ||
+    url.match(/youtu\.be\/([^?]+)/) ||
+    url.match(/youtube\.com\/embed\/([^?]+)/);
+  if (ytMatch) {
+    return `https://www.youtube.com/embed/${ytMatch[1]}?rel=0&modestbranding=1&playsinline=1`;
+  }
+  return url;
+}
+
 export function VideoPlayer({ videoUrl, color, title }: Props) {
   const colors = useColors();
+  const [isOpen, setIsOpen] = useState(false);
+  const embedUrl = getEmbedUrl(videoUrl);
 
-  const handleOpen = () => {
-    Linking.openURL(videoUrl).catch(() => {
-      Linking.openURL(`https://www.youtube.com`);
-    });
-  };
+  if (!isOpen) {
+    return (
+      <Pressable
+        onPress={() => setIsOpen(true)}
+        style={({ pressed }) => [
+          styles.thumbnail,
+          { backgroundColor: color + "12", borderColor: color + "30", opacity: pressed ? 0.9 : 1 },
+        ]}
+      >
+        <View style={[styles.playCircle, { backgroundColor: color }]}>
+          <Feather name="play" size={22} color="#fff" style={{ marginLeft: 3 }} />
+        </View>
+        <View style={styles.thumbInfo}>
+          <Text style={[styles.thumbLabel, { color: colors.mutedForeground }]}>
+            Video dars
+          </Text>
+          {title ? (
+            <Text style={[styles.thumbTitle, { color: colors.foreground }]} numberOfLines={2}>
+              {title}
+            </Text>
+          ) : null}
+          <View style={styles.ytBadge}>
+            <Feather name="youtube" size={12} color="#FF0000" />
+            <Text style={styles.ytText}>YouTube</Text>
+          </View>
+        </View>
+      </Pressable>
+    );
+  }
 
   return (
-    <Pressable
-      onPress={handleOpen}
-      style={({ pressed }) => [
-        styles.thumbnail,
-        { backgroundColor: color + "12", borderColor: color + "30", opacity: pressed ? 0.85 : 1 },
-      ]}
-    >
-      <View style={[styles.playCircle, { backgroundColor: color }]}>
-        <Feather name="play" size={22} color="#fff" style={{ marginLeft: 3 }} />
-      </View>
-      <View style={styles.thumbInfo}>
-        <Text style={[styles.thumbLabel, { color: colors.mutedForeground }]}>
-          Video dars
-        </Text>
-        {title ? (
-          <Text style={[styles.thumbTitle, { color: colors.foreground }]} numberOfLines={2}>
-            {title}
-          </Text>
-        ) : null}
+    <View style={[styles.playerWrap, { borderColor: color + "30" }]}>
+      <View style={[styles.playerHeader, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <View style={styles.ytBadge}>
-          <Feather name="youtube" size={12} color="#FF0000" />
-          <Text style={styles.ytText}>YouTube orqali ochish</Text>
-          <Feather name="external-link" size={11} color={colors.mutedForeground} />
+          <Feather name="youtube" size={13} color="#FF0000" />
+          <Text style={[styles.ytText, { color: colors.foreground }]}>Video dars</Text>
         </View>
+        <Pressable onPress={() => setIsOpen(false)} style={styles.closeBtn}>
+          <Feather name="x" size={16} color={colors.mutedForeground} />
+        </Pressable>
       </View>
-    </Pressable>
+      <WebView
+        source={{ uri: embedUrl }}
+        style={styles.webview}
+        javaScriptEnabled
+        allowsFullscreenVideo
+        mediaPlaybackRequiresUserAction={false}
+        allowsInlineMediaPlayback
+      />
+    </View>
   );
 }
 
@@ -70,4 +101,15 @@ const styles = StyleSheet.create({
   thumbTitle: { fontSize: 14, fontFamily: "Inter_600SemiBold", lineHeight: 20 },
   ytBadge: { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 2 },
   ytText: { fontSize: 11, fontFamily: "Inter_600SemiBold", color: "#FF0000" },
+  playerWrap: { borderRadius: 14, borderWidth: 1, overflow: "hidden", marginBottom: 20 },
+  playerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  closeBtn: { padding: 4 },
+  webview: { height: 220 },
 });
