@@ -1,6 +1,6 @@
 kind = "mobile"
 previewPath = "/"
-title = "Menga Web Academy"
+title = "Web Academy"
 version = "1.0.0"
 id = "artifacts/menga-web-academy"
 router = "expo-domain"
@@ -16,13 +16,13 @@ paths = [ "/" ]
 localPort = 18218
 
 [services.development]
-run = "pnpm --filter @workspace/menga-web-academy run dev"
+run = "pnpm --filter @workspace/web-academy run dev"
 
 [services.production]
-build = [ "pnpm", "--filter", "@workspace/menga-web-academy", "run", "build" ]
+build = [ "pnpm", "--filter", "@workspace/web-academy", "run", "build" ]
 
 [services.production.run]
-args = [ "node", "artifacts/menga-web-academy/server/serve.js" ]
+args = [ "node", "artifacts/web-academy/server/serve.js" ]
 
 [services.production.run.env]
 PORT = "18218"

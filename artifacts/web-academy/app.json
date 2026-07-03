@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "Web Academy",
-    "slug": "menga-web-academy",
+    "slug": "web-academy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "menga-web-academy",
+    "scheme": "web-academy",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
