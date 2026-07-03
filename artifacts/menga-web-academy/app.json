@@ -14,9 +14,16 @@
       "backgroundColor": "#4F8EF7"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "uz.webacademy.app"
     },
-    "android": {},
+    "android": {
+      "package": "uz.webacademy.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#4F8EF7"
+      }
+    },
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
@@ -25,14 +32,6 @@
         "expo-router",
         {
           "origin": "https://replit.com/"
-        }
-      ],
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./assets/fonts/Feather.ttf"
-          ]
         }
       ],
       "expo-web-browser"
