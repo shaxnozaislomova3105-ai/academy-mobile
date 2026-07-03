@@ -1,0 +1,1 @@
+-keep class uz.webacademy.app.data.** { *; }
