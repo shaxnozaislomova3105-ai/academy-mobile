@@ -116,7 +116,7 @@ export default function CourseDetailScreen() {
           {/* Meta row */}
           <View style={[styles.metaCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             {[
-              { Icon: User, val: course.instructor },
+              
               { Icon: BookOpen, val: `${course.lessonsCount} dars` },
               { Icon: Clock, val: course.duration },
             ].map((m, i) => (

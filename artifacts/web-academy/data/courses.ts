@@ -64,7 +64,7 @@ export const COURSES: Course[] = [
     lessonsCount: 14,
     image: "course-html",
     color: "#E44D26",
-    instructor: "Web Academy jamoasi",
+    instructor: "",
     rating: 4.9,
     studentsCount: 5420,
     isPremium: false,
@@ -258,38 +258,160 @@ export const COURSES: Course[] = [
           { question: "autoplay atributi nima?", options: ["Video avtomatik yuklab oladi", "Video sahifa ochilganda avtomatik boshlanadi", "Video sekin ijro bo'ladi", "Video takrorlanadi"], correct: 1, explanation: "autoplay — video sahifa ochilganda avtomatik boshlaydi. Aksariyat brauzerlar faqat muted bilan birgalikda ruxsat beradi." },
         ],
       },
-      {
+     {
         id: "hb-12",
         courseId: "html-basics",
         title: "Meta teglar va SEO",
         duration: "10 daqiqa",
-        description: "meta, title, og: teglar",
+        description: "meta, title, og: teglar — saytingizni qidiruv tizimlari va ijtimoiy tarmoqlarda to'g'ri ko'rsatish",
         content:
-          "```html\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta name=\"description\" content=\"Sayt tavsifi - 150-160 belgi\">\n  <meta name=\"keywords\" content=\"html, css, javascript\">\n  <meta name=\"author\" content=\"Web Academy\">\n  \n  <!-- Open Graph (ijtimoiy tarmoqlar uchun) -->\n  <meta property=\"og:title\" content=\"Sahifa nomi\">\n  <meta property=\"og:description\" content=\"Tavsif\">\n  <meta property=\"og:image\" content=\"https://example.com/image.jpg\">\n  \n  <title>Sahifa nomi | Web Academy</title>\n</head>\n```",
+          "## Meta teglar nima uchun kerak?\n\n" +
+          "Meta teglar — bu brauzer va qidiruv tizimlariga (Google) sahifangiz haqida qo'shimcha ma'lumot beruvchi maxsus teglar. Ular ekranda ko'rinmaydi, lekin sahifangizning qidiruvda topilishi, mobil qurilmalarda to'g'ri ko'rinishi va ijtimoiy tarmoqlarda chiroyli ulashilishi uchun juda muhim.\n\n" +
+          "```html\n" +
+          "<head>\n" +
+          "  <meta charset=\"UTF-8\">\n" +
+          "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+          "  <meta name=\"description\" content=\"Sayt tavsifi - 150-160 belgi\">\n" +
+          "  <meta name=\"keywords\" content=\"html, css, javascript\">\n" +
+          "  <meta name=\"author\" content=\"Web Academy\">\n" +
+          "  \n" +
+          "  <!-- Open Graph (ijtimoiy tarmoqlar uchun) -->\n" +
+          "  <meta property=\"og:title\" content=\"Sahifa nomi\">\n" +
+          "  <meta property=\"og:description\" content=\"Tavsif\">\n" +
+          "  <meta property=\"og:image\" content=\"https://example.com/image.jpg\">\n" +
+          "  \n" +
+          "  <title>Sahifa nomi | Web Academy</title>\n" +
+          "</head>\n" +
+          "```\n\n" +
+          "### Har bir teg nimaga xizmat qiladi?\n\n" +
+          "**1. `charset=\"UTF-8\"`** — sahifadagi harflarning to'g'ri kodlashi. Agar bu bo'lmasa, o'zbek yoki rus harflari o'rniga tushunarsiz belgilar chiqishi mumkin.\n\n" +
+          "**2. `viewport`** — sahifani telefon va planshet ekraniga moslashtiradi. Bu teg bo'lmasa, sayt mobil qurilmalarda juda kichik yoki noqulay ko'rinadi.\n\n" +
+          "**3. `description`** — Google qidiruv natijalarida sarlavha ostida chiqadigan qisqa tavsif. 150-160 belgi atrofida bo'lishi tavsiya etiladi, chunki Google uzunroq matnni kesib tashlaydi.\n\n" +
+          "**4. `og:` teglar (Open Graph)** — saytingiz havolasini Telegram, Facebook yoki boshqa ijtimoiy tarmoqda ulashganda, qanday sarlavha, tavsif va rasm bilan ko'rinishini belgilaydi.\n\n" +
+          "**5. `<title>`** — brauzer tab'ida va Google qidiruv natijalarida katta harf bilan chiqadigan sahifa nomi.",
         order: 12,
         type: "article",
         questions: [
-          { question: "meta charset='UTF-8' nima uchun?", options: ["Sahifa tezligini oshirish", "Belgilar kodlashini belgilash (o'zbek harflari to'g'ri chiqishi)", "Sahifa rangini o'rnatish", "Brauzer turini aniqlash"], correct: 1, explanation: "UTF-8 — keng tarqalgan belgilar kodlashi. O'zbek, rus va boshqa milliy harflar to'g'ri ko'rinishi uchun muhim." },
-          { question: "viewport meta tegi nima uchun?", options: ["Sahifa ko'rinishini belgilash", "Mobil qurilmalarda sahifani to'g'ri o'lchamda ko'rsatish", "Videoni sozlash", "Rasmlarni yuklash"], correct: 1, explanation: "viewport meta — sahifani mobil qurilma ekraniga moslashtiради. Responsive dizayn uchun majburiy!" },
-          { question: "og:title meta tegi qayerda ishlatiladi?", options: ["Brauzer sarlavhasida", "Ijtimoiy tarmoqlarda ulashganda (Facebook, Telegram) ko'rinadigan sarlavha", "Qidiruv natijalarida", "Email da"], correct: 1, explanation: "Open Graph (og:) — Facebook, Telegram kabi tarmoqlarda link ulashganda chiqadigan ma'lumotlarni belgilaydi." },
-          { question: "meta description necha belgi bo'lishi tavsiya etiladi?", options: ["50 belgi", "300-400 belgi", "150-160 belgi", "10 belgi"], correct: 2, explanation: "Meta description — 150-160 belgi. Qidiruv natijalarida (Google) sahifa tavsifi sifatida ko'rsatiladi." },
+          {
+            question: "meta charset='UTF-8' nima uchun kerak?",
+            options: [
+              "Sahifa tezligini oshirish",
+              "Belgilar kodlashini belgilash (o'zbek harflari to'g'ri chiqishi uchun)",
+              "Sahifa rangini o'rnatish",
+              "Brauzer turini aniqlash",
+            ],
+            correct: 1,
+            explanation: "UTF-8 — keng tarqalgan belgilar kodlashi standarti. Bu teg bo'lmasa, o'zbek, rus va boshqa milliy harflar noto'g'ri (tushunarsiz belgilar sifatida) ko'rinishi mumkin.",
+          },
+          {
+            question: "viewport meta tegi nima uchun ishlatiladi?",
+            options: [
+              "Sahifa ko'rinishini belgilash",
+              "Mobil qurilmalarda sahifani to'g'ri o'lchamda ko'rsatish",
+              "Videoni sozlash",
+              "Rasmlarni yuklash",
+            ],
+            correct: 1,
+            explanation: "viewport meta tegi sahifani telefon va planshet ekraniga moslashtiradi. Responsive (moslashuvchan) dizayn yaratish uchun bu teg majburiy hisoblanadi.",
+          },
+          {
+            question: "og:title meta tegi qayerda ishlatiladi?",
+            options: [
+              "Brauzer sarlavhasida",
+              "Ijtimoiy tarmoqlarda ulashganda (Facebook, Telegram) ko'rinadigan sarlavha",
+              "Qidiruv natijalarida",
+              "Email'da",
+            ],
+            correct: 1,
+            explanation: "Open Graph (og:) teglari — havolani Facebook, Telegram kabi ijtimoiy tarmoqlarda ulashganda qanday sarlavha, tavsif va rasm bilan chiqishini belgilaydi.",
+          },
+          {
+            question: "meta description necha belgidan iborat bo'lishi tavsiya etiladi?",
+            options: ["50 belgi", "300-400 belgi", "150-160 belgi", "10 belgi"],
+            correct: 2,
+            explanation: "Meta description odatda 150-160 belgi atrofida bo'lishi kerak. Google qidiruv natijalarida sahifa tavsifi sifatida shu matnni ko'rsatadi va undan uzunroq qismini kesib tashlaydi.",
+          },
         ],
       },
-      {
+            {
         id: "hb-13",
         courseId: "html-basics",
         title: "HTML5 yangiliklari",
         duration: "11 daqiqa",
-        description: "Canvas, SVG, data-* atributlari",
+        description: "Canvas, SVG, data-* atributlari — HTML5 bilan qo'shilgan zamonaviy imkoniyatlar",
         content:
-          "```html\n<!-- Canvas (JavaScript bilan) -->\n<canvas id=\"myCanvas\" width=\"400\" height=\"200\"></canvas>\n\n<!-- SVG -->\n<svg width=\"100\" height=\"100\">\n  <circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"#00BCD4\" />\n</svg>\n\n<!-- Data atributlari -->\n<div data-user-id=\"123\" data-role=\"admin\">Foydalanuvchi</div>\n\n<!-- Progress bar -->\n<progress value=\"70\" max=\"100\">70%</progress>\n\n<!-- Range input -->\n<input type=\"range\" min=\"0\" max=\"100\" value=\"50\">\n\n<!-- Color picker -->\n<input type=\"color\" value=\"#00BCD4\">\n```",
+          "## HTML5 nima yangiliklar olib keldi?\n\n" +
+          "HTML5 — bu HTML tilining eng so'nggi katta versiyasi bo'lib, u sahifalarga grafika chizish, ma'lumot saqlash va foydalanuvchi bilan interaktiv ishlash imkonini beruvchi yangi teglarni qo'shdi. Quyida eng muhimlari keltirilgan:\n\n" +
+          "```html\n" +
+          "<!-- Canvas (JavaScript bilan) -->\n" +
+          "<canvas id=\"myCanvas\" width=\"400\" height=\"200\"></canvas>\n\n" +
+          "<!-- SVG -->\n" +
+          "<svg width=\"100\" height=\"100\">\n" +
+          "  <circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"#00BCD4\" />\n" +
+          "</svg>\n\n" +
+          "<!-- Data atributlari -->\n" +
+          "<div data-user-id=\"123\" data-role=\"admin\">Foydalanuvchi</div>\n\n" +
+          "<!-- Progress bar -->\n" +
+          "<progress value=\"70\" max=\"100\">70%</progress>\n\n" +
+          "<!-- Range input -->\n" +
+          "<input type=\"range\" min=\"0\" max=\"100\" value=\"50\">\n\n" +
+          "<!-- Color picker -->\n" +
+          "<input type=\"color\" value=\"#00BCD4\">\n" +
+          "```\n\n" +
+          "### Har bir element nimaga xizmat qiladi?\n\n" +
+          "**1. `<canvas>`** — JavaScript yordamida piksel asosida rasm chizish maydoni. O'yinlar, grafiklar, animatsiyalar shu orqali yaratiladi. O'zi bo'sh, JS kod yozmasangiz hech narsa ko'rinmaydi.\n\n" +
+          "**2. `<svg>`** — vektor grafika. Kvadrat, doira, chiziq kabi shakllarni to'g'ridan-to'g'ri HTML ichida chizish mumkin. Canvas'dan farqli o'laroq, SVG kattalashtirilganda ham sifatini yo'qotmaydi (logotiplar, ikonkalar uchun ideal).\n\n" +
+          "**3. `data-*` atributlari** — HTML elementiga o'zingiz xohlagan qo'shimcha ma'lumot yozib qo'yish imkoni. Masalan, `data-user-id=\"123\"` — bu ma'lumotni JavaScript orqali `element.dataset.userId` deb o'qib olish mumkin. Foydalanuvchi ID'si, holat, kategoriya kabi narsalarni saqlashda qulay.\n\n" +
+          "**4. `<progress>`** — jarayonning necha foizi bajarilganini ko'rsatuvchi chiziq (progress bar). Masalan, fayl yuklanishi yoki topshiriq bajarilishini vizual ko'rsatish uchun ishlatiladi.\n\n" +
+          "**5. `<input type=\"range\">`** — surib boshqariladigan slider. Ovoz balandligi, narx oralig'i, reyting kabi qiymatlarni tanlashda ishlatiladi.\n\n" +
+          "**6. `<input type=\"color\">`** — foydalanuvchiga rang tanlash oynasini avtomatik ochib beradi, alohida JS kutubxonasi kerak emas.",
         order: 13,
         type: "article",
         questions: [
-          { question: "<canvas> va <svg> farqi nima?", options: ["Hech qanday farq yo'q", "<canvas> JS bilan piksel asosida chizadi, SVG vektoral element", "<svg> JS bilan, canvas HTML", "Ikkalasi ham bir xil"], correct: 1, explanation: "<canvas> — JS orqali piksellarga chizish. SVG — vektoral grafika, HTML teg sifatida. SVG skalalaninganda sifat yo'qolmaydi." },
-          { question: "data-* atributlari nima uchun?", options: ["CSS uchun", "HTML elementlarga maxsus ma'lumot saqlash uchun", "JavaScript ni o'chirish uchun", "Server uchun"], correct: 1, explanation: "data-* — foydalanuvchi tomonidan belgilanadigan ma'lumot atributlari. JS dan dataset orqali o'qiladi: element.dataset.userId." },
-          { question: "<progress value='70' max='100'> nima ko'rsatadi?", options: ["70% to'lgan progress bar", "100% progress", "70 soniya", "70 ta element"], correct: 0, explanation: "<progress> — jarayon ko'rsatgich. value/max nisbati to'lganlik foizini bildiradi. 70/100 = 70% to'lgan." },
-          { question: "<input type='range'> nima?", options: ["Matn kiritish", "Skalyar (surma) kiritish boshqaruvi", "Rang tanlash", "Sana tanlash"], correct: 1, explanation: "<input type='range'> — surma (slider) boshqaruvi. min, max, step, value atributlari bilan sozlanadi." },
+          {
+            question: "<canvas> va <svg> orasidagi asosiy farq nima?",
+            options: [
+              "Hech qanday farq yo'q",
+              "<canvas> JavaScript bilan piksel asosida chizadi, SVG esa vektoral element",
+              "<svg> JavaScript bilan ishlaydi, canvas oddiy HTML",
+              "Ikkalasi ham bir xil ishlaydi",
+            ],
+            correct: 1,
+            explanation: "<canvas> — JavaScript orqali piksellarga chizish maydoni. SVG esa vektoral grafika bo'lib, to'g'ridan-to'g'ri HTML teg sifatida yoziladi va kattalashtirilganda sifatini yo'qotmaydi.",
+          },
+          {
+            question: "data-* atributlari nima uchun ishlatiladi?",
+            options: [
+              "CSS stillari uchun",
+              "HTML elementlarga maxsus (qo'shimcha) ma'lumot saqlash uchun",
+              "JavaScript ni o'chirish uchun",
+              "Serverga ma'lumot yuborish uchun",
+            ],
+            correct: 1,
+            explanation: "data-* — foydalanuvchi tomonidan belgilanadigan maxsus ma'lumot atributlari. Bu ma'lumot JavaScript'da dataset orqali o'qiladi, masalan: element.dataset.userId.",
+          },
+          {
+            question: "<progress value='70' max='100'> nimani bildiradi?",
+            options: [
+              "70% to'lgan progress bar",
+              "100% to'liq progress",
+              "70 soniyalik jarayon",
+              "70 ta element mavjudligi",
+            ],
+            correct: 0,
+            explanation: "<progress> — jarayon ko'rsatgichi. value va max qiymatlarining nisbati to'lganlik foizini bildiradi: 70/100 = 70% bajarilgan.",
+          },
+          {
+            question: "<input type='range'> nima uchun ishlatiladi?",
+            options: [
+              "Matn kiritish uchun",
+              "Surib (slider) qiymat tanlash boshqaruvi uchun",
+              "Rang tanlash uchun",
+              "Sana tanlash uchun",
+            ],
+            correct: 1,
+            explanation: "<input type='range'> — surma (slider) boshqaruv elementi. min, max, step va value atributlari orqali qanday qiymatlar oralig'ida ishlashi sozlanadi.",
+          },
         ],
       },
       {
@@ -342,113 +464,7 @@ export const COURSES: Course[] = [
       },
     ],
   },
-  {
-    id: "html-advanced",
-    title: "HTML Ilg'or Mavzular",
-    description:
-      "Semantik HTML, kirish imkoniyati va SEO uchun eng yaxshi amaliyotlar.",
-    category: "HTML",
-    level: "O'rta",
-    duration: "4 soat",
-    lessonsCount: 8,
-    image: "course-html",
-    color: "#E44D26",
-    instructor: "Web Academy jamoasi",
-    rating: 4.8,
-    studentsCount: 2130,
-    isPremium: false,
-    topics: ["Semantik HTML", "Accessibility", "SEO", "Microdata", "Web Components"],
-    lessons: [
-      {
-        id: "ha-1",
-        courseId: "html-advanced",
-        title: "Kirish imkoniyati (Accessibility)",
-        duration: "15 daqiqa",
-        description: "ARIA, keyboard navigation, screen readers",
-        content:
-          "Kirish imkoniyati (Accessibility / a11y) — veb-saytni barcha foydalanuvchilar, shu jumladan nogironlar uchun ham qulay qilish.\n\n```html\n<!-- ARIA label -->\n<button aria-label=\"Menyuni yopish\">\n  <svg>...</svg>\n</button>\n\n<!-- Role -->\n<div role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"dialog-title\">\n  <h2 id=\"dialog-title\">Dialog sarlavhasi</h2>\n</div>\n\n<!-- Skip link -->\n<a href=\"#main-content\" class=\"skip-link\">Asosiy kontentga o'tish</a>\n\n<!-- Alt matn -->\n<img src=\"logo.png\" alt=\"Web Academy logotipi\">\n```",
-        order: 1,
-        type: "article",
-      },
-      {
-        id: "ha-2",
-        courseId: "html-advanced",
-        title: "Murakkab formalar",
-        duration: "18 daqiqa",
-        description: "Validation, fieldset, datalist, custom elements",
-        content:
-          "```html\n<!-- Fieldset bilan guruh -->\n<fieldset>\n  <legend>Shaxsiy ma'lumotlar</legend>\n  <label for=\"fname\">Ism:</label>\n  <input type=\"text\" id=\"fname\" autocomplete=\"given-name\">\n</fieldset>\n\n<!-- Datalist -->\n<input list=\"cities\" name=\"city\" placeholder=\"Shahar\">\n<datalist id=\"cities\">\n  <option value=\"Toshkent\">\n  <option value=\"Samarqand\">\n  <option value=\"Buxoro\">\n</datalist>\n\n<!-- Pattern validation -->\n<input type=\"tel\" pattern=\"[0-9]{9}\" placeholder=\"901234567\">\n```",
-        order: 2,
-        type: "article",
-      },
-      {
-        id: "ha-3",
-        courseId: "html-advanced",
-        title: "Microdata va Structured Data",
-        duration: "14 daqiqa",
-        description: "Schema.org, JSON-LD, rich snippets",
-        content:
-          "```html\n<!-- JSON-LD (tavsiya etilgan) -->\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Course\",\n  \"name\": \"HTML Asoslari\",\n  \"description\": \"HTML ni noldan o'rganing\",\n  \"provider\": {\n    \"@type\": \"Organization\",\n    \"name\": \"Web Academy\"\n  }\n}\n</script>\n\n<!-- Microdata -->\n<div itemscope itemtype=\"https://schema.org/Person\">\n  <span itemprop=\"name\">Ali Valiyev</span>\n  <span itemprop=\"jobTitle\">Dasturchi</span>\n</div>\n```",
-        order: 3,
-        type: "article",
-      },
-      {
-        id: "ha-4",
-        courseId: "html-advanced",
-        title: "Performance optimizatsiyasi",
-        duration: "16 daqiqa",
-        description: "Lazy loading, preload, prefetch, defer",
-        content:
-          "```html\n<!-- Rasmlarni lazy load -->\n<img src=\"rasm.jpg\" alt=\"...\" loading=\"lazy\">\n\n<!-- Muhim resursni oldindan yuklash -->\n<link rel=\"preload\" href=\"font.woff2\" as=\"font\" crossorigin>\n\n<!-- Keyingi sahifani prefetch -->\n<link rel=\"prefetch\" href=\"/next-page\">\n\n<!-- Skriptni kechiktirish -->\n<script src=\"analytics.js\" defer></script>\n<script src=\"widget.js\" async></script>\n\n<!-- Responsive rasmlar -->\n<picture>\n  <source media=\"(min-width: 768px)\" srcset=\"large.jpg\">\n  <source media=\"(min-width: 480px)\" srcset=\"medium.jpg\">\n  <img src=\"small.jpg\" alt=\"Rasm\">\n</picture>\n```",
-        order: 4,
-        type: "article",
-      },
-      {
-        id: "ha-5",
-        courseId: "html-advanced",
-        title: "Web Components",
-        duration: "20 daqiqa",
-        description: "Custom elements, Shadow DOM, templates",
-        content:
-          "Web Components — qayta ishlatiladigan, kapsulyatsiyalangan elementlar yaratish.\n\n```js\nclass MyButton extends HTMLElement {\n  constructor() {\n    super();\n    const shadow = this.attachShadow({ mode: 'open' });\n    shadow.innerHTML = `\n      <style>\n        button { background: #00BCD4; color: white; }\n      </style>\n      <button><slot></slot></button>\n    `;\n  }\n}\n\ncustomElements.define('my-button', MyButton);\n```\n\n```html\n<my-button>Bosing</my-button>\n```",
-        order: 5,
-        type: "article",
-      },
-      {
-        id: "ha-6",
-        courseId: "html-advanced",
-        title: "HTML Email",
-        duration: "15 daqiqa",
-        description: "Email shablon yaratish",
-        content:
-          "Email HTML oddiy web HTML dan farq qiladi — CSS cheklangan, JavaScript ishlamaydi.\n\n```html\n<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\"></head>\n<body style=\"margin: 0; font-family: Arial, sans-serif;\">\n  <table width=\"600\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\">\n    <tr>\n      <td style=\"background: #00BCD4; padding: 30px; text-align: center;\">\n        <h1 style=\"color: white; margin: 0;\">Web Academy</h1>\n      </td>\n    </tr>\n    <tr>\n      <td style=\"padding: 30px;\">\n        <p>Hurmatli foydalanuvchi,</p>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>\n```",
-        order: 6,
-        type: "article",
-      },
-      {
-        id: "ha-7",
-        courseId: "html-advanced",
-        title: "Canvas API",
-        duration: "18 daqiqa",
-        description: "2D grafika, animatsiya",
-        content:
-          "```js\nconst canvas = document.getElementById('myCanvas');\nconst ctx = canvas.getContext('2d');\n\n// To'rtburchak\nctx.fillStyle = '#00BCD4';\nctx.fillRect(10, 10, 150, 100);\n\n// Doira\nctx.beginPath();\nctx.arc(75, 75, 50, 0, Math.PI * 2);\nctx.fillStyle = '#0097A7';\nctx.fill();\n\n// Matn\nctx.font = '24px Inter';\nctx.fillStyle = '#0A1628';\nctx.fillText('Web Academy', 10, 200);\n\n// Animatsiya\nfunction animate() {\n  ctx.clearRect(0, 0, canvas.width, canvas.height);\n  // ... chizish\n  requestAnimationFrame(animate);\n}\nanimate();\n```",
-        order: 7,
-        type: "article",
-      },
-      {
-        id: "ha-8",
-        courseId: "html-advanced",
-        title: "Yakuniy test",
-        duration: "20 daqiqa",
-        description: "HTML ilg'or mavzular bo'yicha test",
-        content:
-          "Ushbu darsda barcha o'rganilgan mavzular bo'yicha test topshirasiz.\n\n**Mavzular:**\n- Accessibility va ARIA\n- Semantik HTML\n- Performance\n- Web Components\n- Canvas API\n- Structured Data\n\nMuvaffaqiyatli topshirganlar **HTML Ilg'or** sertifikatini oladi!",
-        order: 8,
-        type: "quiz",
-      },
-    ],
-  },
+  
   {
     id: "css-basics",
     title: "CSS Asoslari",

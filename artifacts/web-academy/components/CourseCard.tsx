@@ -46,7 +46,7 @@ function CourseThumbnail({ course, height = 150 }: { course: Course; height?: nu
         colors={[c + "20", c + "06"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={StyleSheet.absoluteFillObject}
+        style={StyleSheet.absoluteFill}
       />
 
       {/* Book shape */}
@@ -55,7 +55,7 @@ function CourseThumbnail({ course, height = 150 }: { course: Course; height?: nu
           colors={[c + "CC", c]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={StyleSheet.absoluteFillObject}
+          style={StyleSheet.absoluteFill}
         />
         <View style={thumbStyles.spine} />
         <View style={[thumbStyles.badge, { backgroundColor: "#ffffff22" }]}>
@@ -88,7 +88,7 @@ function CompactThumbnail({ course }: { course: Course }) {
         colors={[c + "25", c + "08"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={StyleSheet.absoluteFillObject}
+        style={StyleSheet.absoluteFill}
       />
       <View style={[styles.compactIcon, { backgroundColor: c }]}>
         <meta.Icon size={16} color="#fff" />
