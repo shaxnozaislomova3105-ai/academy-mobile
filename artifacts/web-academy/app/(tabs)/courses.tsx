@@ -13,36 +13,18 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CategoryChip } from "@/components/CategoryChip";
 import { CourseCard } from "@/components/CourseCard";
-import { CATEGORIES, COURSES } from "@/data/courses";
+import { CATEGORIES, } from "@/data/courses";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
-import { supabase } from "@/lib/supabase";
 
 export default function CoursesScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { isEnrolled, getCourseProgress } = useAcademy();
+  const { isEnrolled, getCourseProgress, courses } = useAcademy();
   const { category } = useLocalSearchParams<{ category?: string }>();
   const [activeCategory, setActiveCategory] = useState(category || "Barchasi");
   const [search, setSearch] = useState("");
-  const [courses, setCourses] = useState<any[]>(COURSES);
-
-   useEffect(() => {
-    supabase
-      .from("courses")
-      .select("*")
-      .then(({ data, error }) => {
-         if (error || !data?.length) return;
-         setCourses(
-          data.map((c) => ({
-          ...c,
-          studentsCount: c.students_count,
-          isPremium: c.is_premium,
-        }))
-      );
-    });
-}, []);
 
   useEffect(() => {
     if (category) {
