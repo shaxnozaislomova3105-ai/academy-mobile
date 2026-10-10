@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {
   createContext,
   useCallback,
@@ -6,7 +5,10 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { COURSES, Course, Lesson } from "@/data/courses";
+import type { Session } from "@supabase/supabase-js";
+import { COURSES, Course } from "@/data/courses";
+import { fetchCourses } from "@/lib/courseApi";
+import { supabase } from "@/lib/supabase";
 
 interface UserProfile {
   name: string;
@@ -14,14 +16,17 @@ interface UserProfile {
   joinedAt: string;
 }
 
-interface AcademyState {
+interface AcademyContextValue {
   profile: UserProfile;
   enrolledCourseIds: string[];
   completedLessonIds: string[];
   courses: Course[];
-}
-
-interface AcademyContextValue extends AcademyState {
+  coursesLoading: boolean;
+  session: Session | null;
+  authLoading: boolean;
+  signIn: (email: string, password: string) => Promise<string | null>;
+  signUp: (name: string, email: string, password: string) => Promise<string | null>;
+  signOut: () => Promise<void>;
   enrollCourse: (courseId: string) => Promise<void>;
   unenrollCourse: (courseId: string) => Promise<void>;
   completeLesson: (lessonId: string) => Promise<void>;
@@ -35,11 +40,9 @@ interface AcademyContextValue extends AcademyState {
 
 const AcademyContext = createContext<AcademyContextValue | null>(null);
 
-const STORAGE_KEY = "academy_state";
-
 const DEFAULT_PROFILE: UserProfile = {
   name: "Foydalanuvchi",
-  email: "foydalanuvchi@email.com",
+  email: "",
   joinedAt: new Date().toISOString(),
 };
 
@@ -49,97 +52,166 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [enrolledCourseIds, setEnrolledCourseIds] = useState<string[]>([]);
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [coursesLoading, setCoursesLoading] = useState(true);
+  const [session, setSession] = useState<Session | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
+  // Kurslar bazadan
   useEffect(() => {
-    const load = async () => {
-      try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const saved = JSON.parse(raw);
-          if (saved.profile) setProfile(saved.profile);
-          if (saved.enrolledCourseIds)
-            setEnrolledCourseIds(saved.enrolledCourseIds);
-          if (saved.completedLessonIds)
-            setCompletedLessonIds(saved.completedLessonIds);
-        }
-      } catch {}
-    };
-    load();
+    fetchCourses()
+      .then((data) => setCourses(data))
+      .catch((e) => {
+        console.warn("Supabase xato, mahalliy ma'lumot ishlatildi:", e);
+        setCourses(COURSES);
+      })
+      .finally(() => setCoursesLoading(false));
   }, []);
 
-  const save = useCallback(
-    async (
-      p: UserProfile,
-      enrolled: string[],
-      completed: string[]
-    ) => {
-      try {
-        await AsyncStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({
-            profile: p,
-            enrolledCourseIds: enrolled,
-            completedLessonIds: completed,
-          })
-        );
-      } catch {}
+  // Foydalanuvchi ma'lumotlari bazadan
+  const loadUserData = useCallback(async (userId: string) => {
+    const [p, e, c] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("full_name,email,created_at")
+        .eq("id", userId)
+        .maybeSingle(),
+      supabase.from("enrollments").select("course_id").eq("user_id", userId),
+      supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId),
+    ]);
+    if (p.data) {
+      setProfile({
+        name: p.data.full_name ?? "Foydalanuvchi",
+        email: p.data.email ?? "",
+        joinedAt: p.data.created_at ?? new Date().toISOString(),
+      });
+    }
+    setEnrolledCourseIds((e.data ?? []).map((r: any) => r.course_id));
+    setCompletedLessonIds((c.data ?? []).map((r: any) => r.lesson_id));
+  }, []);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      if (data.session) loadUserData(data.session.user.id);
+      setAuthLoading(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s);
+      setTimeout(() => {
+        if (s) {
+          loadUserData(s.user.id);
+        } else {
+          setProfile(DEFAULT_PROFILE);
+          setEnrolledCourseIds([]);
+          setCompletedLessonIds([]);
+        }
+      }, 0);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [loadUserData]);
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return error ? error.message : null;
+  }, []);
+
+  const signUp = useCallback(
+    async (name: string, email: string, password: string) => {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name } },
+      });
+      return error ? error.message : null;
     },
     []
   );
 
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut();
+  }, []);
+
   const enrollCourse = useCallback(
     async (courseId: string) => {
-      const next = enrolledCourseIds.includes(courseId)
-        ? enrolledCourseIds
-        : [...enrolledCourseIds, courseId];
-      setEnrolledCourseIds(next);
-      await save(profile, next, completedLessonIds);
+      if (!session) return;
+      setEnrolledCourseIds((prev) =>
+        prev.includes(courseId) ? prev : [...prev, courseId]
+      );
+      const { error } = await supabase
+        .from("enrollments")
+        .upsert({ user_id: session.user.id, course_id: courseId });
+      if (error) {
+        console.warn(error.message);
+        setEnrolledCourseIds((prev) => prev.filter((id) => id !== courseId));
+      }
     },
-    [enrolledCourseIds, completedLessonIds, profile, save]
+    [session]
   );
 
   const unenrollCourse = useCallback(
     async (courseId: string) => {
-      const next = enrolledCourseIds.filter((id) => id !== courseId);
-      const course = COURSES.find((c) => c.id === courseId);
+      if (!session) return;
+      const course = courses.find((c) => c.id === courseId);
       const lessonIds = course?.lessons.map((l) => l.id) ?? [];
-      const nextCompleted = completedLessonIds.filter(
-        (id) => !lessonIds.includes(id)
-      );
-      setEnrolledCourseIds(next);
-      setCompletedLessonIds(nextCompleted);
-      await save(profile, next, nextCompleted);
+      setEnrolledCourseIds((prev) => prev.filter((id) => id !== courseId));
+      setCompletedLessonIds((prev) => prev.filter((id) => !lessonIds.includes(id)));
+      await supabase
+        .from("enrollments")
+        .delete()
+        .eq("user_id", session.user.id)
+        .eq("course_id", courseId);
+      if (lessonIds.length > 0) {
+        await supabase
+          .from("lesson_progress")
+          .delete()
+          .eq("user_id", session.user.id)
+          .in("lesson_id", lessonIds);
+      }
     },
-    [enrolledCourseIds, completedLessonIds, profile, save]
+    [session, courses]
   );
 
   const completeLesson = useCallback(
     async (lessonId: string) => {
-      const next = completedLessonIds.includes(lessonId)
-        ? completedLessonIds
-        : [...completedLessonIds, lessonId];
-      setCompletedLessonIds(next);
-      await save(profile, enrolledCourseIds, next);
+      if (!session) return;
+      setCompletedLessonIds((prev) =>
+        prev.includes(lessonId) ? prev : [...prev, lessonId]
+      );
+      const { error } = await supabase
+        .from("lesson_progress")
+        .upsert({ user_id: session.user.id, lesson_id: lessonId });
+      if (error) {
+        console.warn(error.message);
+        setCompletedLessonIds((prev) => prev.filter((id) => id !== lessonId));
+      }
     },
-    [completedLessonIds, enrolledCourseIds, profile, save]
+    [session]
   );
 
   const uncompleteLesson = useCallback(
     async (lessonId: string) => {
-      const next = completedLessonIds.filter((id) => id !== lessonId);
-      setCompletedLessonIds(next);
-      await save(profile, enrolledCourseIds, next);
+      if (!session) return;
+      setCompletedLessonIds((prev) => prev.filter((id) => id !== lessonId));
+      await supabase
+        .from("lesson_progress")
+        .delete()
+        .eq("user_id", session.user.id)
+        .eq("lesson_id", lessonId);
     },
-    [completedLessonIds, enrolledCourseIds, profile, save]
+    [session]
   );
 
   const updateProfile = useCallback(
     async (updates: Partial<UserProfile>) => {
-      const next = { ...profile, ...updates };
-      setProfile(next);
-      await save(next, enrolledCourseIds, completedLessonIds);
+      setProfile((prev) => ({ ...prev, ...updates }));
+      if (!session || updates.name === undefined) return;
+      await supabase
+        .from("profiles")
+        .update({ full_name: updates.name })
+        .eq("id", session.user.id);
     },
-    [profile, enrolledCourseIds, completedLessonIds, save]
+    [session]
   );
 
   const isEnrolled = useCallback(
@@ -154,19 +226,19 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const getCourseProgress = useCallback(
     (courseId: string) => {
-      const course = COURSES.find((c) => c.id === courseId);
+      const course = courses.find((c) => c.id === courseId);
       if (!course || course.lessons.length === 0) return 0;
       const done = course.lessons.filter((l) =>
         completedLessonIds.includes(l.id)
       ).length;
       return Math.round((done / course.lessons.length) * 100);
     },
-    [completedLessonIds]
+    [completedLessonIds, courses]
   );
 
   const getEnrolledCourses = useCallback(
-    () => COURSES.filter((c) => enrolledCourseIds.includes(c.id)),
-    [enrolledCourseIds]
+    () => courses.filter((c) => enrolledCourseIds.includes(c.id)),
+    [enrolledCourseIds, courses]
   );
 
   return (
@@ -175,7 +247,13 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
         profile,
         enrolledCourseIds,
         completedLessonIds,
-        courses: COURSES,
+        courses,
+        coursesLoading,
+        session,
+        authLoading,
+        signIn,
+        signUp,
+        signOut,
         enrollCourse,
         unenrollCourse,
         completeLesson,
@@ -191,7 +269,6 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
     </AcademyContext.Provider>
   );
 };
-
 export const useAcademy = (): AcademyContextValue => {
   const ctx = useContext(AcademyContext);
   if (!ctx) throw new Error("useAcademy must be used within AcademyProvider");

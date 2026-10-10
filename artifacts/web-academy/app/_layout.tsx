@@ -6,19 +6,37 @@ import {
   useFonts,
 } from "@expo-google-fonts/inter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { AcademyProvider } from "@/context/AcademyContext";
+import { AcademyProvider, useAcademy } from "@/context/AcademyContext";
 
 SplashScreen.preventAutoHideAsync();
+
+function AuthGate() {
+  const { session, authLoading } = useAcademy();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authLoading) return;
+    const onLogin = (segments[0] as string) === "login";
+    if (!session && !onLogin) router.replace("/login" as any);
+    else if (session && onLogin) router.replace("/" as any);
+  }, [session, authLoading, segments]);
+
+  return null;
+}
 
 function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={new QueryClient()}>
-      <AcademyProvider>{children}</AcademyProvider>
+      <AcademyProvider>
+        <AuthGate />
+        {children}
+      </AcademyProvider>
     </QueryClientProvider>
   );
 }

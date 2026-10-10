@@ -15,13 +15,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAcademy } from "@/context/AcademyContext";
 import { COURSES } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
+import{LogOut} from "lucide-react-native";
 
 type IconComponent = React.ComponentType<{ size: number; color: string }>;
 
 export default function ProfileScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { profile, updateProfile, enrolledCourseIds, completedLessonIds } =
+  const { profile, updateProfile, enrolledCourseIds, completedLessonIds, signOut } =
     useAcademy();
 
   const [editing, setEditing] = useState(false);
@@ -46,6 +47,14 @@ export default function ProfileScreen() {
     { Icon: TrendingUp, label: "Umumiy progress", value: `${progressPercent}%` },
     { Icon: Calendar, label: "Qo'shilgan sana", value: new Date(profile.joinedAt).toLocaleDateString("uz-UZ") },
   ];
+
+
+  const handleSignOut = () => {
+    Alert.alert("Chiqish", "Hisobingizdan chiqmoqchimisiz?", [
+      { text: "Bekor qilish", style: "cancel" },
+      { text: "Chiqish", style: "destructive", onPress: () => signOut() },
+    ]);
+  };
 
   return (
     <ScrollView
@@ -153,34 +162,45 @@ export default function ProfileScreen() {
       </View>
 
       {/* Progress card */}
+      {/* Progress Card */}
+  <View
+    style={[
+      styles.progressCard,
+      { backgroundColor: colors.primary },
+    ]}
+  >
+    {/* Sarlavha va foiz yonma-yon */}
+    <View style={styles.progressCardInner}>
+      <View>
+        <Text style={styles.progressCardTitle}>Umumiy progress</Text>
+        <Text style={styles.progressCardSub}>
+          {`${completedLessonIds.length} / ${totalLessons} dars bajarildi`}
+        </Text>
+      </View>
+      <Text style={styles.progressPercent}>{progressPercent}%</Text>
+    </View>
+
+    {/* Progress chizig'i (progressCardInner dan TASHQARIDA, to'liq 100% kenglikda) */}
+    <View style={styles.progressTrack}>
       <View
         style={[
-          styles.progressCard,
-          { backgroundColor: colors.primary, },
+          styles.progressFill,
+          { 
+            width: `${progressPercent}%` as any, 
+            backgroundColor: "#ffffff" 
+          },
         ]}
-      >
-        <View style={styles.progressCardInner}>
-          <View>
-            <Text style={styles.progressCardTitle}>Umumiy progress</Text>
-            <Text style={styles.progressCardSub}>
-              {completedLessonIds.length} / {totalLessons} dars bajarildi
-            </Text>
-            <View style={styles.progressTrack}>
-              <View
-                style={[
-                  styles.progressFill,
-                  { width: `${progressPercent}%` as any, backgroundColor: "#fff" },
-                ]}
-              />
-            </View>
-          </View>
-          <Text style={styles.progressPercent}>{progressPercent}%</Text>
-        </View>
-      </View>
+      />
+    </View>
+  </View>
 
-      {/* Stats */}
-      <View
-        style={[styles.statsCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+  {/* Stats */}
+  <View
+    style={[
+      styles.statsCard, 
+      { backgroundColor: colors.card, borderColor: colors.border }
+    ]}
+  
       >
         {menuItems.map((item, idx) => (
           <View key={item.label}>
@@ -208,6 +228,28 @@ export default function ProfileScreen() {
           </View>
         ))}
       </View>
+      <Pressable
+  onPress={handleSignOut}
+  style={({ pressed }) => ({
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 14,
+    marginTop: 16,
+    marginBottom: 8,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#EF444440",
+    backgroundColor: "#EF444410",
+    opacity: pressed ? 0.8 : 1,
+  })}
+>
+  <LogOut size={18} color="#EF4444" />
+  <Text style={{ color: "#EF4444", fontSize: 16, fontFamily: "Inter_700Bold" }}>
+    Chiqish
+  </Text>
+</Pressable>
 
       {/* App info */}
       <View style={styles.appInfo}>
@@ -303,7 +345,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   progressTrack: {
-    width: 180,
+    width: "100%",
     height: 6,
     backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 3,
@@ -345,3 +387,4 @@ const styles = StyleSheet.create({
   appName: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
   appVersion: { fontSize: 12, fontFamily: "Inter_400Regular" },
 });
+

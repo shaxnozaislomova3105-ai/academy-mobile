@@ -16,6 +16,7 @@ import { CourseCard } from "@/components/CourseCard";
 import { CATEGORIES, COURSES } from "@/data/courses";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
+import { supabase } from "@/lib/supabase";
 
 export default function CoursesScreen() {
   const colors = useColors();
@@ -25,6 +26,23 @@ export default function CoursesScreen() {
   const { category } = useLocalSearchParams<{ category?: string }>();
   const [activeCategory, setActiveCategory] = useState(category || "Barchasi");
   const [search, setSearch] = useState("");
+  const [courses, setCourses] = useState<any[]>(COURSES);
+
+   useEffect(() => {
+    supabase
+      .from("courses")
+      .select("*")
+      .then(({ data, error }) => {
+         if (error || !data?.length) return;
+         setCourses(
+          data.map((c) => ({
+          ...c,
+          studentsCount: c.students_count,
+          isPremium: c.is_premium,
+        }))
+      );
+    });
+}, []);
 
   useEffect(() => {
     if (category) {
@@ -32,7 +50,7 @@ export default function CoursesScreen() {
     }
   }, [category]);
 
-  const filtered = COURSES.filter((c) => {
+  const filtered = courses.filter((c) => {
     const matchesCat = activeCategory === "Barchasi" || c.category === activeCategory;
     const matchesSearch =
       search.length === 0 ||

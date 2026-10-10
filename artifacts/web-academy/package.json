@@ -58,8 +58,10 @@
     "zod-validation-error": "^3.4.0"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
     "expo": "~57.0.20",
     "lucide-react-native": "^1.22.0",
+    "react-native-url-polyfill": "^4.0.0",
     "react-native-webview": "^13.16.1"
   }
 }

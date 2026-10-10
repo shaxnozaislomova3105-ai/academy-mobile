@@ -243,7 +243,7 @@ export default function LessonScreen() {
         </View>
 
         {/* Video */}
-        {lesson.videoUrl && (
+        {!!lesson.videoUrl && (
           <VideoPlayer videoUrl={lesson.videoUrl} color={course.color} title={lesson.title} />
         )}
 

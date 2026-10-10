@@ -134,7 +134,7 @@ export const CourseCard: React.FC<Props> = ({
           <Text style={[styles.compactMeta, { color: colors.mutedForeground }]}>
             {course.lessonsCount} dars · {course.duration}
           </Text>
-          {showProgress && (
+          {!!showProgress && (
             <View style={styles.progressRow}>
               <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
                 <View
@@ -201,7 +201,7 @@ export const CourseCard: React.FC<Props> = ({
           {course.description}
         </Text>
 
-        {showProgress && (
+        {!!showProgress && (
           <View style={styles.progressWrap}>
             <View style={styles.progressRow}>
               <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
