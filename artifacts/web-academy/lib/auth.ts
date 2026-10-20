@@ -3,10 +3,7 @@ import { supabase } from "./supabase";
 export const CONSENT_TEXT =
   "Men ushbu platforma dissertatsiya tadqiqoti uchun yaratilganini bilaman. " +
   "Darslarni o'qish jarayonim va test natijalarim ilmiy maqsadda, shaxsiy " +
-  "ma'lumotlarim oshkor etilmagan (anonim) holda tahlil qilinishiga roziman. " +
-  "Xohlagan vaqtda ma'lumotlarimni o'chirishni so'rashim mumkin.";
-
-/** Ro'yxatdan o'tish. consent = true bo'lmasa, ro'yxatdan o'tkazilmaydi. */
+  "ma'lumotlarim oshkor etilmagan (anonim) holda tahlil qilinishiga roziman. ";
 export async function signUp(fullName: string, email: string, password: string, consent: boolean) {
   if (!consent) throw new Error("Davom etish uchun rozilik berishingiz kerak");
 
@@ -63,4 +60,16 @@ export async function getCompletedLessonIds(): Promise<string[]> {
   const { data, error } = await supabase.from("lesson_progress").select("lesson_id");
   if (error) throw error;
   return (data ?? []).map((r) => r.lesson_id);
+}
+
+/** Parolni tiklash xatini yuboradi */
+export async function sendPasswordReset(email: string, redirectTo?: string) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+  if (error) throw error;
+}
+
+/** Xatdagi havola orqali kirgandan keyin yangi parol o'rnatish */
+export async function updatePassword(newPassword: string) {
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) throw error;
 }

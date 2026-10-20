@@ -14,7 +14,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
-import { CONSENT_TEXT } from "@/lib/auth"; // Rozilik matnini import qilamiz
+import { CONSENT_TEXT } from "@/lib/auth";
+import { HelpButton } from "@/components/HelpButton";
 
 export default function LoginScreen() {
   const colors = useColors();
@@ -60,7 +61,6 @@ export default function LoginScreen() {
     setLoading(false);
 
    if (err) {
-  // Supabase xatolarini o'zbekchaga o'giramiz
   let message = err;
 if (err.includes("already registered") || err.includes("already in use")) {
   message = "Bu foydalanuvchi allaqachon ro'yxatdan o'tgan";
@@ -186,6 +186,7 @@ return;
           </Text>
         </Pressable>
       </ScrollView>
+      <HelpButton />
     </KeyboardAvoidingView>
   );
 }

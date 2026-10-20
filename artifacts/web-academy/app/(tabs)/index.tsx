@@ -23,9 +23,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CourseCard } from "@/components/CourseCard";
 import { WALogo } from "@/components/WALogo";
-import { COURSES } from "@/data/courses";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
+import courses from "./courses";
 
 type CategoryIcon = React.ComponentType<{ size: number; color: string }>;
 
@@ -35,6 +35,7 @@ const CATEGORY_ICONS: { name: string; color: string; Icon: CategoryIcon }[] = [
   { name: "JavaScript", color: "#F7DF1E", Icon: Zap },
   { name: "React", color: "#61DAFB", Icon: Layers },
   { name: "Node.js", color: "#339933", Icon: Server },
+  { name: "PHP", color: "#777BB4", Icon: Server },
   { name: "Full-Stack", color: "#7C3AED", Icon: Package },
 ];
 
@@ -42,10 +43,10 @@ export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { getEnrolledCourses, getCourseProgress } = useAcademy();
+  const { getEnrolledCourses, getCourseProgress, courses: allCourses } = useAcademy();
   const [search, setSearch] = useState("");
 
-  const filtered = COURSES.filter(
+  const filtered = allCourses.filter(
     (c) =>
       search.length === 0 ||
       c.title.toLowerCase().includes(search.toLowerCase()) ||

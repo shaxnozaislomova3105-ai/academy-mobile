@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAcademy } from "@/context/AcademyContext";
-import { COURSES } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
 import{LogOut} from "lucide-react-native";
 
@@ -22,14 +21,14 @@ type IconComponent = React.ComponentType<{ size: number; color: string }>;
 export default function ProfileScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { profile, updateProfile, enrolledCourseIds, completedLessonIds, signOut } =
+  const { profile, updateProfile, enrolledCourseIds, completedLessonIds, signOut, courses: allCourses } =
     useAcademy();
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(profile.name);
   const [email, setEmail] = useState(profile.email);
 
-  const totalLessons = COURSES.reduce((s, c) => s + c.lessons.length, 0);
+  const totalLessons = allCourses.reduce((s, c) => s + c.lessons.length, 0);
   const progressPercent =
     totalLessons > 0
       ? Math.round((completedLessonIds.length / totalLessons) * 100)

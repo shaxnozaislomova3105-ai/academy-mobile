@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { COURSES, Course } from "@/data/courses";
+import {Course } from "@/data/courses";
 import { fetchCourses } from "@/lib/courseApi";
 import { supabase } from "@/lib/supabase";
 
@@ -63,7 +63,7 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
       .then((data) => setCourses(data))
       .catch((e) => {
         console.warn("Supabase xato, mahalliy ma'lumot ishlatildi:", e);
-        setCourses(COURSES);
+        setCourses([]);
       })
       .finally(() => setCoursesLoading(false));
   }, []);

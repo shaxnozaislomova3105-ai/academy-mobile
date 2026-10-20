@@ -22,6 +22,7 @@ const IMAGES: Record<string, ReturnType<typeof require>> = {
   "course-nodejs": require("@/assets/images/course-nodejs.png"),
   "course-html": require("@/assets/images/course-html.png"),
   "course-css": require("@/assets/images/course-css.png"),
+  "course-php": require("@/assets/images/course-php.png"),
   "course-fullstack": require("@/assets/images/course-fullstack.png"),
 };
 
@@ -120,7 +121,6 @@ export default function CourseDetailScreen() {
             {[
               
               { Icon: BookOpen, val: `${course.lessonsCount} dars` },
-              { Icon: Clock, val: course.duration },
             ].map((m, i) => (
               <View key={i} style={styles.metaItem}>
                 <m.Icon size={13} color={colors.primary} />

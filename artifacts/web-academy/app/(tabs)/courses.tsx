@@ -25,7 +25,6 @@ export default function CoursesScreen() {
   const { category } = useLocalSearchParams<{ category?: string }>();
   const [activeCategory, setActiveCategory] = useState(category || "Barchasi");
   const [search, setSearch] = useState("");
-
   useEffect(() => {
     if (category) {
       setActiveCategory(category);

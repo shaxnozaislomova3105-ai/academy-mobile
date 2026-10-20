@@ -17,7 +17,6 @@ import { NotesSection } from "@/components/NotesSection";
 import { QuizSection } from "@/components/QuizSection";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { useAcademy } from "@/context/AcademyContext";
-import { COURSES } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
 
 export default function LessonScreen() {
@@ -25,12 +24,12 @@ export default function LessonScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { completeLesson, uncompleteLesson, isLessonCompleted } = useAcademy();
+  const { completeLesson, uncompleteLesson, isLessonCompleted, courses: allCourses } = useAcademy();
   const [activeLinkUrl, setActiveLinkUrl] = useState<string | null>(null);
   const [activeLinkTitle, setActiveLinkTitle] = useState("");
 
   const { lesson, course, prevLesson, nextLesson } = useMemo(() => {
-    for (const c of COURSES) {
+    for (const c of allCourses) {
       const idx = c.lessons.findIndex((l) => l.id === id);
       if (idx >= 0) {
         return {
