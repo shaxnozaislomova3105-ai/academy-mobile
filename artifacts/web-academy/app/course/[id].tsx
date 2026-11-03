@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { CoursesError } from "@/components/CoursesError";
 import { LessonItem } from "@/components/LessonItem";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
@@ -38,7 +39,7 @@ export default function CourseDetailScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { 
-    courses, coursesLoading, isEnrolled, enrollCourse,  unenrollCourse,  isLessonCompleted,  getCourseProgress,
+    courses, coursesLoading, coursesError, isEnrolled, enrollCourse,  unenrollCourse,  isLessonCompleted,  getCourseProgress,
    } = useAcademy();
 
   const course = courses.find((c) => c.id === id);
@@ -46,9 +47,13 @@ export default function CourseDetailScreen() {
   if (!course) {
   return (
     <View style={[styles.center, { backgroundColor: colors.background }]}>
-      <Text style={{ color: colors.foreground }}>
-        {coursesLoading ? "Yuklanmoqda..." : "Kurs topilmadi"}
-      </Text>
+      {coursesError ? (
+        <CoursesError />
+      ) : (
+        <Text style={{ color: colors.foreground }}>
+          {coursesLoading ? "Yuklanmoqda..." : "Kurs topilmadi"}
+        </Text>
+      )}
     </View>
     );
   }

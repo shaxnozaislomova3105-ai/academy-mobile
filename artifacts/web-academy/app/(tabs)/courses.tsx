@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CategoryChip } from "@/components/CategoryChip";
 import { CourseCard } from "@/components/CourseCard";
+import { CoursesError } from "@/components/CoursesError";
 import { CATEGORIES, } from "@/data/courses";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
@@ -21,7 +22,7 @@ export default function CoursesScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { isEnrolled, getCourseProgress, courses } = useAcademy();
+  const { isEnrolled, getCourseProgress, courses, coursesError } = useAcademy();
   const { category } = useLocalSearchParams<{ category?: string }>();
   const [activeCategory, setActiveCategory] = useState(category || "Barchasi");
   const [search, setSearch] = useState("");
@@ -95,7 +96,9 @@ export default function CoursesScreen() {
         ))}
       </ScrollView>
 
-      {filtered.length === 0 ? (
+      {coursesError ? (
+        <CoursesError />
+      ) : filtered.length === 0 ? (
         <View style={styles.empty}>
           <Search size={32} color={colors.mutedForeground} />
           <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>

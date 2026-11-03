@@ -23,7 +23,7 @@ type AnswerState = "idle" | "correct" | "wrong";
 
 export function QuizSection({ lessonId, questions, color }: Props) {
   const colors = useColors();
-  const { saveQuizAttempt } = useAcademy();
+  const { saveQuizAttempt, session } = useAcademy();
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [answerState, setAnswerState] = useState<AnswerState>("idle");
@@ -32,11 +32,12 @@ export function QuizSection({ lessonId, questions, color }: Props) {
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [expanded, setExpanded] = useState(false);
 
-  const KEY = `quiz_${lessonId}`;
+  const KEY = session ? `quiz_${session.user.id}_${lessonId}` : null;
 
   useEffect(() => {
+    if (!KEY) return;
     AsyncStorage.getItem(KEY).then((v) => {
-      if (v) setBestScore(parseInt(v, 10));
+      setBestScore(v ? parseInt(v, 10) : null);
     });
   }, [KEY]);
 
@@ -64,7 +65,7 @@ export function QuizSection({ lessonId, questions, color }: Props) {
       saveQuizAttempt(lessonId, realScore, questions.length);
       const best = bestScore ?? 0;
       if (realScore > best) {
-        AsyncStorage.setItem(KEY, String(realScore));
+        if (KEY) AsyncStorage.setItem(KEY, String(realScore));
         setBestScore(realScore);
       }
     }

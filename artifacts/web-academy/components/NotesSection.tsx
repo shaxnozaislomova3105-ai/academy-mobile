@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Check, ChevronDown, ChevronUp, Edit3, Trash2 } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
 
 interface Props {
@@ -11,21 +12,24 @@ interface Props {
 
 export function NotesSection({ lessonId, color }: Props) {
   const colors = useColors();
+  const { session } = useAcademy();
   const [expanded, setExpanded] = useState(false);
   const [text, setText] = useState("");
   const [saved, setSaved] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const KEY = `note_${lessonId}`;
+  const KEY = session ? `note_${session.user.id}_${lessonId}` : null;
 
   useEffect(() => {
+    if (!KEY) return;
     AsyncStorage.getItem(KEY).then((v) => {
-      if (v) setText(v);
+      setText(v ?? "");
     });
   }, [KEY]);
 
   const handleChange = (val: string) => {
     setText(val);
     setSaved(false);
+    if (!KEY) return;
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(async () => {
       await AsyncStorage.setItem(KEY, val);
@@ -35,7 +39,7 @@ export function NotesSection({ lessonId, color }: Props) {
 
   const handleClear = async () => {
     setText("");
-    await AsyncStorage.removeItem(KEY);
+    if (KEY) await AsyncStorage.removeItem(KEY);
     setSaved(false);
   };
 

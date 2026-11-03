@@ -68,7 +68,13 @@ export async function sendPasswordReset(email: string, redirectTo?: string) {
   if (error) throw error;
 }
 
-/** Xatdagi havola orqali kirgandan keyin yangi parol o'rnatish */
+/** Emailga kelgan tiklash kodini tekshiradi va foydalanuvchini tizimga kiritadi */
+export async function verifyResetCode(email: string, code: string) {
+  const { error } = await supabase.auth.verifyOtp({ email, token: code, type: "recovery" });
+  if (error) throw error;
+}
+
+/** Tiklash kodi tasdiqlangandan keyin yangi parol o'rnatish */
 export async function updatePassword(newPassword: string) {
   const { error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) throw error;

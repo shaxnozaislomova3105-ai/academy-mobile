@@ -1,5 +1,5 @@
 import * as Haptics from "expo-haptics";
-import { BookOpen, Calendar, CheckCircle, Edit2, Mail, TrendingUp, User } from "lucide-react-native";
+import { BookOpen, Calendar, CheckCircle, Edit2, TrendingUp, User } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Alert,
@@ -26,7 +26,6 @@ export default function ProfileScreen() {
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(profile.name);
-  const [email, setEmail] = useState(profile.email);
 
   const totalLessons = allCourses.reduce((s, c) => s + c.lessons.length, 0);
   const progressPercent =
@@ -35,7 +34,7 @@ export default function ProfileScreen() {
       : 0;
 
   const handleSave = async () => {
-    await updateProfile({ name, email });
+    await updateProfile({ name });
     setEditing(false);
     if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
@@ -49,6 +48,11 @@ export default function ProfileScreen() {
 
 
   const handleSignOut = () => {
+    // react-native-web'da Alert.alert ishlamaydi
+    if (Platform.OS === "web") {
+      if (window.confirm("Hisobingizdan chiqmoqchimisiz?")) signOut();
+      return;
+    }
     Alert.alert("Chiqish", "Hisobingizdan chiqmoqchimisiz?", [
       { text: "Bekor qilish", style: "cancel" },
       { text: "Chiqish", style: "destructive", onPress: () => signOut() },
@@ -118,23 +122,6 @@ export default function ProfileScreen() {
                 onChangeText={setName}
                 placeholder="Ism"
                 placeholderTextColor={colors.mutedForeground}
-                style={[styles.input, { color: colors.foreground }]}
-              />
-            </View>
-            <View
-              style={[
-                styles.inputRow,
-                { backgroundColor: colors.card, borderColor: colors.border },
-              ]}
-            >
-              <Mail size={16} color={colors.mutedForeground} />
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Email"
-                placeholderTextColor={colors.mutedForeground}
-                keyboardType="email-address"
-                autoCapitalize="none"
                 style={[styles.input, { color: colors.foreground }]}
               />
             </View>

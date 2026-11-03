@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CourseCard } from "@/components/CourseCard";
+import { CoursesError } from "@/components/CoursesError";
 import { WALogo } from "@/components/WALogo";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
@@ -34,7 +35,7 @@ export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { getEnrolledCourses, getCourseProgress, courses: allCourses } = useAcademy();
+  const { getEnrolledCourses, getCourseProgress, coursesError, courses: allCourses } = useAcademy();
   const [search, setSearch] = useState("");
 
   const filtered = allCourses.filter(
@@ -87,6 +88,8 @@ export default function HomeScreen() {
           </Pressable>
         )}
       </View>
+
+      {coursesError && <CoursesError />}
 
       {/* Search results */}
       {search.length > 0 ? (

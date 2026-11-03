@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CodePlayground } from "@/components/CodePlayground";
+import { CoursesError } from "@/components/CoursesError";
 import { InAppBrowser } from "@/components/InAppBrowser";
 import { NotesSection } from "@/components/NotesSection";
 import { QuizSection } from "@/components/QuizSection";
@@ -25,7 +26,10 @@ export default function LessonScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { completeLesson, uncompleteLesson, isLessonCompleted, logLessonTime, courses: allCourses } = useAcademy();
+  const {
+    completeLesson, uncompleteLesson, isLessonCompleted, logLessonTime, isEnrolled,
+    userDataLoaded, coursesLoading, coursesError, courses: allCourses,
+  } = useAcademy();
   const [activeLinkUrl, setActiveLinkUrl] = useState<string | null>(null);
   const [activeLinkTitle, setActiveLinkTitle] = useState("");
 
@@ -42,10 +46,17 @@ export default function LessonScreen() {
       }
     }
     return { lesson: null, course: null, prevLesson: null, nextLesson: null };
-  }, [id]);
+  }, [id, allCourses]);
+
+  // Yozilmagan kurs darsi havola orqali ochilsa, kurs sahifasiga qaytariladi
+  const courseId = course?.id;
+  const locked = !!courseId && userDataLoaded && !isEnrolled(courseId);
+  useEffect(() => {
+    if (locked) router.replace(`/course/${courseId}` as any);
+  }, [locked, courseId]);
 
   // Darsda o'tkazilgan vaqt: ilova fonga o'tganda hisob to'xtaydi
-  const lessonId = lesson?.id;
+  const lessonId = locked ? undefined : lesson?.id;
   useEffect(() => {
     if (!lessonId) return;
     let startedAt: number | null = Date.now();
@@ -65,10 +76,16 @@ export default function LessonScreen() {
     };
   }, [lessonId, logLessonTime]);
 
-  if (!lesson || !course) {
+  if (!lesson || !course || locked) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <Text style={{ color: colors.foreground }}>Dars topilmadi</Text>
+        {coursesError ? (
+          <CoursesError />
+        ) : (
+          <Text style={{ color: colors.foreground }}>
+            {coursesLoading || locked ? "Yuklanmoqda..." : "Dars topilmadi"}
+          </Text>
+        )}
       </View>
     );
   }

@@ -22,6 +22,9 @@ interface AcademyContextValue {
   completedLessonIds: string[];
   courses: Course[];
   coursesLoading: boolean;
+  coursesError: boolean;
+  userDataLoaded: boolean;
+  reloadData: () => Promise<void>;
   session: Session | null;
   authLoading: boolean;
   signIn: (email: string, password: string) => Promise<string | null>;
@@ -56,19 +59,27 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [coursesLoading, setCoursesLoading] = useState(true);
+  const [coursesError, setCoursesError] = useState(false);
+  const [userDataLoaded, setUserDataLoaded] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
 
   // Kurslar bazadan
-  useEffect(() => {
-    fetchCourses()
+  const loadCourses = useCallback(() => {
+    setCoursesLoading(true);
+    setCoursesError(false);
+    return fetchCourses()
       .then((data) => setCourses(data))
       .catch((e) => {
-        console.warn("Supabase xato, mahalliy ma'lumot ishlatildi:", e);
-        setCourses([]);
+        console.warn("Kurslarni yuklashda xato:", e);
+        setCoursesError(true);
       })
       .finally(() => setCoursesLoading(false));
   }, []);
+
+  useEffect(() => {
+    loadCourses();
+  }, [loadCourses]);
 
   // Foydalanuvchi ma'lumotlari bazadan
   const loadUserData = useCallback(async (userId: string) => {
@@ -88,9 +99,20 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
         joinedAt: p.data.created_at ?? new Date().toISOString(),
       });
     }
-    setEnrolledCourseIds((e.data ?? []).map((r: any) => r.course_id));
-    setCompletedLessonIds((c.data ?? []).map((r: any) => r.lesson_id));
+    // Xato bo'lsa mavjud ro'yxatlar o'chib ketmasin
+    if (!e.error) {
+      setEnrolledCourseIds((e.data ?? []).map((r: any) => r.course_id));
+      setUserDataLoaded(true);
+    }
+    if (!c.error) {
+      setCompletedLessonIds((c.data ?? []).map((r: any) => r.lesson_id));
+    }
   }, []);
+
+  const reloadData = useCallback(async () => {
+    await loadCourses();
+    if (session) await loadUserData(session.user.id);
+  }, [loadCourses, loadUserData, session]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -107,6 +129,7 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
           setProfile(DEFAULT_PROFILE);
           setEnrolledCourseIds([]);
           setCompletedLessonIds([]);
+          setUserDataLoaded(false);
         }
       }, 0);
     });
@@ -274,6 +297,9 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
         completedLessonIds,
         courses,
         coursesLoading,
+        coursesError,
+        userDataLoaded,
+        reloadData,
         session,
         authLoading,
         signIn,

@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,8 +15,22 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
-import { CONSENT_TEXT } from "@/lib/auth";
+import { CONSENT_TEXT, sendPasswordReset, updatePassword, verifyResetCode } from "@/lib/auth";
 import { HelpButton } from "@/components/HelpButton";
+
+function resetErrorMessage(e: unknown): string {
+  const err = e instanceof Error ? e.message : String(e);
+  if (err.includes("rate limit") || err.includes("security purposes")) {
+    return "Juda ko'p urinish bo'ldi. Birozdan keyin qayta urinib ko'ring";
+  }
+  if (err.includes("expired") || err.includes("invalid")) {
+    return "Kod noto'g'ri yoki muddati o'tgan";
+  }
+  if (err.includes("different from the old")) {
+    return "Yangi parol eskisidan farq qilishi kerak";
+  }
+  return err;
+}
 
 export default function LoginScreen() {
   const colors = useColors();
@@ -23,7 +38,10 @@ export default function LoginScreen() {
   const router = useRouter();
   const { signIn, signUp } = useAcademy();
 
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
+  const [resetSent, setResetSent] = useState(false);
+  const [code, setCode] = useState("");
+  const [info, setInfo] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +49,64 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const switchMode = (next: "login" | "register" | "forgot") => {
+    setMode(next);
+    setError(null);
+    setInfo(null);
+    setResetSent(false);
+    setCode("");
+  };
+
+  const submitReset = async () => {
+    setError(null);
+    setInfo(null);
+    if (!email.trim()) {
+      setError("Emailni kiriting");
+      return;
+    }
+
+    if (!resetSent) {
+      setLoading(true);
+      try {
+        await sendPasswordReset(email.trim());
+        setResetSent(true);
+        setPassword("");
+        setInfo("Agar bu email ro'yxatdan o'tgan bo'lsa, unga tiklash kodi yuborildi");
+      } catch (e) {
+        setError(resetErrorMessage(e));
+      }
+      setLoading(false);
+      return;
+    }
+
+    if (!code.trim()) {
+      setError("Emailga kelgan kodni kiriting");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Parol kamida 6 ta belgidan iborat bo'lsin");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await verifyResetCode(email.trim(), code.trim());
+    } catch (e) {
+      setError(resetErrorMessage(e));
+      setLoading(false);
+      return;
+    }
+    // Kod tasdiqlangach sessiya ochiladi va AuthGate bosh sahifaga o'tkazadi
+    try {
+      await updatePassword(password);
+    } catch (e) {
+      Alert.alert("Parol o'zgarmadi", resetErrorMessage(e));
+    }
+    setLoading(false);
+  };
+
   const submit = async () => {
+    if (mode === "forgot") return submitReset();
     setError(null);
     if (!email.trim() || !password) {
       setError("Email va parolni kiriting");
@@ -95,7 +170,7 @@ return;
       >
         <Text style={[styles.brand, { color: colors.primary }]}>Web Academy</Text>
         <Text style={[styles.title, { color: colors.foreground }]}>
-          {mode === "login" ? "Kirish" : "Ro'yxatdan o'tish"}
+          {mode === "login" ? "Kirish" : mode === "register" ? "Ro'yxatdan o'tish" : "Parolni tiklash"}
         </Text>
 
         {mode === "register" && (
@@ -116,15 +191,28 @@ return;
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        <TextInput
-          style={inputStyle}
-          placeholder="Parol"
-          placeholderTextColor={colors.mutedForeground}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          autoCapitalize="none"
-        />
+        {mode === "forgot" && resetSent && (
+          <TextInput
+            style={inputStyle}
+            placeholder="Emaildagi kod"
+            placeholderTextColor={colors.mutedForeground}
+            value={code}
+            onChangeText={setCode}
+            keyboardType="number-pad"
+            autoCapitalize="none"
+          />
+        )}
+        {(mode !== "forgot" || resetSent) && (
+          <TextInput
+            style={inputStyle}
+            placeholder={mode === "forgot" ? "Yangi parol" : "Parol"}
+            placeholderTextColor={colors.mutedForeground}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoCapitalize="none"
+          />
+        )}
 
         {/* Faqat ro'yxatdan o'tish rejimida dissertatsiya rozilik matni va checkbox chiqadi */}
         {mode === "register" && (
@@ -154,6 +242,7 @@ return;
           </View>
         )}
 
+        {info && <Text style={[styles.consentText, { color: colors.mutedForeground }]}>{info}</Text>}
         {error && <Text style={styles.error}>{error}</Text>}
 
         <Pressable
@@ -168,21 +257,32 @@ return;
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={styles.btnText}>
-              {mode === "login" ? "Kirish" : "Ro'yxatdan o'tish"}
+              {mode === "login"
+                ? "Kirish"
+                : mode === "register"
+                  ? "Ro'yxatdan o'tish"
+                  : resetSent
+                    ? "Parolni yangilash"
+                    : "Kod yuborish"}
             </Text>
           )}
         </Pressable>
 
-        <Pressable
-          onPress={() => {
-            setMode(mode === "login" ? "register" : "login");
-            setError(null);
-          }}
-        >
+        {mode === "login" && (
+          <Pressable onPress={() => switchMode("forgot")}>
+            <Text style={[styles.switch, { color: colors.primary }]}>
+              Parolni unutdingizmi?
+            </Text>
+          </Pressable>
+        )}
+
+        <Pressable onPress={() => switchMode(mode === "login" ? "register" : "login")}>
           <Text style={[styles.switch, { color: colors.mutedForeground }]}>
             {mode === "login"
               ? "Hisobingiz yo'qmi? Ro'yxatdan o'ting"
-              : "Hisobingiz bormi? Kiring"}
+              : mode === "register"
+                ? "Hisobingiz bormi? Kiring"
+                : "Kirishga qaytish"}
           </Text>
         </Pressable>
       </ScrollView>
