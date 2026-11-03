@@ -2,7 +2,7 @@ import { BlurView } from "expo-blur";
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
-import { NativeTabs } from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/native-tabs";
 import { SymbolView } from "expo-symbols";
 import { BarChart2, BookOpen, Home, User } from "lucide-react-native";
 import React from "react";

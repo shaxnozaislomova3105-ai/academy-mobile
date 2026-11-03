@@ -7,12 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "web-academy",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#4F8EF7"
-    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "uz.webacademy.app"
@@ -34,7 +28,16 @@
           "origin": "https://replit.com/"
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#4F8EF7",
+          "imageWidth": 200
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
