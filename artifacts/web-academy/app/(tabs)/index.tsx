@@ -33,9 +33,9 @@ const CATEGORY_ICONS: { name: string; color: string; Icon: CategoryIcon }[] = [
   { name: "HTML", color: "#E44D26", Icon: Code },
   { name: "CSS", color: "#264DE4", Icon: Layout },
   { name: "JavaScript", color: "#F7DF1E", Icon: Zap },
-  { name: "React", color: "#61DAFB", Icon: Layers },
-  { name: "Node.js", color: "#339933", Icon: Server },
   { name: "PHP", color: "#777BB4", Icon: Server },
+  { name: "Node.js", color: "#339933", Icon: Server },
+  { name: "React", color: "#61DAFB", Icon: Layers },
   { name: "Full-Stack", color: "#7C3AED", Icon: Package },
 ];
 
