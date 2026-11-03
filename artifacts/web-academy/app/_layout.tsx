@@ -5,7 +5,6 @@ import {
   Inter_700Bold,
   useFonts,
 } from "@expo-google-fonts/inter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
@@ -32,12 +31,10 @@ function AuthGate() {
 
 function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={new QueryClient()}>
-      <AcademyProvider>
-        <AuthGate />
-        {children}
-      </AcademyProvider>
-    </QueryClientProvider>
+    <AcademyProvider>
+      <AuthGate />
+      {children}
+    </AcademyProvider>
   );
 }
 

@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { BookOpen, Check, CheckCircle, Clock, PlayCircle, User } from "lucide-react-native";
+import { BookOpen, Check, CheckCircle, PlayCircle } from "lucide-react-native";
 import React from "react";
 import {
   Image,
@@ -18,7 +18,6 @@ import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
 
 const IMAGES: Record<string, ReturnType<typeof require>> = {
-  "course-web-basics": require("@/assets/images/course-web-basics.png"),
   "course-javascript": require("@/assets/images/course-javascript.png"),
   "course-react": require("@/assets/images/course-react.png"),
   "course-nodejs": require("@/assets/images/course-nodejs.png"),

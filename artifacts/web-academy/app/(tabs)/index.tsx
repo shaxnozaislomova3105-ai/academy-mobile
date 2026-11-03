@@ -2,7 +2,6 @@ import { useRouter } from "expo-router";
 import { Code, Layers, Layout, Package, Search, Server, User, X, Zap } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Image,
   Platform,
   Pressable,
   ScrollView,
@@ -17,7 +16,6 @@ import { CoursesError } from "@/components/CoursesError";
 import { WALogo } from "@/components/WALogo";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
-import courses from "./courses";
 
 type CategoryIcon = React.ComponentType<{ size: number; color: string }>;
 

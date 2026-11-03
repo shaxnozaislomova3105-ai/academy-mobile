@@ -18,7 +18,7 @@ export default function MyLearningScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { getEnrolledCourses, getCourseProgress, completedLessonIds, courses } =
+  const { getEnrolledCourses, getCourseProgress, completedLessonIds } =
     useAcademy();
 
   const enrolled = getEnrolledCourses();
@@ -29,7 +29,6 @@ export default function MyLearningScreen() {
   const completed = enrolled.filter((c) => getCourseProgress(c.id) === 100);
   const notStarted = enrolled.filter((c) => getCourseProgress(c.id) === 0);
 
-  const totalLessons = courses.reduce((s, c) => s + c.lessons.length, 0);
   const completedCount = completedLessonIds.length;
 
   return (
