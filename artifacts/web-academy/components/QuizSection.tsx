@@ -3,6 +3,7 @@ import * as Haptics from "expo-haptics";
 import { ArrowRight, Check, CheckSquare, ChevronDown, ChevronUp, Info, RotateCcw, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
 
 export interface QuizQuestion {
@@ -22,6 +23,7 @@ type AnswerState = "idle" | "correct" | "wrong";
 
 export function QuizSection({ lessonId, questions, color }: Props) {
   const colors = useColors();
+  const { saveQuizAttempt } = useAcademy();
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [answerState, setAnswerState] = useState<AnswerState>("idle");
@@ -59,6 +61,7 @@ export function QuizSection({ lessonId, questions, color }: Props) {
     } else {
       const realScore = answerState === "correct" ? score : score;
       setFinished(true);
+      saveQuizAttempt(lessonId, realScore, questions.length);
       const best = bestScore ?? 0;
       if (realScore > best) {
         AsyncStorage.setItem(KEY, String(realScore));

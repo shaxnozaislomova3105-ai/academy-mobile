@@ -1,8 +1,9 @@
 import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Check, ChevronLeft, ChevronRight, ExternalLink, Globe } from "lucide-react-native";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  AppState,
   Platform,
   Pressable,
   ScrollView,
@@ -24,7 +25,7 @@ export default function LessonScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { completeLesson, uncompleteLesson, isLessonCompleted, courses: allCourses } = useAcademy();
+  const { completeLesson, uncompleteLesson, isLessonCompleted, logLessonTime, courses: allCourses } = useAcademy();
   const [activeLinkUrl, setActiveLinkUrl] = useState<string | null>(null);
   const [activeLinkTitle, setActiveLinkTitle] = useState("");
 
@@ -42,6 +43,27 @@ export default function LessonScreen() {
     }
     return { lesson: null, course: null, prevLesson: null, nextLesson: null };
   }, [id]);
+
+  // Darsda o'tkazilgan vaqt: ilova fonga o'tganda hisob to'xtaydi
+  const lessonId = lesson?.id;
+  useEffect(() => {
+    if (!lessonId) return;
+    let startedAt: number | null = Date.now();
+    const flush = () => {
+      if (startedAt === null) return;
+      const seconds = Math.round((Date.now() - startedAt) / 1000);
+      if (seconds >= 2) logLessonTime(lessonId, startedAt, seconds);
+      startedAt = null;
+    };
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state !== "active") flush();
+      else if (startedAt === null) startedAt = Date.now();
+    });
+    return () => {
+      sub.remove();
+      flush();
+    };
+  }, [lessonId, logLessonTime]);
 
   if (!lesson || !course) {
     return (

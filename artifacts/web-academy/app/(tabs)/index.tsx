@@ -1,15 +1,6 @@
 import { useRouter } from "expo-router";
 import { Code, Layers, Layout, Package, Search, Server, User, X, Zap } from "lucide-react-native";
 import React, { useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { useEffect } from "react";
-useEffect(() => {
-  supabase
-    .from("progress")
-    .select("*")
-    .limit(1)
-    .then(({ data, error }) => console.log("Supabase:", data, error));
-}, []);
 import {
   Image,
   Platform,

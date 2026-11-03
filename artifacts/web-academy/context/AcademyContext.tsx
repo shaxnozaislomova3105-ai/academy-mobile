@@ -31,6 +31,8 @@ interface AcademyContextValue {
   unenrollCourse: (courseId: string) => Promise<void>;
   completeLesson: (lessonId: string) => Promise<void>;
   uncompleteLesson: (lessonId: string) => Promise<void>;
+  saveQuizAttempt: (lessonId: string, score: number, total: number) => Promise<void>;
+  logLessonTime: (lessonId: string, startedAt: number, durationSeconds: number) => Promise<void>;
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
   isEnrolled: (courseId: string) => boolean;
   isLessonCompleted: (lessonId: string) => boolean;
@@ -121,7 +123,8 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name } },
+        // Login ekrani rozilik belgilanmasa bu yerga o'tkazmaydi
+        options: { data: { full_name: name, consented_at: new Date().toISOString() } },
       });
       return error ? error.message : null;
     },
@@ -152,24 +155,21 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
   const unenrollCourse = useCallback(
     async (courseId: string) => {
       if (!session) return;
-      const course = courses.find((c) => c.id === courseId);
-      const lessonIds = course?.lessons.map((l) => l.id) ?? [];
       setEnrolledCourseIds((prev) => prev.filter((id) => id !== courseId));
-      setCompletedLessonIds((prev) => prev.filter((id) => !lessonIds.includes(id)));
-      await supabase
+      // Progress o'chirilmaydi: u tadqiqot ma'lumoti, qayta yozilganda tiklanadi
+      const { error } = await supabase
         .from("enrollments")
         .delete()
         .eq("user_id", session.user.id)
         .eq("course_id", courseId);
-      if (lessonIds.length > 0) {
-        await supabase
-          .from("lesson_progress")
-          .delete()
-          .eq("user_id", session.user.id)
-          .in("lesson_id", lessonIds);
+      if (error) {
+        console.warn(error.message);
+        setEnrolledCourseIds((prev) =>
+          prev.includes(courseId) ? prev : [...prev, courseId]
+        );
       }
     },
-    [session, courses]
+    [session]
   );
 
   const completeLesson = useCallback(
@@ -198,6 +198,31 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
         .delete()
         .eq("user_id", session.user.id)
         .eq("lesson_id", lessonId);
+    },
+    [session]
+  );
+
+  const saveQuizAttempt = useCallback(
+    async (lessonId: string, score: number, total: number) => {
+      if (!session) return;
+      const { error } = await supabase
+        .from("quiz_attempts")
+        .insert({ user_id: session.user.id, lesson_id: lessonId, score, total });
+      if (error) console.warn(error.message);
+    },
+    [session]
+  );
+
+  const logLessonTime = useCallback(
+    async (lessonId: string, startedAt: number, durationSeconds: number) => {
+      if (!session) return;
+      const { error } = await supabase.from("lesson_time_logs").insert({
+        user_id: session.user.id,
+        lesson_id: lessonId,
+        started_at: new Date(startedAt).toISOString(),
+        duration_seconds: durationSeconds,
+      });
+      if (error) console.warn(error.message);
     },
     [session]
   );
@@ -258,6 +283,8 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
         unenrollCourse,
         completeLesson,
         uncompleteLesson,
+        saveQuizAttempt,
+        logLessonTime,
         updateProfile,
         isEnrolled,
         isLessonCompleted,
