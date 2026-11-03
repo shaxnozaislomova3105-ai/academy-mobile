@@ -12,9 +12,9 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CodePlayground } from "@/components/CodePlayground";
 import { CoursesError } from "@/components/CoursesError";
 import { InAppBrowser } from "@/components/InAppBrowser";
+import { LessonContent } from "@/components/LessonContent";
 import { NotesSection } from "@/components/NotesSection";
 import { QuizSection } from "@/components/QuizSection";
 import { VideoPlayer } from "@/components/VideoPlayer";
@@ -102,127 +102,6 @@ export default function LessonScreen() {
     }
   };
 
-  const renderContent = (content: string) => {
-    const elements: React.ReactNode[] = [];
-    const lines = content.split("\n");
-    let inBlock = false;
-    let blockLines: string[] = [];
-    let blockLang = "";
-
-    const flushBlock = (key: number) => {
-      if (blockLines.length === 0) return;
-      const isHtml = blockLang === "html";
-      if (!isHtml) {
-        elements.push(
-          <View key={`block-${key}`} style={[styles.codeBlock, { backgroundColor: "#1E293B" }]}>
-            <View style={[styles.codeBlockHeader, { backgroundColor: "#0F172A" }]}>
-              <View style={styles.codeDots}>
-                <View style={[styles.codeDot, { backgroundColor: "#FF5F56" }]} />
-                <View style={[styles.codeDot, { backgroundColor: "#FFBD2E" }]} />
-                <View style={[styles.codeDot, { backgroundColor: "#27C93F" }]} />
-              </View>
-              {blockLang ? (
-                <Text style={styles.codeLang}>{blockLang.toUpperCase()}</Text>
-              ) : null}
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.codeScroll}>
-              <Text style={styles.codeText} selectable>
-                {blockLines.join("\n")}
-              </Text>
-            </ScrollView>
-          </View>
-        );
-      }
-      blockLines = [];
-      blockLang = "";
-    };
-
-    lines.forEach((line, i) => {
-      if (line.startsWith("```")) {
-        if (inBlock) {
-          flushBlock(i);
-          inBlock = false;
-        } else {
-          blockLang = line.slice(3).trim();
-          inBlock = true;
-        }
-        return;
-      }
-      if (inBlock) {
-        blockLines.push(line);
-        return;
-      }
-      if (line.startsWith("**") && line.endsWith("**")) {
-        elements.push(
-          <Text key={i} style={[styles.bold, { color: colors.foreground }]}>
-            {line.slice(2, -2)}
-          </Text>
-        );
-      } else if (line.startsWith("- ")) {
-        elements.push(
-          <View key={i} style={styles.bulletRow}>
-            <Text style={[styles.bullet, { color: course.color }]}>•</Text>
-            <Text style={[styles.bulletText, { color: colors.foreground }]}>
-              {line.slice(2)}
-            </Text>
-          </View>
-        );
-      } else if (line.startsWith("# ")) {
-        elements.push(
-          <Text key={i} style={[styles.h1, { color: colors.foreground }]}>
-            {line.slice(2)}
-          </Text>
-        );
-      } else if (line.trim() === "") {
-        elements.push(<View key={i} style={styles.spacer} />);
-      } else if (line.includes("`") && !line.startsWith("```")) {
-        const parts = line.split("`");
-        elements.push(
-          <Text key={i} style={[styles.paragraph, { color: colors.foreground }]}>
-            {parts.map((p, j) =>
-              j % 2 === 1 ? (
-                <Text key={j} style={[styles.inlineCode, { backgroundColor: course.color + "18", color: course.color }]}>
-                  {p}
-                </Text>
-              ) : (p)
-            )}
-          </Text>
-        );
-      } else {
-        elements.push(
-          <Text key={i} style={[styles.paragraph, { color: colors.foreground }]}>
-            {line}
-          </Text>
-        );
-      }
-    });
-
-    return elements;
-  };
-
-  const codeBlocks = (() => {
-    const blocks: { code: string; lang: string }[] = [];
-    let inBlock = false;
-    let current = "";
-    let lang = "";
-    for (const line of lesson.content.split("\n")) {
-      if (line.startsWith("```")) {
-        if (inBlock) {
-          if (lang === "html") blocks.push({ code: current.trim(), lang });
-          current = "";
-          lang = "";
-          inBlock = false;
-        } else {
-          lang = line.slice(3).trim();
-          inBlock = true;
-        }
-      } else if (inBlock) {
-        current += line + "\n";
-      }
-    }
-    return blocks;
-  })();
-
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <InAppBrowser
@@ -286,12 +165,7 @@ export default function LessonScreen() {
         )}
 
         {/* Content */}
-        <View style={styles.body}>{renderContent(lesson.content)}</View>
-
-        {/* Code playgrounds */}
-        {codeBlocks.map((block, i) => (
-          <CodePlayground key={i} code={block.code} language={block.lang} color={course.color} />
-        ))}
+        <LessonContent content={lesson.content} color={course.color} />
 
         {/* Example project links */}
         {lesson.links && lesson.links.length > 0 && (
@@ -410,15 +284,6 @@ const styles = StyleSheet.create({
   courseTagText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
   lessonNum: { fontSize: 12, fontFamily: "Inter_400Regular" },
   lessonTitle: { fontSize: 20, fontFamily: "Inter_700Bold", lineHeight: 26 },
-  body: { marginBottom: 24 },
-  paragraph: { fontSize: 15, fontFamily: "Inter_400Regular", lineHeight: 24, marginBottom: 4 },
-  bold: { fontSize: 15, fontFamily: "Inter_700Bold", marginBottom: 8 },
-  h1: { fontSize: 20, fontFamily: "Inter_700Bold", marginBottom: 12 },
-  bulletRow: { flexDirection: "row", gap: 8, marginBottom: 4 },
-  bullet: { fontSize: 18, lineHeight: 24 },
-  bulletText: { flex: 1, fontSize: 15, fontFamily: "Inter_400Regular", lineHeight: 24 },
-  spacer: { height: 8 },
-  inlineCode: { fontFamily: "Inter_500Medium", fontSize: 13, paddingHorizontal: 4, borderRadius: 4 },
   linksCard: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 20, gap: 12 },
   linksHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
   linksTitle: { fontSize: 14, fontFamily: "Inter_700Bold" },
@@ -434,11 +299,4 @@ const styles = StyleSheet.create({
   navBtnRight: { justifyContent: "flex-end" },
   navBtnText: { flex: 1, fontSize: 13, fontFamily: "Inter_500Medium" },
   navEmpty: { flex: 1 },
-  codeBlock: { borderRadius: 12, overflow: "hidden", marginBottom: 16 },
-  codeBlockHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14, paddingVertical: 8 },
-  codeDots: { flexDirection: "row", gap: 6 },
-  codeDot: { width: 10, height: 10, borderRadius: 5 },
-  codeLang: { fontSize: 11, fontFamily: "Inter_600SemiBold", color: "#64748B", letterSpacing: 0.5 },
-  codeScroll: { paddingHorizontal: 16, paddingVertical: 14 },
-  codeText: { fontFamily: "Courier", fontSize: 13, lineHeight: 22, color: "#E2E8F0" },
 });

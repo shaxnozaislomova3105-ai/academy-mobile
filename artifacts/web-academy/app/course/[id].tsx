@@ -19,6 +19,7 @@ import { useColors } from "@/hooks/useColors";
 
 const IMAGES: Record<string, ReturnType<typeof require>> = {
   "course-web-basics": require("@/assets/images/course-web-basics.png"),
+  "course-javascript": require("@/assets/images/course-javascript.png"),
   "course-react": require("@/assets/images/course-react.png"),
   "course-nodejs": require("@/assets/images/course-nodejs.png"),
   "course-html": require("@/assets/images/course-html.png"),
