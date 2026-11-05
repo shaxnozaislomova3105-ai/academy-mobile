@@ -22,3 +22,9 @@ export async function updatePassword(newPassword: string) {
   const { error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) throw error;
 }
+
+/** Sinf kodi bazada borligini tekshiradi; aloqa xatosida null qaytaradi */
+export async function classCodeExists(code: string): Promise<boolean | null> {
+  const { data, error } = await supabase.rpc("class_code_exists", { p_code: code });
+  return error ? null : data === true;
+}

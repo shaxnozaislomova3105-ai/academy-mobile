@@ -28,7 +28,7 @@ interface AcademyContextValue {
   session: Session | null;
   authLoading: boolean;
   signIn: (email: string, password: string) => Promise<string | null>;
-  signUp: (name: string, email: string, password: string) => Promise<string | null>;
+  signUp: (name: string, email: string, password: string, classCode: string) => Promise<string | null>;
   signOut: () => Promise<void>;
   enrollCourse: (courseId: string) => Promise<void>;
   unenrollCourse: (courseId: string) => Promise<void>;
@@ -142,12 +142,18 @@ export const AcademyProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const signUp = useCallback(
-    async (name: string, email: string, password: string) => {
+    async (name: string, email: string, password: string, classCode: string) => {
       const { error } = await supabase.auth.signUp({
         email,
         password,
         // Login ekrani rozilik belgilanmasa bu yerga o'tkazmaydi
-        options: { data: { full_name: name, consented_at: new Date().toISOString() } },
+        options: {
+          data: {
+            full_name: name,
+            consented_at: new Date().toISOString(),
+            class_code: classCode.trim().toUpperCase(),
+          },
+        },
       });
       return error ? error.message : null;
     },

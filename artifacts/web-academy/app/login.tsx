@@ -15,8 +15,10 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
-import { CONSENT_TEXT, sendPasswordReset, updatePassword, verifyResetCode } from "@/lib/auth";
+import { classCodeExists, CONSENT_TEXT, sendPasswordReset, updatePassword, verifyResetCode } from "@/lib/auth";
 import { HelpButton } from "@/components/HelpButton";
+
+const INVALID_CLASS_CODE_MESSAGE = "Sinf kodi noto'g'ri. Kodni o'qituvchingizdan so'rang";
 
 function resetErrorMessage(e: unknown): string {
   const err = e instanceof Error ? e.message : String(e);
@@ -43,6 +45,7 @@ export default function LoginScreen() {
   const [code, setCode] = useState("");
   const [info, setInfo] = useState<string | null>(null);
   const [name, setName] = useState("");
+  const [classCode, setClassCode] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [consent, setConsent] = useState(false); // Rozilik holati
@@ -116,6 +119,10 @@ export default function LoginScreen() {
       setError("Ismingizni kiriting");
       return;
     }
+    if (mode === "register" && !classCode.trim()) {
+      setError("Sinf kodini kiriting");
+      return;
+    }
     if (mode === "register" && !consent) {
       setError("Tadqiqotda qatnashish uchun rozilik berishingiz kerak");
       return;
@@ -128,7 +135,13 @@ export default function LoginScreen() {
     setLoading(true);
     let err: string | null;
     if (mode === "register") {
-      err = await signUp(name.trim(), email.trim(), password);
+      const codeOk = await classCodeExists(classCode);
+      if (codeOk === false) {
+        setLoading(false);
+        setError(INVALID_CLASS_CODE_MESSAGE);
+        return;
+      }
+      err = await signUp(name.trim(), email.trim(), password, classCode);
       if (!err) err = await signIn(email.trim(), password);
     } else {
       err = await signIn(email.trim(), password);
@@ -143,6 +156,8 @@ if (err.includes("already registered") || err.includes("already in use")) {
   message = "Bunday foydalanuvchi topilmadi yoki parol noto'g'ri";
 } else if (err.includes("Password should be at least 6 characters")) {
   message = "Parol kamida 6 ta belgidan iborat bo'lsin";
+} else if (err.includes("Database error saving new user") || err.includes("invalid_class_code")) {
+  message = INVALID_CLASS_CODE_MESSAGE;
 }
 
 setError(message);
@@ -180,6 +195,17 @@ return;
             placeholderTextColor={colors.mutedForeground}
             value={name}
             onChangeText={setName}
+          />
+        )}
+        {mode === "register" && (
+          <TextInput
+            style={inputStyle}
+            placeholder="Sinf kodi"
+            placeholderTextColor={colors.mutedForeground}
+            value={classCode}
+            onChangeText={setClassCode}
+            autoCapitalize="characters"
+            autoCorrect={false}
           />
         )}
         <TextInput
