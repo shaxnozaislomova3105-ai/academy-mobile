@@ -5,11 +5,13 @@ import {
   Animated,
   Linking,
   PanResponder,
+  Platform,
   StyleSheet,
   Text,
   useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WEB_MAX_WIDTH } from "@/constants/layout";
 
 const TELEGRAM_URL = "https://t.me/Islomova_Sh31";
 const STORAGE_KEY = "help_button_position";
@@ -18,7 +20,8 @@ const BTN_H = 46;
 const MARGIN = 8;
 
 export function HelpButton() {
-  const { width, height } = useWindowDimensions();
+  const { width: windowWidth, height } = useWindowDimensions();
+  const width = Platform.OS === "web" ? Math.min(windowWidth, WEB_MAX_WIDTH) : windowWidth;
   const insets = useSafeAreaInsets();
 
   // Ruxsat etilgan chegaralar (har renderda yangilanadi)

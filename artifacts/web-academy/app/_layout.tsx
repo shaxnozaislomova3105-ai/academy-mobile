@@ -8,9 +8,12 @@ import {
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
+import { Platform, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { WEB_MAX_WIDTH } from "@/constants/layout";
 import { AcademyProvider, useAcademy } from "@/context/AcademyContext";
+import { useColors } from "@/hooks/useColors";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,7 +41,17 @@ function Providers({ children }: { children: React.ReactNode }) {
   );
 }
 
+const styles = StyleSheet.create({
+  column: {
+    flex: 1,
+    ...(Platform.OS === "web"
+      ? { width: "100%", maxWidth: WEB_MAX_WIDTH, alignSelf: "center" }
+      : {}),
+  },
+});
+
 export default function RootLayout() {
+  const colors = useColors();
   const [fontsLoaded, fontError] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -55,10 +68,12 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Providers>
-        <Stack screenOptions={{ headerShown: false }} />
-      </Providers>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={styles.column}>
+        <Providers>
+          <Stack screenOptions={{ headerShown: false }} />
+        </Providers>
+      </View>
     </GestureHandlerRootView>
   );
 }
