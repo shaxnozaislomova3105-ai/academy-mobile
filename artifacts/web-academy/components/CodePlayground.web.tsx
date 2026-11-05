@@ -97,7 +97,7 @@ export function CodePlayground({ code, language, color }: Props) {
               key: runKey,
               srcDoc: html,
               style: { width: "100%", height: "100%", border: "none" },
-              sandbox: "allow-scripts",
+              sandbox: "allow-scripts allow-modals",
             })}
           </View>
         </View>

@@ -48,7 +48,7 @@ export default function CoursesScreen() {
       contentContainerStyle={[
         styles.content,
         {
-          paddingTop: Platform.OS === "web" ? insets.top + 67 : insets.top + 16,
+          paddingTop: insets.top + 16,
           paddingBottom: Platform.OS === "web" ? insets.bottom + 34 + 84 : insets.bottom + 100,
         },
       ]}

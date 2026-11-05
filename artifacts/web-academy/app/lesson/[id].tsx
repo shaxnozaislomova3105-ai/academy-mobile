@@ -116,7 +116,7 @@ export default function LessonScreen() {
           {
             backgroundColor: colors.background,
             borderBottomColor: colors.border,
-            paddingTop: Platform.OS === "web" ? insets.top + 67 : insets.top + 8,
+            paddingTop: insets.top + 8,
           },
         ]}
       >

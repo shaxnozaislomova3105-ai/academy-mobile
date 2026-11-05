@@ -34,7 +34,7 @@ export function InAppBrowser({ url, title, onClose }: Props) {
             {
               backgroundColor: colors.card,
               borderBottomColor: colors.border,
-              paddingTop: insets.top + 67 + 8,
+              paddingTop: insets.top + 8,
             },
           ]}
         >
