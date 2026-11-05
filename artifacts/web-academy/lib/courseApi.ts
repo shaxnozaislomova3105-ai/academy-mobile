@@ -38,6 +38,7 @@ export async function fetchCourses(): Promise<Course[]> {
       studentsCount: 0,
       isPremium: c.is_premium,
       topics: c.topics ?? [],
+      stage: c.stage ?? 1,
       lessons,
     };
   });

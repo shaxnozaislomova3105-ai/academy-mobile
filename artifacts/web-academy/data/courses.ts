@@ -36,8 +36,17 @@ export interface Course {
   instructor: string;
   isPremium: boolean;
   topics: string[];
+  stage: CourseStage;
   lessons: Lesson[];
 }
+
+export type CourseStage = 1 | 2 | 3;
+
+export const STAGE_LABELS: Record<CourseStage, string> = {
+  1: "1-bosqich: Asosiy",
+  2: "2-bosqich: Chuqurlashtirilgan",
+  3: "3-bosqich: Kasbiy",
+};
 
 export const CATEGORIES = [
   "Barchasi",

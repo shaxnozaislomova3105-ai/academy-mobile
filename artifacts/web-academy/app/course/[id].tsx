@@ -114,6 +114,9 @@ export default function CourseDetailScreen() {
             <View style={[styles.levelTag, { backgroundColor: levelColor + "15" }]}>
               <Text style={[styles.levelTagText, { color: levelColor }]}>{course.level}</Text>
             </View>
+            <View style={[styles.levelTag, { backgroundColor: colors.muted }]}>
+              <Text style={[styles.levelTagText, { color: colors.mutedForeground }]}>{course.stage}-bosqich</Text>
+            </View>
           </View>
 
           <Text style={[styles.title, { color: colors.foreground }]}>{course.title}</Text>

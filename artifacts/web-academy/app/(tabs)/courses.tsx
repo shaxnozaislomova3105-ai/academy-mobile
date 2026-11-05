@@ -14,9 +14,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CategoryChip } from "@/components/CategoryChip";
 import { CourseCard } from "@/components/CourseCard";
 import { CoursesError } from "@/components/CoursesError";
-import { CATEGORIES, } from "@/data/courses";
+import { CATEGORIES, CourseStage, STAGE_LABELS } from "@/data/courses";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
+
+const STAGES: CourseStage[] = [1, 2, 3];
 
 export default function CoursesScreen() {
   const colors = useColors();
@@ -107,20 +109,29 @@ export default function CoursesScreen() {
         </View>
       ) : (
         <>
-          <View style={styles.section}>
-            {filtered.map((c) => {
-              const enrolled = isEnrolled(c.id);
-              return (
-                <CourseCard
-                  key={c.id}
-                  course={c}
-                  onPress={() => router.push(`/course/${c.id}` as any)}
-                  showProgress={enrolled}
-                  progress={getCourseProgress(c.id)}
-                />
-              );
-            })}
-          </View>
+          {STAGES.map((stage) => {
+            const stageCourses = filtered.filter((c) => c.stage === stage);
+            if (stageCourses.length === 0) return null;
+            return (
+              <View key={stage} style={styles.section}>
+                <Text style={[styles.stageTitle, { color: colors.foreground }]}>
+                  {STAGE_LABELS[stage]}
+                </Text>
+                {stageCourses.map((c) => {
+                  const enrolled = isEnrolled(c.id);
+                  return (
+                    <CourseCard
+                      key={c.id}
+                      course={c}
+                      onPress={() => router.push(`/course/${c.id}` as any)}
+                      showProgress={enrolled}
+                      progress={getCourseProgress(c.id)}
+                    />
+                  );
+                })}
+              </View>
+            );
+          })}
         </>
       )}
     </ScrollView>
@@ -146,6 +157,7 @@ const styles = StyleSheet.create({
   chipsScroll: { marginBottom: 4 },
   chips: { paddingBottom: 14, paddingRight: 20 },
   section: { marginBottom: 24 },
+  stageTitle: { fontSize: 17, fontFamily: "Inter_700Bold", marginBottom: 12 },
   empty: { alignItems: "center", paddingVertical: 48, gap: 12 },
   emptyText: { fontSize: 14, fontFamily: "Inter_400Regular" },
 });
