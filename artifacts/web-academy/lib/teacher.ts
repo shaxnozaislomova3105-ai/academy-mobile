@@ -16,6 +16,18 @@ export interface StudentOverview {
   avg_quiz_percent: number | null;
   minutes: number;
   last_active: string | null;
+  exercises_solved: number;
+  exercise_hints: number;
+}
+
+export interface ExerciseStat {
+  lesson_title: string;
+  lesson_position: number;
+  exercise_index: number;
+  exercise_prompt: string | null;
+  students_tried: number;
+  students_solved: number;
+  students_used_solution: number;
 }
 
 export interface StudentLessonRow {
@@ -26,6 +38,9 @@ export interface StudentLessonRow {
   total: number | null;
   attempts: number;
   minutes: number | null;
+  exercises_total: number;
+  exercises_solved: number | null;
+  exercise_hints: number | null;
 }
 
 /** O'qituvchiga biriktirilgan sinflar; o'qituvchi bo'lmasa bo'sh ro'yxat */
@@ -43,6 +58,13 @@ export async function fetchClassOverview(classId: string): Promise<StudentOvervi
 
 export async function fetchStudentDetail(studentId: string): Promise<StudentLessonRow[]> {
   const { data, error } = await supabase.rpc("teacher_student_detail", { p_student: studentId });
+  if (error) throw error;
+  return data ?? [];
+}
+
+/** Sinf bo'yicha mashqlar; eng kam yechilganlari birinchi */
+export async function fetchExerciseStats(classId: string): Promise<ExerciseStat[]> {
+  const { data, error } = await supabase.rpc("teacher_exercise_stats", { p_class: classId });
   if (error) throw error;
   return data ?? [];
 }

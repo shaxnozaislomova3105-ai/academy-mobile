@@ -63,6 +63,12 @@ export default function TeacherStudentScreen() {
                 {" · "}
                 {r.minutes ?? 0} daq
               </Text>
+              {r.exercises_total > 0 && (
+                <Text style={[styles.meta, { color: colors.mutedForeground }]}>
+                  Mashqlar: {r.exercises_solved ?? 0}/{r.exercises_total} yechilgan
+                  {r.exercise_hints ? ` · ${r.exercise_hints} ta maslahat` : ""}
+                </Text>
+              )}
             </View>
           ))
         )}

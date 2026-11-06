@@ -13,7 +13,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import {
+  ExerciseStat,
   fetchClassOverview,
+  fetchExerciseStats,
   fetchTeacherClasses,
   formatDate,
   StudentOverview,
@@ -27,6 +29,8 @@ export default function TeacherPanelScreen() {
   const [classes, setClasses] = useState<TeacherClass[]>([]);
   const [activeClass, setActiveClass] = useState<string | null>(null);
   const [students, setStudents] = useState<StudentOverview[]>([]);
+  const [exerciseStats, setExerciseStats] = useState<ExerciseStat[]>([]);
+  const [view, setView] = useState<"students" | "exercises">("students");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +42,11 @@ export default function TeacherPanelScreen() {
       setClasses(list);
       const selected = classId ?? list[0]?.class_id ?? null;
       setActiveClass(selected);
-      setStudents(selected ? await fetchClassOverview(selected) : []);
+      const [overview, stats] = selected
+        ? await Promise.all([fetchClassOverview(selected), fetchExerciseStats(selected)])
+        : [[], []];
+      setStudents(overview);
+      setExerciseStats(stats);
     } catch (e) {
       console.warn(e);
       setError("Ma'lumotlarni yuklab bo'lmadi. Internet aloqasini tekshiring.");
@@ -123,8 +131,58 @@ export default function TeacherPanelScreen() {
               ))}
             </View>
 
+            <View style={styles.tabs}>
+              {(["students", "exercises"] as const).map((t) => (
+                <Pressable
+                  key={t}
+                  onPress={() => setView(t)}
+                  style={[
+                    styles.tab,
+                    { borderBottomColor: view === t ? colors.primary : "transparent" },
+                  ]}
+                >
+                  <Text style={[styles.tabText, { color: view === t ? colors.primary : colors.mutedForeground }]}>
+                    {t === "students" ? "O'quvchilar" : "Mashqlar tahlili"}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
             {loading ? (
               <ActivityIndicator style={styles.loader} color={colors.primary} />
+            ) : view === "exercises" ? (
+              exerciseStats.length === 0 ? (
+                <Text style={[styles.note, { color: colors.mutedForeground }]}>
+                  Bu sinfda hali mashq yechilmagan.
+                </Text>
+              ) : (
+                <>
+                  <Text style={[styles.rowMeta, { color: colors.mutedForeground }]}>
+                    Eng kam yechilgan mashqlar birinchi turadi.
+                  </Text>
+                  {exerciseStats.map((ex) => {
+                    const rate = Math.round((ex.students_solved / ex.students_tried) * 100);
+                    return (
+                      <View
+                        key={`${ex.lesson_position}-${ex.exercise_index}`}
+                        style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border }]}
+                      >
+                        <View style={styles.rowInfo}>
+                          <Text style={[styles.rowMeta, { color: colors.mutedForeground }]}>
+                            {ex.lesson_position}-dars · {ex.lesson_title} · {ex.exercise_index + 1}-mashq
+                          </Text>
+                          <Text style={[styles.rowName, { color: colors.foreground }]} numberOfLines={2}>
+                            {ex.exercise_prompt ?? ""}
+                          </Text>
+                          <Text style={[styles.rowMeta, { color: colors.mutedForeground }]}>
+                            {ex.students_solved}/{ex.students_tried} yechgan ({rate}%) · {ex.students_used_solution} kishi yechimni ko'rgan
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  })}
+                </>
+              )
             ) : students.length === 0 ? (
               <Text style={[styles.note, { color: colors.mutedForeground }]}>
                 Bu sinfda hali ro'yxatdan o'tgan o'quvchi yo'q.
@@ -153,6 +211,9 @@ export default function TeacherPanelScreen() {
                       {st.avg_quiz_percent === null ? "—" : `${st.avg_quiz_percent}%`} · {st.minutes} daq
                     </Text>
                     <Text style={[styles.rowMeta, { color: colors.mutedForeground }]}>
+                      {st.exercises_solved} mashq yechilgan · {st.exercise_hints} maslahat
+                    </Text>
+                    <Text style={[styles.rowMeta, { color: colors.mutedForeground }]}>
                       Oxirgi faollik: {formatDate(st.last_active)}
                     </Text>
                   </View>
@@ -178,6 +239,9 @@ const styles = StyleSheet.create({
   statCard: { flex: 1, alignItems: "center", paddingVertical: 12, borderRadius: 12, borderWidth: 1, gap: 2 },
   statValue: { fontSize: 18, fontFamily: "Inter_700Bold" },
   statLabel: { fontSize: 11, fontFamily: "Inter_400Regular" },
+  tabs: { flexDirection: "row", gap: 16 },
+  tab: { paddingVertical: 8, borderBottomWidth: 2 },
+  tabText: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
   row: { flexDirection: "row", alignItems: "center", gap: 12, padding: 14, borderRadius: 12, borderWidth: 1 },
   rowInfo: { flex: 1, gap: 3 },
   rowName: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
