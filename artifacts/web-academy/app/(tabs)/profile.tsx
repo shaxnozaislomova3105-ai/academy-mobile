@@ -1,6 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { BookOpen, Calendar, CheckCircle, Edit2, TrendingUp, User } from "lucide-react-native";
-import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Platform,
@@ -14,7 +15,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAcademy } from "@/context/AcademyContext";
 import { useColors } from "@/hooks/useColors";
-import{LogOut} from "lucide-react-native";
+import { fetchTeacherClasses } from "@/lib/teacher";
+import{LogOut, Users} from "lucide-react-native";
 
 type IconComponent = React.ComponentType<{ size: number; color: string }>;
 
@@ -24,8 +26,16 @@ export default function ProfileScreen() {
   const { profile, updateProfile, enrolledCourseIds, completedLessonIds, signOut, courses: allCourses } =
     useAcademy();
 
+  const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(profile.name);
+  const [isTeacher, setIsTeacher] = useState(false);
+
+  useEffect(() => {
+    fetchTeacherClasses()
+      .then((list) => setIsTeacher(list.length > 0))
+      .catch(() => setIsTeacher(false));
+  }, []);
 
   const totalLessons = allCourses.reduce((s, c) => s + c.lessons.length, 0);
   const progressPercent =
@@ -211,6 +221,18 @@ export default function ProfileScreen() {
           </View>
         ))}
       </View>
+      {isTeacher && (
+        <Pressable
+          onPress={() => router.push("/teacher" as any)}
+          style={({ pressed }) => [
+            styles.teacherBtn,
+            { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
+          ]}
+        >
+          <Users size={18} color="#fff" />
+          <Text style={styles.teacherBtnText}>O'qituvchi paneli</Text>
+        </Pressable>
+      )}
       <Pressable
   onPress={handleSignOut}
   style={({ pressed }) => ({
@@ -249,6 +271,15 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  teacherBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 14,
+  },
+  teacherBtnText: { color: "#fff", fontSize: 16, fontFamily: "Inter_700Bold" },
   content: { paddingHorizontal: 20 },
   pageTitle: { fontSize: 28, fontFamily: "Inter_700Bold", marginBottom: 24 },
   avatarSection: {
