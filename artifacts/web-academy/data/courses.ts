@@ -21,7 +21,32 @@ export interface Lesson {
   links?: LessonLink[];
   videoUrl?: string;
   questions?: QuizQuestion[];
+  goal?: string;
+  summary?: string;
+  exercises?: Exercise[];
 }
+
+/** Bo'sh joylarni (___) to'ldirish mashqi; answers har bir bo'sh joy uchun qabul qilinadigan javoblar */
+export interface FillExercise {
+  type: "fill";
+  prompt: string;
+  code: string;
+  answers: string[][];
+  expected?: string;
+  hints: string[];
+}
+
+/** Xatoli qatorni topish mashqi; bugLine 0 dan boshlanadi */
+export interface BugExercise {
+  type: "bug";
+  prompt: string;
+  code: string;
+  bugLine: number;
+  explanation: string;
+  hints: string[];
+}
+
+export type Exercise = FillExercise | BugExercise;
 
 export interface Course {
   id: string;

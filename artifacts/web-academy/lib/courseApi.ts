@@ -21,6 +21,9 @@ export async function fetchCourses(): Promise<Course[]> {
         links: l.links ?? [],
         videoUrl: l.video_url || undefined,
         questions: l.questions ?? [],
+        goal: l.goal || undefined,
+        summary: l.summary || undefined,
+        exercises: l.exercises ?? [],
       }));
 
     return {

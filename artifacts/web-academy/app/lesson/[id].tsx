@@ -16,6 +16,7 @@ import { CoursesError } from "@/components/CoursesError";
 import { InAppBrowser } from "@/components/InAppBrowser";
 import { LessonContent } from "@/components/LessonContent";
 import { NotesSection } from "@/components/NotesSection";
+import { ExerciseSection } from "@/components/ExerciseSection";
 import { QuizSection } from "@/components/QuizSection";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { useAcademy } from "@/context/AcademyContext";
@@ -159,6 +160,14 @@ export default function LessonScreen() {
           </Text>
         </View>
 
+        {/* Goal */}
+        {!!lesson.goal && (
+          <View style={[styles.infoCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.infoTitle, { color: course.color }]}>Dars maqsadi</Text>
+            <Text style={[styles.infoText, { color: colors.foreground }]}>{lesson.goal}</Text>
+          </View>
+        )}
+
         {/* Video */}
         {!!lesson.videoUrl && (
           <VideoPlayer videoUrl={lesson.videoUrl} color={course.color} title={lesson.title} />
@@ -166,6 +175,11 @@ export default function LessonScreen() {
 
         {/* Content */}
         <LessonContent content={lesson.content} color={course.color} />
+
+        {/* Exercises */}
+        {lesson.exercises && lesson.exercises.length > 0 && (
+          <ExerciseSection lessonId={lesson.id} exercises={lesson.exercises} color={course.color} />
+        )}
 
         {/* Example project links */}
         {lesson.links && lesson.links.length > 0 && (
@@ -208,6 +222,14 @@ export default function LessonScreen() {
         {/* Quiz */}
         {lesson.questions && lesson.questions.length > 0 && (
           <QuizSection lessonId={lesson.id} questions={lesson.questions} color={course.color} />
+        )}
+
+        {/* Summary */}
+        {!!lesson.summary && (
+          <View style={[styles.infoCard, { backgroundColor: course.color + "08", borderColor: course.color + "25" }]}>
+            <Text style={[styles.infoTitle, { color: course.color }]}>Xulosa</Text>
+            <Text style={[styles.infoText, { color: colors.foreground }]}>{lesson.summary}</Text>
+          </View>
         )}
 
         {/* Notes */}
@@ -279,6 +301,9 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingTop: 16 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   lessonHeader: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 24, gap: 8 },
+  infoCard: { borderRadius: 14, borderWidth: 1, padding: 14, marginBottom: 20, gap: 6 },
+  infoTitle: { fontSize: 12, fontFamily: "Inter_700Bold", textTransform: "uppercase", letterSpacing: 0.4 },
+  infoText: { fontSize: 14, fontFamily: "Inter_400Regular", lineHeight: 21 },
   lessonMeta: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   courseTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
   courseTagText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
