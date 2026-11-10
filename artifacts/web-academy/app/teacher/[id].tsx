@@ -60,8 +60,6 @@ export default function TeacherStudentScreen() {
                 {r.completed_at ? `Bajarilgan: ${formatDate(r.completed_at)}` : "Bajarilmagan"}
                 {" · "}
                 {r.attempts > 0 ? `Test: ${r.best_score}/${r.total} (${r.attempts} urinish)` : "Test yechilmagan"}
-                {" · "}
-                {r.minutes ?? 0} daq
               </Text>
               {r.exercises_total > 0 && (
                 <Text style={[styles.meta, { color: colors.mutedForeground }]}>

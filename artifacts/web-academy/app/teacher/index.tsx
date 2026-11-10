@@ -61,10 +61,9 @@ export default function TeacherPanelScreen() {
   const totals = students.reduce(
     (s, st) => ({
       lessons: s.lessons + st.completed_lessons,
-      minutes: s.minutes + st.minutes,
       active: s.active + (st.last_active ? 1 : 0),
     }),
-    { lessons: 0, minutes: 0, active: 0 }
+    { lessons: 0, active: 0 }
   );
 
   return (
@@ -122,7 +121,6 @@ export default function TeacherPanelScreen() {
                 { label: "O'quvchilar", value: students.length },
                 { label: "Faol", value: totals.active },
                 { label: "Darslar", value: totals.lessons },
-                { label: "Daqiqa", value: totals.minutes },
               ].map((s) => (
                 <View key={s.label} style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <Text style={[styles.statValue, { color: colors.primary }]}>{s.value}</Text>
@@ -208,7 +206,7 @@ export default function TeacherPanelScreen() {
                     </Text>
                     <Text style={[styles.rowMeta, { color: colors.mutedForeground }]}>
                       {st.completed_lessons} dars · test o'rtacha{" "}
-                      {st.avg_quiz_percent === null ? "—" : `${st.avg_quiz_percent}%`} · {st.minutes} daq
+                      {st.avg_quiz_percent === null ? "—" : `${st.avg_quiz_percent}%`}
                     </Text>
                     <Text style={[styles.rowMeta, { color: colors.mutedForeground }]}>
                       {st.exercises_solved} mashq yechilgan · {st.exercise_hints} maslahat
