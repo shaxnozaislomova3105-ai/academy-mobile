@@ -123,7 +123,13 @@ export function QuizSection({ lessonId, questions, color }: Props) {
           {finished ? (
             <View style={styles.result}>
               <View style={[styles.resultCircle, { borderColor: pct >= 70 ? "#22C55E" : "#F59E0B" }]}>
-                <Text style={[styles.resultPct, { color: pct >= 70 ? "#22C55E" : "#F59E0B" }]}>
+                <Text
+                  style={[styles.resultPct, { color: pct >= 70 ? "#22C55E" : "#F59E0B" }]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.6}
+                  maxFontSizeMultiplier={1.2}
+                >
                   {pct}%
                 </Text>
               </View>
@@ -255,10 +261,10 @@ const styles = StyleSheet.create({
   nextText: { color: "#fff", fontSize: 14, fontFamily: "Inter_600SemiBold" },
   result: { alignItems: "center", paddingVertical: 20, gap: 10 },
   resultCircle: {
-    width: 90, height: 90, borderRadius: 45, borderWidth: 3,
-    alignItems: "center", justifyContent: "center", marginBottom: 8,
+    width: 100, height: 100, borderRadius: 50, borderWidth: 3,
+    alignItems: "center", justifyContent: "center", marginBottom: 8, paddingHorizontal: 10,
   },
-  resultPct: { fontSize: 28, fontFamily: "Inter_700Bold" },
+  resultPct: { fontSize: 26, fontFamily: "Inter_700Bold", textAlign: "center" },
   resultTitle: { fontSize: 18, fontFamily: "Inter_700Bold" },
   resultSub: { fontSize: 14, fontFamily: "Inter_400Regular" },
   restartBtn: {
