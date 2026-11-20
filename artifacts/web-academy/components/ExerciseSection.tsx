@@ -1,7 +1,7 @@
 import { Check, Lightbulb, PenLine, X } from "lucide-react-native";
 import React, { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { BugExercise, Exercise, FillExercise } from "@/data/courses";
+import { BugExercise, Exercise, FillExercise, ParsonsExercise } from "@/data/courses";
 import { useColors } from "@/hooks/useColors";
 import { supabase } from "@/lib/supabase";
 
@@ -16,6 +16,28 @@ const MONO = Platform.select({ ios: "Menlo", default: "monospace" });
 // Bo'sh joy, qo'shtirnoq turi va oxiridagi nuqta-vergul farqlari hisobga olinmaydi
 function normalize(value: string): string {
   return value.trim().replace(/\s+/g, " ").replace(/'/g, '"').replace(/;$/, "");
+}
+
+const TYPE_LABELS: Record<Exercise["type"], string> = {
+  fill: "Kodni to'ldiring",
+  bug: "Xatoni toping",
+  parsons: "Qatorlarni tartiblang",
+};
+
+// Bloklarni aralashtiradi; natija hech qachon to'g'ri tartib bilan bir xil bo'lmaydi
+function shuffledPool(exercise: ParsonsExercise): number[] {
+  const all = [...exercise.blocks, ...(exercise.distractors ?? [])].map((_, i) => i);
+  if (all.length < 2) return all;
+  let order = all;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    order = [...all];
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    if (order.some((v, i) => v !== i)) break;
+  }
+  return order;
 }
 
 function saveAttempt(lessonId: string, index: number, correct: boolean, hintsUsed: number) {
@@ -51,6 +73,8 @@ function ExerciseCard({ lessonId, index, exercise, color }: { lessonId: string; 
     exercise.type === "fill" ? exercise.answers.map(() => "") : []
   );
   const [selectedLine, setSelectedLine] = useState<number | null>(null);
+  const [pool] = useState<number[]>(() => (exercise.type === "parsons" ? shuffledPool(exercise) : []));
+  const [chosen, setChosen] = useState<number[]>([]);
 
   const check = () => {
     let correct: boolean;
@@ -58,6 +82,11 @@ function ExerciseCard({ lessonId, index, exercise, color }: { lessonId: string; 
       correct = exercise.answers.every((options, i) =>
         options.some((o) => normalize(o) === normalize(values[i] ?? ""))
       );
+    } else if (exercise.type === "parsons") {
+      const all = [...exercise.blocks, ...(exercise.distractors ?? [])];
+      correct =
+        chosen.length === exercise.blocks.length &&
+        chosen.every((blockIndex, i) => all[blockIndex] === exercise.blocks[i]);
     } else {
       if (selectedLine === null) return;
       correct = selectedLine === exercise.bugLine;
@@ -66,12 +95,17 @@ function ExerciseCard({ lessonId, index, exercise, color }: { lessonId: string; 
     saveAttempt(lessonId, index, correct, hintsUsed);
   };
 
-  const canCheck = exercise.type === "fill" ? values.every((v) => v.trim() !== "") : selectedLine !== null;
+  const canCheck =
+    exercise.type === "fill"
+      ? values.every((v) => v.trim() !== "")
+      : exercise.type === "parsons"
+        ? chosen.length === exercise.blocks.length
+        : selectedLine !== null;
 
   return (
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Text style={[styles.label, { color }]}>
-        {index + 1}-mashq · {exercise.type === "fill" ? "Kodni to'ldiring" : "Xatoni toping"}
+        {index + 1}-mashq · {TYPE_LABELS[exercise.type]}
       </Text>
       <Text style={[styles.prompt, { color: colors.foreground }]}>{exercise.prompt}</Text>
 
@@ -81,6 +115,17 @@ function ExerciseCard({ lessonId, index, exercise, color }: { lessonId: string; 
           values={values}
           onChange={(i, v) => {
             setValues((prev) => prev.map((p, j) => (j === i ? v : p)));
+            setResult("idle");
+          }}
+        />
+      ) : exercise.type === "parsons" ? (
+        <ParsonsBody
+          exercise={exercise}
+          pool={pool}
+          chosen={chosen}
+          color={color}
+          onChange={(next) => {
+            setChosen(next);
             setResult("idle");
           }}
         />
@@ -111,7 +156,7 @@ function ExerciseCard({ lessonId, index, exercise, color }: { lessonId: string; 
           <Check size={16} color="#22C55E" />
           <Text style={[styles.resultText, { color: colors.foreground }]}>
             To'g'ri!
-            {exercise.type === "fill" && exercise.expected ? ` Natija: ${exercise.expected}` : ""}
+            {exercise.type !== "bug" && exercise.expected ? ` Natija: ${exercise.expected}` : ""}
             {exercise.type === "bug" ? ` ${exercise.explanation}` : ""}
           </Text>
         </View>
@@ -184,6 +229,68 @@ function FillBody({ exercise, values, onChange }: { exercise: FillExercise; valu
   );
 }
 
+// Barmoq bilan bosish orqali ishlaydi: pastdagi blok javobga qo'shiladi, javobdagi blok bosilsa qaytadi
+function ParsonsBody({
+  exercise,
+  pool,
+  chosen,
+  color,
+  onChange,
+}: {
+  exercise: ParsonsExercise;
+  pool: number[];
+  chosen: number[];
+  color: string;
+  onChange: (next: number[]) => void;
+}) {
+  const colors = useColors();
+  const all = [...exercise.blocks, ...(exercise.distractors ?? [])];
+  const remaining = pool.filter((i) => !chosen.includes(i));
+
+  return (
+    <>
+      <Text style={[styles.parsonsHint, { color: colors.mutedForeground }]}>
+        Bloklarni to'g'ri tartibda bosing. Javobdagi blokni bossangiz, u pastga qaytadi.
+        {exercise.distractors && exercise.distractors.length > 0 ? " Diqqat: bitta blok ortiqcha." : ""}
+      </Text>
+
+      <View style={[styles.answerBox, { borderColor: color + "60" }]}>
+        {chosen.length === 0 ? (
+          <Text style={[styles.placeholder, { color: colors.mutedForeground }]}>Javob shu yerda yig'iladi</Text>
+        ) : (
+          chosen.map((blockIndex, pos) => (
+            <Pressable
+              key={blockIndex}
+              onPress={() => onChange(chosen.filter((i) => i !== blockIndex))}
+              style={({ pressed }) => [styles.block, styles.codeBox, { opacity: pressed ? 0.8 : 1 }]}
+            >
+              <Text style={styles.lineNo}>{pos + 1}</Text>
+              <Text style={[styles.code, styles.blockCode]}>{all[blockIndex]}</Text>
+            </Pressable>
+          ))
+        )}
+      </View>
+
+      {remaining.length > 0 && (
+        <View style={styles.poolBox}>
+          {remaining.map((blockIndex) => (
+            <Pressable
+              key={blockIndex}
+              onPress={() => onChange([...chosen, blockIndex])}
+              style={({ pressed }) => [
+                styles.block,
+                { backgroundColor: colors.background, borderColor: colors.border, borderWidth: 1, opacity: pressed ? 0.8 : 1 },
+              ]}
+            >
+              <Text style={[styles.code, styles.blockCode, { color: colors.foreground }]}>{all[blockIndex]}</Text>
+            </Pressable>
+          ))}
+        </View>
+      )}
+    </>
+  );
+}
+
 function BugBody({ exercise, selected, color, onSelect }: { exercise: BugExercise; selected: number | null; color: string; onSelect: (line: number) => void }) {
   return (
     <View style={styles.codeBox}>
@@ -215,6 +322,12 @@ const styles = StyleSheet.create({
   inputRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   inputLabel: { fontFamily: MONO, fontSize: 13, minWidth: 26 },
   input: { flex: 1, borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8, fontFamily: MONO, fontSize: 14 },
+  parsonsHint: { fontSize: 12, fontFamily: "Inter_400Regular", lineHeight: 17 },
+  answerBox: { borderWidth: 1, borderStyle: "dashed", borderRadius: 10, padding: 8, gap: 6, minHeight: 48, justifyContent: "center" },
+  placeholder: { fontSize: 12, fontFamily: "Inter_400Regular", textAlign: "center" },
+  poolBox: { gap: 6 },
+  block: { flexDirection: "row", gap: 10, borderRadius: 8, paddingVertical: 8, paddingHorizontal: 10 },
+  blockCode: { flex: 1 },
   hintBox: { borderWidth: 1, borderRadius: 10, padding: 10, gap: 4 },
   hintText: { fontSize: 13, fontFamily: "Inter_400Regular", lineHeight: 19 },
   resultBox: { flexDirection: "row", gap: 8, borderWidth: 1, borderRadius: 10, padding: 10, alignItems: "flex-start" },

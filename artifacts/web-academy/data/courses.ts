@@ -46,7 +46,21 @@ export interface BugExercise {
   hints: string[];
 }
 
-export type Exercise = FillExercise | BugExercise;
+/**
+ * Parsons masalasi: aralashtirilgan kod bloklarini to'g'ri tartibga keltirish.
+ * blocks — to'g'ri tartibdagi bloklar (blok bir necha qatordan iborat bo'lishi mumkin),
+ * distractors — yechimga kirmaydigan chalg'ituvchi bloklar.
+ */
+export interface ParsonsExercise {
+  type: "parsons";
+  prompt: string;
+  blocks: string[];
+  distractors?: string[];
+  expected?: string;
+  hints: string[];
+}
+
+export type Exercise = FillExercise | BugExercise | ParsonsExercise;
 
 export interface Course {
   id: string;

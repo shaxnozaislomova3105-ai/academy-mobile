@@ -4,6 +4,7 @@ import { Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-na
 import WebView from "react-native-webview";
 import { useColors } from "@/hooks/useColors";
 import { buildHtml, isRunnableCode } from "@/lib/playground";
+import { PredictPrompt, PredictReview, PredictVerdict } from "@/components/PredictStep";
 
 interface Props {
   code: string;
@@ -19,8 +20,25 @@ export function CodePlayground({ code, language, color }: Props) {
   const lang = language.toLowerCase();
   const isRunnable = isRunnableCode(lang, code);
   const isEdited = editedCode !== code;
+  // JavaScript natijasi matn ko'rinishida chiqadi, shuning uchun uni oldindan taxmin qilish mumkin
+  const isJs = lang === "js" || lang === "javascript";
+  const [prediction, setPrediction] = useState("");
+  const [nudged, setNudged] = useState(false);
+  const [ranPrediction, setRanPrediction] = useState("");
+  const [verdict, setVerdict] = useState<PredictVerdict>(null);
+  const [lastRunCode, setLastRunCode] = useState<string | null>(null);
+  const needsPrediction = isRunnable && isJs && (!isOpen || editedCode !== lastRunCode);
 
   const handleRun = () => {
+    if (needsPrediction && !prediction.trim() && !nudged) {
+      setNudged(true);
+      return;
+    }
+    setRanPrediction(needsPrediction ? prediction.trim() : "");
+    setVerdict(null);
+    setPrediction("");
+    setNudged(false);
+    setLastRunCode(editedCode);
     setRunKey((k) => k + 1);
     setIsOpen(true);
   };
@@ -59,6 +77,10 @@ export function CodePlayground({ code, language, color }: Props) {
           spellCheck={false}
         />
       </View>
+
+      {needsPrediction && (
+        <PredictPrompt value={prediction} onChange={setPrediction} nudged={nudged} color={color} />
+      )}
 
       {isRunnable && (
         <View style={styles.btnRow}>
@@ -101,6 +123,9 @@ export function CodePlayground({ code, language, color }: Props) {
             originWhitelist={["*"]}
           />
         </View>
+      )}
+      {isOpen && ranPrediction !== "" && (
+        <PredictReview prediction={ranPrediction} verdict={verdict} onVerdict={setVerdict} color={color} />
       )}
     </View>
   );
