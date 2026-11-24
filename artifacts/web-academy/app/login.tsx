@@ -119,10 +119,6 @@ export default function LoginScreen() {
       setError("Ismingizni kiriting");
       return;
     }
-    if (mode === "register" && !classCode.trim()) {
-      setError("Sinf kodini kiriting");
-      return;
-    }
     if (mode === "register" && !consent) {
       setError("Tadqiqotda qatnashish uchun rozilik berishingiz kerak");
       return;
@@ -135,7 +131,8 @@ export default function LoginScreen() {
     setLoading(true);
     let err: string | null;
     if (mode === "register") {
-      const codeOk = await classCodeExists(classCode);
+      // Sinf kodi ixtiyoriy: faqat kiritilgan bo'lsa tekshiriladi
+      const codeOk = classCode.trim() ? await classCodeExists(classCode) : true;
       if (codeOk === false) {
         setLoading(false);
         setError(INVALID_CLASS_CODE_MESSAGE);
@@ -200,7 +197,7 @@ return;
         {mode === "register" && (
           <TextInput
             style={inputStyle}
-            placeholder="Sinf kodi"
+            placeholder="Sinf kodi (ixtiyoriy)"
             placeholderTextColor={colors.mutedForeground}
             value={classCode}
             onChangeText={setClassCode}
