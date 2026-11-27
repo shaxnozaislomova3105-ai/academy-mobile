@@ -1,0 +1,32 @@
+# Supabase bepul tarifida loyiha 7 kun so'rovsiz qolsa to'xtatiladi (pause).
+# Bu vazifa har 3 kunda bazadan bitta yozuvni o'qiydi, shuning uchun loyiha faol qoladi.
+# Faqat o'qish: hech narsa yozmaydi va tadqiqot ma'lumotlariga tegmaydi.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: "0 6 */3 * *" # har 3 kunda, 06:00 UTC (Toshkent vaqti 11:00)
+  workflow_dispatch: # GitHub'da qo'lda ishga tushirish uchun
+  push:
+    branches: [main]
+    paths: [".github/workflows/supabase-keepalive.yml"]
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: https://ppekqegcvmxzluhewkny.supabase.co
+      # Publishable kalit ochiq ilovada ham ishlatiladi; ma'lumotlarni RLS qoidalari himoya qiladi
+      SUPABASE_KEY: sb_publishable_HPGfB8pF2WGZe9mh4Y1rdA_9mHJK28M
+    steps:
+      - name: Bazaga o'qish so'rovi yuborish
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o body.txt -w "%{http_code}" "$SUPABASE_URL/rest/v1/courses?select=id&limit=1" -H "apikey: $SUPABASE_KEY")
+            echo "Urinish $i: HTTP $code"
+            if [ "$code" = "200" ]; then cat body.txt; echo; exit 0; fi
+            sleep 20
+          done
+          echo "Supabase javob bermadi. Loyiha to'xtatilgan bo'lishi mumkin: Supabase panelida Restore tugmasini bosing."
+          exit 1
